@@ -18,11 +18,11 @@ if (root) {
 
             <div class="tool-controls" style="display: flex; gap: 15px; margin-top: 20px; align-items: center; background: #f4f6f8; padding: 15px; border-radius: 8px;">
                 <span style="font-weight: bold; font-size: 14px;">Options:</span>
-                <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
-                    <input type="checkbox" id="opt-ignore-case"> Ignore Case
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; margin: 0;">
+                    <input type="checkbox" id="opt-ignore-case" style="margin: 0;"> Ignore Case
                 </label>
-                <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
-                    <input type="checkbox" id="opt-trim-whitespace" checked> Ignore Leading/Trailing Whitespace
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; margin: 0;">
+                    <input type="checkbox" id="opt-trim-whitespace" checked style="margin: 0;"> Ignore Leading/Trailing Whitespace
                 </label>
             </div>
 
