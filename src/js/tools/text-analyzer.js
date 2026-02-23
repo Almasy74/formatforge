@@ -5,7 +5,10 @@ if (root) {
     root.innerHTML = `
         <div class="tool-layout">
             <div class="tool-panel tool-input-panel" style="flex: 1; display: flex; flex-direction: column;">
-                <label for="input-data" style="font-weight: bold; margin-bottom: 5px;">Input: Text to Analyze</label>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <label for="input-data" style="font-weight: bold; margin-top: 0;">Input: Text to Analyze</label>
+                    <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Paste Text</button>
+                </div>
                 <textarea id="input-data" autofocus placeholder="Paste or type your text here to see real-time statistics..." style="flex: 1; padding: 10px; font-family: sans-serif; resize: none; border: 1px solid #ccc; border-radius: 4px; min-height: 400px; font-size: 16px; line-height: 1.5;"></textarea>
             </div>
 
@@ -69,16 +72,16 @@ if (root) {
     const uiSpeakingTime = $('#stat-speaking-time');
 
     const formatTime = (seconds) => {
-        if (seconds < 60) return \`\${Math.round(seconds)}s\`;
+        if (seconds < 60) return `${Math.round(seconds)}s`;
         const mins = Math.floor(seconds / 60);
         const secs = Math.round(seconds % 60);
-        return \`\${mins}m \${secs}s\`;
+        return `${mins}m ${secs}s`;
     };
 
     const analyzeText = () => {
         const text = inputData.value;
         const trimmedText = text.trim();
-        
+
         if (!trimmedText) {
             uiWords.textContent = '0';
             uiChars.textContent = '0';
@@ -119,9 +122,9 @@ if (root) {
         uiChars.textContent = charCount.toLocaleString();
         uiSentences.textContent = sentenceCount.toLocaleString();
         uiParagraphs.textContent = paragraphCount.toLocaleString();
-        
+
         uiCharsNoSpace.textContent = charsNoSpaceCount.toLocaleString();
-        uiAvgSentence.textContent = \`\${avgSentenceLength} words\`;
+        uiAvgSentence.textContent = `${avgSentenceLength} words`;
         uiReadingTime.textContent = formatTime(readingSeconds);
         uiSpeakingTime.textContent = formatTime(speakingSeconds);
     };
@@ -129,3 +132,24 @@ if (root) {
     // Instant reactivity
     on(inputData, 'input', analyzeText);
 }
+
+// Automatic Paste Binding
+setTimeout(() => {
+
+    const btnPaste = $('#btn-paste');
+    if (btnPaste) {
+        on(btnPaste, 'click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                const input = $('#input-data') || $('#input-text') || document.querySelector('textarea');
+                if (input) {
+                    input.value = text;
+                    input.dispatchEvent(new Event('input'));
+                }
+            } catch (err) {
+                console.error('Failed to read clipboard', err);
+            }
+        });
+    }
+
+}, 100);

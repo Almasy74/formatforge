@@ -1,0 +1,74 @@
+<h2>What is a Regular Expression?</h2>
+<p>A Regular Expression (often abbreviated as <strong>Regex</strong> or <strong>RegExp</strong>) is a sequence of
+    characters that specifies a search pattern. Think of it as "Find and Replace" on steroids. Instead of searching for
+    the exact word "apple", you can search for "any word that starts with 'a', ends with 'e', and has exactly 5
+    letters."</p>
+
+<h2>Why Should You Learn Regex?</h2>
+<p>Regex is universally supported across almost all modern programming languages (JavaScript, Python, Java, PHP) and
+    tools (VS Code, grep, Google Analytics). It is the most powerful tool for:</p>
+<ul>
+    <li><strong>Data Validation:</strong> Ensuring an input field only contains a valid email address or phone number.
+    </li>
+    <li><strong>Data Extraction:</strong> Pulling out all the URLs or IP addresses from a massive 10GB log file.</li>
+    <li><strong>Refactoring Code:</strong> Replacing old variable formats with new ones across hundreds of files
+        simultaneously.</li>
+</ul>
+
+<h2>Basic Regex Syntax</h2>
+<p>Regex can look like absolute gibberish at first glance. Here is a breakdown of the most common symbols:</p>
+
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+    <thead>
+        <tr style="background-color: #f4f6f8; text-align: left;">
+            <th style="padding: 10px; border: 1px solid #ccc;">Character</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">Meaning</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">Example</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>.</code> (Dot)</td>
+            <td style="padding: 10px; border: 1px solid #ccc;">Matches any single character except a newline.</td>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>c.t</code> matches "cat", "cot", "cut"</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>*</code> (Asterisk)</td>
+            <td style="padding: 10px; border: 1px solid #ccc;">Matches 0 or more of the preceding character.</td>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>a*b</code> matches "b", "ab", "aab", "aaab"</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>+</code> (Plus)</td>
+            <td style="padding: 10px; border: 1px solid #ccc;">Matches 1 or more of the preceding character.</td>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>a+b</code> matches "ab", "aab" (but not "b")</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>[]</code> (Brackets)</td>
+            <td style="padding: 10px; border: 1px solid #ccc;">Matches any one character inside the brackets.</td>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>[aeiou]</code> matches any vowel</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>\d</code></td>
+            <td style="padding: 10px; border: 1px solid #ccc;">Matches any digit (0-9).</td>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>\d\d\d</code> matches any 3-digit number</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>A Real World Example: Extracting Emails</h2>
+<p>If you have a block of text and want to find all emails, you might use a pattern like
+    <code>[\w.-]+@[\w.-]+\.\w+</code>. Let's break it down:</p>
+<ol>
+    <li><code>[\w.-]+</code>: Matches 1 or more word characters, dots, or hyphens (the username part).</li>
+    <li><code>@</code>: Exactly matches the @ symbol.</li>
+    <li><code>[\w.-]+</code>: Matches 1 or more characters for the domain name.</li>
+    <li><code>\.\w+</code>: Matches a literal dot (<code>\.</code>) followed by 1 or more word characters (like .com or
+        .net).</li>
+</ol>
+
+<h2>How to Practice Safely</h2>
+<p>Never run a complex regex directly on production databases without testing it first! A badly written regex can cause
+    "Catastrophic Backtracking", which freezes the CPU and takes down your server.</p>
+<p>Instead, use an interactive testing environment. You can paste your data and your pattern into our upcoming
+    <strong>Regex Tester</strong> tool to see what matches instantly, safely within your browser before deploying to
+    production.</p>

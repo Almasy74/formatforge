@@ -408,6 +408,363 @@
                 "enabled": true,
                 "variantOf": null
             }
+        },
+        {
+            "id": "csv-json-converter",
+            "clusterId": "json",
+            "path": "/json/csv-to-json/",
+            "ui": {
+                "jsModule": "csv-json-converter.js"
+            },
+            "seo": {
+                "title": "CSV to JSON Converter Online | FormatForge",
+                "metaDescription": "Instantly convert CSV data to JSON and JSON to CSV. Free, fast, privacy-first conversion that runs completely in your web browser.",
+                "h1": "CSV ↔ JSON Converter",
+                "subtitle": "Instantly convert between Comma-Separated Values and JSON."
+            },
+            "content": {
+                "intro": [
+                    "Converting data between CSV (Comma-Separated Values) and JSON (JavaScript Object Notation) shouldn't require uploading your sensitive data to a random server. This tool performs a secure, high-speed conversion directly inside your browser.",
+                    "Whether you're exporting database tables into a generic frontend API structure, or flattening a JSON response into an Excel-friendly CSV, this utility provides an instant, zero-latency feedback loop without page reloads."
+                ],
+                "howTo": {
+                    "heading": "How to convert CSV to JSON",
+                    "steps": [
+                        "Paste your CSV or JSON data into the input area.",
+                        "The tool will automatically detect the format and convert it to the other instantly.",
+                        "If you paste CSV, it will output an array of JSON objects. If you paste JSON, it converts the array of objects into CSV rows.",
+                        "Click 'Copy' to copy the converted structure to your clipboard."
+                    ]
+                },
+                "examples": {
+                    "heading": "Example Conversion",
+                    "items": [
+                        {
+                            "input": "id,name,role\\n1,Alice,Admin\\n2,Bob,User",
+                            "output": "[\\n  {\\n    \\\"id\\\": \\\"1\\\",\\n    \\\"name\\\": \\\"Alice\\\",\\n    \\\"role\\\": \\\"Admin\\\"\\n  },\\n  {\\n    \\\"id\\\": \\\"2\\\",\\n    \\\"name\\\": \\\"Bob\\\",\\n    \\\"role\\\": \\\"User\\\"\\n  }\\n]"
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [],
+                    "crossCluster": [
+                        "remove-duplicate-lines"
+                    ]
+                }
+            },
+            "faq": [
+                {
+                    "q": "How does the automatic format detection work?",
+                    "a": "The logic looks at the first characters of the pasted text. If it detects a JSON array bracket '[' or object bracket '{', it parses it as JSON to CSV. Otherwise, it treats the input as CSV text and converts it to JSON."
+                },
+                {
+                    "q": "Is my data sent to a server?",
+                    "a": "No. The CSV and JSON conversion happens entirely in your browser using local JavaScript. No data is ever transmitted over the network."
+                },
+                {
+                    "q": "Does this support custom delimiters?",
+                    "a": "Currently, the tool supports the standard comma (,) delimiter for CSV data."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": null
+            }
+        },
+        {
+            "id": "smart-slug-generator",
+            "clusterId": "dev",
+            "path": "/dev/slug-generator/",
+            "ui": {
+                "jsModule": "smart-slug-generator.js"
+            },
+            "seo": {
+                "title": "Smart Slug Generator | Create URL-Friendly Strings | FormatForge",
+                "metaDescription": "Instantly generate clean, SEO-friendly, lowercase URL slugs from any text title. Removes stop words, strips special characters, and transliterates instantly.",
+                "h1": "Smart URL Slug Generator",
+                "subtitle": "Convert titles and text into clean, SEO-friendly URL slugs instantly."
+            },
+            "content": {
+                "intro": [
+                    "A 'slug' is the part of a URL that identifies a particular page on a website in a readable form. For example, in `https://example.com/blog/my-first-post`, the slug is `my-first-post`.",
+                    "This tool takes any string of text—like a blog post title, product name, or category—and instantly converts it into a clean, lowercased, hyphen-separated string perfectly optimized for SEO and modern web frameworks.",
+                    "It automatically handles stripping special characters, transliterating foreign letters (like converting 'é' to 'e'), and removing common stop words that bloat your URLs."
+                ],
+                "howTo": {
+                    "heading": "How to generate a URL slug",
+                    "steps": [
+                        "Type or paste your title into the input box.",
+                        "The tool will instantly convert it to a lowercase URL-friendly string.",
+                        "Use the toggles to optionally remove stop words or change the separator from hyphens to underscores.",
+                        "Click 'Copy Slug' to use it in your CMS or code."
+                    ]
+                },
+                "examples": {
+                    "heading": "Examples",
+                    "items": [
+                        {
+                            "input": "10 Best SEO Tips for 2026 (Updated!)",
+                            "output": "10-best-seo-tips-for-2026-updated"
+                        },
+                        {
+                            "input": "L'Odyssée de l'Espace",
+                            "output": "lodyssee-de-lespace"
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [],
+                    "crossCluster": [
+                        "case-converter",
+                        "remove-line-breaks"
+                    ]
+                }
+            },
+            "faq": [
+                {
+                    "q": "What makes a good URL slug?",
+                    "a": "A good slug is short, descriptive, lowercase, and uses hyphens to separate words. It should be easily readable by both humans and search engine crawlers."
+                },
+                {
+                    "q": "Why should I remove stop words from slugs?",
+                    "a": "Stop words (like 'a', 'the', 'and', 'for') don't add much SEO value. Removing them keeps the URL concise, which search engines prefer, and makes it easier for users to read and share."
+                },
+                {
+                    "q": "Does this tool work offline?",
+                    "a": "Yes! Because FormatForge relies on client-side JavaScript, the slug generation happens instantly in your browser without requiring a server connection."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": null
+            }
+        },
+        {
+            "id": "text-diff-checker",
+            "clusterId": "text",
+            "path": "/text/diff-checker/",
+            "ui": {
+                "jsModule": "text-diff-checker.js"
+            },
+            "seo": {
+                "title": "Text Diff Checker Online | Compare Two Files | FormatForge",
+                "metaDescription": "Instantly compare two texts or files online. Fast, private, zero-latency text difference checker that highlights added, removed, and modified lines in your browser.",
+                "h1": "Text Diff Checker",
+                "subtitle": "Instantly compare two blocks of text to see what changed."
+            },
+            "content": {
+                "intro": [
+                    "Spotting tiny differences between two configurations, code snippets, or text documents can be exhausting. This Text Diff Checker highlights exactly what lines were added, removed, or kept the same.",
+                    "Many online diff tools upload your sensitive code to a server. FormatForge performs the diff calculation entirely in your browser using local JavaScript, guaranteeing 100% privacy and zero-latency feedback."
+                ],
+                "howTo": {
+                    "heading": "How to compare two texts",
+                    "steps": [
+                        "Paste the original, older version of your text into the 'Original Text' box.",
+                        "Paste the modified, newer version into the 'Changed Text' box.",
+                        "The tool will instantly calculate the longest common subsequence and color-code the lines below: <span style=\\\"color: #c62828;\\\">Red for Removed</span> and <span style=\\\"color: #388e3c;\\\">Green for Added</span>.",
+                        "You can toggle case sensitivity or trim whitespace to ignore trivial differences."
+                    ]
+                },
+                "examples": {
+                    "heading": "Example Diff",
+                    "items": [
+                        {
+                            "input": "Original: The quick brown fox\\nChanged: The fast brown fox jumps",
+                            "output": "- The quick brown fox\\n+ The fast brown fox jumps"
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [
+                        "remove-duplicate-lines"
+                    ],
+                    "crossCluster": [
+                        "csv-json-converter"
+                    ]
+                }
+            },
+            "faq": [
+                {
+                    "q": "How does the comparison algorithm work?",
+                    "a": "It uses a Longest Common Subsequence (LCS) algorithm to find the optimal set of lines that were added or removed between the original and modified texts."
+                },
+                {
+                    "q": "Is my proprietary code safe to compare here?",
+                    "a": "Yes. The diff is calculated on your own CPU in your web browser. No data leaves your machine, making it completely secure for comparing sensitive database queries, API keys, or proprietary code."
+                },
+                {
+                    "q": "What happens if I compare extremely large files?",
+                    "a": "Because the calculation happens on your device, very large files (thousands of lines) might take a second to process depending on your CPU speed. There are no server-imposed size limits."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": null
+            }
+        },
+        {
+            "id": "url-encoder-decoder",
+            "clusterId": "dev",
+            "path": "/dev/url-encode-decode/",
+            "ui": {
+                "jsModule": "url-encoder-decoder.js"
+            },
+            "seo": {
+                "title": "URL Encode/Decode Online | Fast escape strings | FormatForge",
+                "metaDescription": "Instantly encode or decode URL strings for safe web transmission. Works instantly in your browser with no tracking or server uploads.",
+                "h1": "URL Encoder / Decoder",
+                "subtitle": "Safely escape or unescape characters for uniform resource locators."
+            },
+            "content": {
+                "intro": [
+                    "URL encoding (or percent-encoding) converts reserved, unsafe, or non-ASCII characters in a URL to a format that is universally accepted by web browsers and servers. For example, spaces are converted to `%20`.",
+                    "If you are building APIs, integrating webhooks, or sharing complex query parameters, encoding prevents your data from breaking the URL structure.",
+                    "FormatForge's encoder provides a zero-latency, privacy-first interface to encode strings in real time."
+                ],
+                "howTo": {
+                    "heading": "How to URL Encode or Decode Text",
+                    "steps": [
+                        "Type or paste your raw text or URL into the input area.",
+                        "Select whether you want to Encode or Decode the string using the toggle switch.",
+                        "The converted output appears instantly.",
+                        "Click 'Copy' to copy the encoded or decoded string to your clipboard."
+                    ]
+                },
+                "examples": {
+                    "heading": "Examples",
+                    "items": [
+                        {
+                            "input": "https://example.com/?search=hello world!",
+                            "output": "https%3A%2F%2Fexample.com%2F%3Fsearch%3Dhello%20world!"
+                        },
+                        {
+                            "input": "test%40email.com",
+                            "output": "test@email.com (Decoded)"
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [
+                        "smart-slug-generator"
+                    ],
+                    "crossCluster": [
+                        "html-cleaner"
+                    ]
+                }
+            },
+            "faq": [
+                {
+                    "q": "What mechanism does this tool use?",
+                    "a": "It uses standard native JavaScript functions: `encodeURIComponent` for encoding ensuring all special characters are safely escaped, and `decodeURIComponent` for reverting them."
+                },
+                {
+                    "q": "Why do spaces become %20?",
+                    "a": "Spaces are invalid in web URLs. The standard hex value equivalent for a space character in ASCII is 20, so URL encoding escapes it to %20."
+                },
+                {
+                    "q": "Is a network connection required?",
+                    "a": "No, you don't need to be online. Once the page is loaded, the conversion is handled completely by local JavaScript."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": null
+            }
+        },
+        {
+            "id": "base64-encode-decode",
+            "clusterId": "dev",
+            "path": "/dev/base64-encode-decode/",
+            "ui": {
+                "jsModule": "base64-encode-decode.js"
+            },
+            "seo": {
+                "title": "Base64 Encode and Decode Online | FormatForge",
+                "metaDescription": "Securely encode text to Base64 or decode Base64 back to text strings. Instant, privacy-first formatting explicitly running in your web browser.",
+                "h1": "Base64 Encoder / Decoder",
+                "subtitle": "Convert strings to Base64 representation or decode them back to text instantly."
+            },
+            "content": {
+                "intro": [
+                    "Base64 is an encoding scheme used to convert binary data or text characters into a standard ASCII string format. It is commonly used for transmitting data through channels that only reliably support text content, such as email MIME, XML, or JSON.",
+                    "Whether you're embedding small images into CSS, masking secret keys, or debugging API responses, converting back and forth from Base64 is a daily developer task.",
+                    "FormatForge's encoder provides a zero-latency, privacy-first interface. Calculations happen directly on your machine so your sensitive credentials or tokens are never uploaded anywhere."
+                ],
+                "howTo": {
+                    "heading": "How to convert Base64 online",
+                    "steps": [
+                        "Type or paste your raw text or Base64 string into the input area.",
+                        "Select whether you want to Encode or Decode the string using the toggle switch.",
+                        "The converted output appears instantly.",
+                        "Click 'Copy' to copy the encoded or decoded string to your clipboard."
+                    ]
+                },
+                "examples": {
+                    "heading": "Examples",
+                    "items": [
+                        {
+                            "input": "Base64 Encoding Tool",
+                            "output": "QmFzZTY0IEVuY29kaW5nIFRvb2w="
+                        },
+                        {
+                            "input": "SGVsbG8gV29ybGQh",
+                            "output": "Hello World! (Decoded)"
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [
+                        "url-encoder-decoder"
+                    ],
+                    "crossCluster": [
+                        "case-converter"
+                    ]
+                }
+            },
+            "faq": [
+                {
+                    "q": "What mechanism does this tool use?",
+                    "a": "It uses the standard native browser APIs: `btoa()` for encoding a string to Base64, and `atob()` for decoding it back to a standard string."
+                },
+                {
+                    "q": "Is a network connection required?",
+                    "a": "No, you don't need to be online. Once the page is loaded, the conversion is handled completely by local JavaScript."
+                },
+                {
+                    "q": "Can I encode very large files?",
+                    "a": "This specific tool is optimized for text strings and tokens. Very large files might exceed browser memory caps for instant visualization."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": null
+            }
         }
     ]
 }

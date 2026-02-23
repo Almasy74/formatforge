@@ -1,0 +1,46 @@
+<h2>Why Data Cleaning Matters</h2>
+<p>Whether you've scraped a competitor's pricing table, exported a massive CSV from your CRM, or copy-pasted a messy
+    list of emails, raw data is rarely ready for use. <strong>Dirty data</strong> costs time, introduces bugs, and ruins
+    the accuracy of your analytics.</p>
+
+<p>Data cleaning is the process of detecting and correcting (or removing) corrupt or inaccurate records from a record
+    set, table, or database. In modern web workflows, the most common issues are:</p>
+<ul>
+    <li>Accidental line breaks breaking CSV columns</li>
+    <li>Duplicate rows skewing email marketing send lists</li>
+    <li>Hidden HTML tags leftover from web scraping</li>
+</ul>
+
+<h2>Core Techniques for Instant Cleaning</h2>
+
+<h3>1. Removing Line Breaks and Normalizing Whitespace</h3>
+<p>When copying text from PDFs or older websites, line breaks are often inserted artificially to fit a visual box. If
+    you try to paste this into a spreadsheet, a single paragraph might span 15 rows.</p>
+<p><strong>The Fix:</strong> Use a tool to strip all line breaks and replace them with a single space. This flattens
+    your text into a single continuous string. You can use our <a href="/text/remove-line-breaks/">Remove Line Breaks
+        tool</a> to instantly crush formatting problems without uploading your sensitive data anywhere.</p>
+
+<h3>2. Eliminating Duplicate Records</h3>
+<p>If you've combined two email lists, you almost certainly have duplicates. Sending the same newsletter to a user twice
+    is a massive trust-breaker.</p>
+<p><strong>The Fix:</strong> Sort your list alphabetically and iterate through it, or drop it into a Set to filter
+    unique values. For a faster approach, use our <a href="/text/remove-duplicate-lines/">Remove Duplicate Lines
+        tool</a> to instantly deduplicate tens of thousands of rows locally in your browser.</p>
+
+<h3>3. Stripping Unwanted HTML Tags</h3>
+<p>If you're pulling product descriptions from an API and inserting them into your own mobile app, raw HTML tags like
+    <code>&lt;span&gt;</code> or <code>&lt;br&gt;</code> will render as ugly text.</p>
+<p><strong>The Fix:</strong> Rely on an <a href="/text/html-cleaner/">HTML Cleaner</a> that uses browser DOM parsing to
+    safely extract the raw <code>innerText</code>, ignoring the markup.</p>
+
+<h2>Best Practices for Data Pipelines</h2>
+<ol>
+    <li><strong>Never mutate the original file:</strong> Always keep a raw, untouched backup of your data before running
+        any bash scripts, Excel macros, or web tools.</li>
+    <li><strong>Client-Side First:</strong> If you are cleaning sensitive customer PII (Personally Identifiable
+        Information), never upload it to a random online formatter server. Use tools that perform operations strictly
+        via client-side JavaScript.</li>
+    <li><strong>Validate After Cleaning:</strong> Run a quick regex check or use a <a href="/text/text-analyzer/">Text
+            Analyzer</a> to ensure your word counts and character limits look correct after applying a transformation.
+    </li>
+</ol>

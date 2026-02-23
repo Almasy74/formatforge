@@ -6,7 +6,10 @@ if (root) {
     root.innerHTML = `
         <div class="tool-layout">
             <div class="tool-panel tool-input-panel" style="flex: 1; display: flex; flex-direction: column;">
-                <label for="input-data" style="font-weight: bold; margin-bottom: 5px;">Input: Text to Convert</label>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <label for="input-data" style="font-weight: bold; margin-top: 0;">Input: Text to Convert</label>
+                    <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Paste Text</button>
+                </div>
                 <textarea id="input-data" autofocus placeholder="Paste text you want to convert..." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; min-height: 300px;"></textarea>
             </div>
 
@@ -53,7 +56,7 @@ if (root) {
             <div class="tool-panel tool-output-panel" style="flex: 1; display: flex; flex-direction: column;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                     <label for="output-data" style="font-weight: bold;">Output: Converted Result</label>
-                    <button id="btn-copy" class="btn primary" style="padding: 4px 12px; font-size: 13px;">Copy Text</button>
+                    <button id="btn-copy" class="btn primary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Copy Text</button>
                 </div>
                 <textarea id="output-data" readonly placeholder="Output will appear here instantly..." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9; min-height: 300px;"></textarea>
             </div>
@@ -80,8 +83,32 @@ if (root) {
     };
 
     // Words tokenizer for programming cases
-    const getWords = (str) => str.replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(/\\s+/);
+    const getWords = (str) =>
+        str.replace(/([a-z])([A-Z])/g, '$1 $2')
+            .replace(/[^a-zA-Z0-9]+/g, ' ')
+            .trim()
+            .split(/\s+/);
 
+    // Automatic Paste Binding
+    setTimeout(() => {
+
+        const btnPaste = $('#btn-paste');
+        if (btnPaste) {
+            on(btnPaste, 'click', async () => {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    const input = $('#input-data') || $('#input-text') || document.querySelector('textarea');
+                    if (input) {
+                        input.value = text;
+                        input.dispatchEvent(new Event('input'));
+                    }
+                } catch (err) {
+                    console.error('Failed to read clipboard', err);
+                }
+            });
+        }
+
+    }, 100);
     const convertCase = () => {
         let text = inputData.value;
         if (!text) {

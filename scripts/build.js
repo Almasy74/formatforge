@@ -52,6 +52,8 @@ tools.forEach(tool => {
 const getFile = (filePath) => fs.readFileSync(filePath, 'utf8');
 const template = getFile(path.join(srcDir, 'templates', 'tool-template.html'));
 const homeTemplate = getFile(path.join(srcDir, 'templates', 'home-template.html'));
+const guideTemplatePath = path.join(srcDir, 'templates', 'guide-template.html');
+const guideTemplate = fs.existsSync(guideTemplatePath) ? getFile(guideTemplatePath) : '';
 const headerPartial = getFile(path.join(srcDir, 'partials', 'header.html'));
 const footerPartial = getFile(path.join(srcDir, 'partials', 'footer.html'));
 const adsPartial = getFile(path.join(srcDir, 'partials', 'ads-placeholder.html'));
@@ -136,14 +138,14 @@ tools.filter(t => t.flags.enabled).forEach(tool => {
     html = html.replace(/\[SEO_INTRO_HTML\]/g, introHtml);
 
     if (tool.content.howTo) {
-        const howToHtml = `<h3>${tool.content.howTo.heading}</h3><ol>${tool.content.howTo.steps.map(s => `<li>${s}</li>`).join('')}</ol>`;
+        const howToHtml = `<h2>${tool.content.howTo.heading}</h2><ol>${tool.content.howTo.steps.map(s => `<li>${s}</li>`).join('')}</ol>`;
         html = html.replace(/\[HOW_TO_HTML\]/g, howToHtml);
     } else {
         html = html.replace(/\[HOW_TO_HTML\]/g, '');
     }
 
     if (tool.content.examples && tool.content.examples.items && tool.content.examples.items.length > 0) {
-        let exHtml = `<div class="examples-block"><h3>${tool.content.examples.heading}</h3><div style="background:#f4f4f4; padding:15px; border-radius:8px;">`;
+        let exHtml = `<div class="examples-block"><h2>${tool.content.examples.heading}</h2><div style="background:#f4f4f4; padding:15px; border-radius:8px;">`;
         tool.content.examples.items.forEach(ex => {
             exHtml += `<strong>Input:</strong><pre><code>${ex.input}</code></pre><strong>Output:</strong><pre><code>${ex.output}</code></pre>`;
         });
@@ -250,6 +252,69 @@ clusters.forEach(cluster => {
     generatedUrls.push(canonicalUrl);
 });
 
+// Generated Guides
+console.log('Generating knowledge guides...');
+guides.forEach(guide => {
+    let cleanRoute = guide.path;
+    if (site.canonicalTrailingSlash && !cleanRoute.endsWith('/')) {
+        cleanRoute += '/';
+    } else if (!site.canonicalTrailingSlash && cleanRoute.endsWith('/') && cleanRoute !== '/') {
+        cleanRoute = cleanRoute.slice(0, -1);
+    }
+    const routeParts = cleanRoute.split('/').filter(Boolean);
+    const destDir = path.join(publicDir, ...routeParts);
+    if (!fs.existsSync(destDir)) {
+        fs.mkdirSync(destDir, { recursive: true });
+    }
+
+    let html = guideTemplate;
+    html = html.replace(/\[HEADER_PARTIAL\]/g, headerPartial);
+    html = html.replace(/\[FOOTER_PARTIAL\]/g, footerPartial);
+    html = html.replace(/\[LANGUAGE\]/g, site.defaultLocale);
+
+    const canonicalUrl = BASE_URL + cleanRoute;
+    html = html.replace(/\[CANONICAL_URL\]/g, canonicalUrl);
+    html = html.replace(/\[TITLE\]/g, guide.title);
+    html = html.replace(/\[META_DESCRIPTION\]/g, guide.description);
+
+    // Read guide content
+    const guideFile = path.join(dataDir, 'guides', guide.id + '.html');
+    let guideContent = '';
+    if (fs.existsSync(guideFile)) {
+        guideContent = getFile(guideFile);
+    } else {
+        console.warn(`Warning: Missing content for guide ${guide.id}`);
+    }
+    html = html.replace(/\[GUIDE_CONTENT\]/g, guideContent);
+
+    // Related Tools
+    let relatedToolsHtml = '';
+    if (guide.relatedTools && guide.relatedTools.length > 0) {
+        guide.relatedTools.forEach(toolId => {
+            const t = tools.find(x => x.id === toolId);
+            if (t && t.flags.enabled) {
+                relatedToolsHtml += `<li style="margin-bottom: 15px;"><a href="${t.path}" style="text-decoration: none; color: #0056b3; font-weight: bold; font-size: 15px;">${t.seo.h1}</a><div style="font-size: 13px; color: #666; margin-top: 4px;">${t.seo.subtitle}</div></li>`;
+            }
+        });
+    }
+    html = html.replace(/\[RELATED_TOOLS_HTML\]/g, relatedToolsHtml);
+
+    // Basic Article Schema
+    const schemaObj = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": guide.title,
+        "description": guide.description,
+        "url": canonicalUrl
+    };
+    html = html.replace(/\[SCHEMA_JSON\]/g, JSON.stringify(schemaObj, null, 2));
+
+    const destFile = path.join(destDir, 'index.html');
+    fs.writeFileSync(destFile, html, 'utf8');
+
+    generatedUrls.push(canonicalUrl);
+});
+
 // Generate Homepage
 console.log('Generating homepage (index.html)...');
 let homeHtml = homeTemplate;
@@ -298,5 +363,10 @@ const copyRecursiveSync = function (src, dest) {
 
 copyRecursiveSync(path.join(srcDir, 'css'), path.join(publicDir, 'css'));
 copyRecursiveSync(path.join(srcDir, 'js'), path.join(publicDir, 'js'));
+
+const srcAssets = path.join(srcDir, 'assets');
+if (fs.existsSync(srcAssets)) {
+    copyRecursiveSync(srcAssets, path.join(publicDir, 'assets'));
+}
 
 console.log(`Build complete! ${tools.length} tool pages generated. ${clusters.length} hub pages. Sitemap and index.html saved.`);

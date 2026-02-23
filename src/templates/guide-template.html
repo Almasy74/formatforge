@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="[LANGUAGE]">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[TITLE]</title>
+    <meta name="description" content="[META_DESCRIPTION]">
+    <link rel="canonical" href="[CANONICAL_URL]">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    [SCHEMA_JSON]
+    </script>
+</head>
+
+<body>
+    [HEADER_PARTIAL]
+
+    <main class="container">
+        <div class="breadcrumb" style="margin-bottom: 20px; font-size: 14px; color: #666;">
+            <a href="/" style="color: #007bff; text-decoration: none;">Home</a> >
+            <a href="/guides/" style="color: #007bff; text-decoration: none;">Guides</a> >
+            <span>[TITLE]</span>
+        </div>
+
+        <div class="guide-layout">
+            <article class="guide-content"
+                style="background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <header style="margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
+                    <h1 style="font-size: 32px; color: #222; margin-top: 0;">[TITLE]</h1>
+                    <p style="font-size: 18px; color: #555;">[META_DESCRIPTION]</p>
+                </header>
+
+                <div class="prose" style="line-height: 1.8; color: #333; font-size: 16px;">
+                    [GUIDE_CONTENT]
+                </div>
+            </article>
+
+            <aside class="guide-sidebar" style="margin-top: 40px;">
+                <div class="shadow-card" style="padding: 20px; background: #fdfdfd; border-left: 4px solid #0056b3;">
+                    <h3 style="margin-top: 0; font-size: 18px;">Related Tools</h3>
+                    <ul
+                        style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
+                        [RELATED_TOOLS_HTML]
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    [FOOTER_PARTIAL]
+</body>
+
+</html>

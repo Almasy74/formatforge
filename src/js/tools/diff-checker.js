@@ -41,3 +41,24 @@ on(btnCompare, 'click', () => {
     }
     outDiff.innerHTML = html;
 });
+
+// Automatic Paste Binding
+setTimeout(() => {
+    
+    const btnPaste = $('#btn-paste');
+    if (btnPaste) {
+        on(btnPaste, 'click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                const input = $('#input-data') || $('#input-text') || document.querySelector('textarea');
+                if (input) {
+                    input.value = text;
+                    input.dispatchEvent(new Event('input'));
+                }
+            } catch (err) {
+                console.error('Failed to read clipboard', err);
+            }
+        });
+    }
+
+}, 100);
