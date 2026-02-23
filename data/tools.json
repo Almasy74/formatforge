@@ -54,9 +54,11 @@
             },
             "content": {
                 "intro": [
-                    "In the professional data workshop, dealing with 'dirty' text is a constant challenge. Unwanted line breaks, carriage returns, and hard line endings often sneak into your content when copying from legacy systems, PDFs, fixed-width text files, or email clients. These invisible artifacts don't just look messy—they break downstream processing, inflate token counts in Large Language Models (LLMs), and cause structural errors in database imports.",
-                    "The FormatForge Remove Line Breaks tool offers a focused, high-performance environment to neutralize these formatting issues instantly. Unlike generic text editors that require complex find-and-replace strings, our utility is optimized for the specific task of 'flattening' text while preserving the semantic integrity of your data. It operates with zero latency, processing even massive documents entirely within your browser to ensure maximum privacy and speed.",
-                    "Beyond simple removal, this workshop tool allows you to tune the output for specific professional workflows. Whether you are preparing a clean prompt for an AI model, normalizing scraped web content for a spreadsheet, or simply fixing a broken paragraph from a Word document, you can choose exactly how transitions are handled. You can replace breaks with a single space to create a flowing sentence or strip them entirely for dense data payloads. It is an essential utility for developers, content editors, and data analysts who demand precision in their text processing pipeline."
+                    "Unwanted line breaks often sneak into your content when copying from PDFs, fixed-width text files, or terminal outputs, breaking the semantic flow of your data.",
+                    "Example Broken Input: A paragraph copied from a research paper PDF might look like this: 'The research\\nwas conducted\\nin 2024.' with hard returns mid-sentence.",
+                    "Why it happens: Legacy document formats use fixed-width line endings that don't reflow when pasted into modern text editors or LLM prompts, leading to fragmented sentences and inflated token counts.",
+                    "Solution (Use Tool): The Remove Line Breaks workshop instantly 'flattens' these fragments into a single continuous block of text while preserving paragraph integrity. It processes your data entirely within your local browser sandbox, ensuring zero data exposure.",
+                    "Advanced Notes: Use 'Preserve Paragraphs' to keep double line breaks while cleaning single returns. This is essential for preparing clean datasets for AI training or normalizing scraped web content."
                 ],
                 "howTo": {
                     "heading": "How to remove line breaks",
@@ -131,9 +133,11 @@
             },
             "content": {
                 "intro": [
-                    "Web developers and content managers frequently encounter 'poisoned' HTML—code snippets riddled with bloated inline styles, proprietary classes from Microsoft Word, and nested tags that break modern CSS layouts. Manually cleaning these snippets is time-consuming and prone to human error. Our HTML Cleaner is a dedicated workshop utility designed to strip away the noise and return clean, semantic, and standardized code.",
-                    "Unlike online converters that send your snippets to a remote server, FormatForge processes your HTML entirely in the client-side environment. This means you can safely clean sensitive internal documentation, private CMS content, or proprietary template code without any risk of data exposure. The tool leverages the browser's native DOM parser to ensure that even 'broken' or malformed HTML is handled gracefully and restructured into a valid output.",
-                    "The utility offers several professional cleaning modes. You can perform a 'Basic Clean' that preserves essential structural tags while deleting inline `style` and `class` attributes—perfect for migrating blog posts. Alternatively, use the 'Strip All Tags' mode for high-speed text extraction, converting complex HTML layouts into plain, unformatted strings for database storage or further text analysis. It is the definitive tool for maintaining a clean and professional codebase."
+                    "Bloated HTML snippets riddled with inline styles and proprietary tags often break modern CSS layouts when pasted into a CMS or static site builder.",
+                    "Example Broken Input: A snippet from Microsoft Word contains tags like `<p class=\\\"MsoNormal\\\" style=\\\"margin:0; font-family:'Calibri'\\\">` which override your site's global styles.",
+                    "Why it happens: Visual page builders and word processors prioritize layout over semantics, injecting 'poisoned' code that creates inconsistency and makes maintenance impossible.",
+                    "Solution (Use Tool): Our HTML Cleaner strips away the noise—classes, inline styles, and proprietary attributes—leaving you with clean, semantic markup. The tool leverages your browser's native DOM parser to safely reflow code locally.",
+                    "Advanced Notes: Use 'Strip All Tags' for high-speed text extraction if you only need the content without any markup for database storage or further analysis."
                 ],
                 "howTo": {
                     "heading": "How to clean HTML",
@@ -204,9 +208,11 @@
             },
             "content": {
                 "intro": [
-                    "Writers, researchers, and SEO specialists often need more than a simple word count—they need a comprehensive structural audit of their content. Our Text Analyzer is a high-speed workshop utility that provides deep linguistic and structural insights instantaneously. As you type or paste, the tool performs a multi-dimensional analysis of your text, helping you identify density, readability, and structural patterns that affect both human engagement and search engine visibility.",
-                    "Traditional word counters often suffer from slow processing times or invasive tracking. At FormatForge, your text never leaves your device. The analyzer runs entirely within your browser's local sandbox, making it the safest environment for evaluating sensitive manuscripts, private legal documents, or unreleased marketing copy. We leverage optimized JavaScript algorithms to ensure that even book-length content is analyzed with zero lag, providing real-time feedback as you refine your prose.",
-                    "Beyond the basics of character and word counting, this utility calculates essential metrics like estimated reading and speaking times—critical for video scripts and podcast planning. It also isolates sentence and paragraph density, allowing you to spot 'walls of text' that might hinder user experience. Whether you are fine-tuning an academic paper or optimizing a meta description for a specific character limit, the Text Analyzer is your definitive tool for content precision."
+                    "Writers and SEO specialists often need a comprehensive structural audit of their content to ensure optimal readability and density.",
+                    "Example Broken Input: A blog post draft contains 3000 words but has a 'Reading Time' that feels off, or sentences that are consistently too long for mobile users.",
+                    "Why it happens: Without real-time metrics, it is easy to create 'walls of text' that increase bounce rates and harm human engagement signals.",
+                    "Solution (Use Tool): The Text Analyzer workshop provides a high-speed linguistic audit, calculating word counts, character density, and reading times instantly in your browser.",
+                    "Advanced Notes: Use the Speaking Time estimate for script planning and podcast preparation. The analyzer helps maintain a consistent 'pace' across your long-form content."
                 ],
                 "howTo": {
                     "heading": "How to analyze text",
@@ -280,9 +286,11 @@
             },
             "content": {
                 "intro": [
-                    "Few things are more frustrating than realizing you've typed a large block of text with the Caps Lock on, or receiving a dataset where the naming conventions are completely inconsistent. The Case Converter is a streamlined workshop utility designed to solve these issues in a single click. It allows you to transform text between standard grammatical cases and technical developer formats with surgical precision and zero overhead.",
-                    "While basic editors might offer simple uppercase or lowercase toggles, FormatForge provides a comprehensive suite of transformations. You can quickly normalize text into Sentence case for readability, Title Case for headings, or specialized programming formats like camelCase, snake_case, and kebab-case. This makes it an indispensable tool for both technical writers and software engineers who need to frequently adjust variable names, file paths, or UI labels to match strict style guides.",
-                    "As with all our workshop tools, privacy and speed are paramount. The case conversion logic is executed locally on your machine, ensuring that your text isn't sent to an external server while you wait. The transformations are instantaneous, even for massive documents, providing a frictionless way to fix formatting errors and maintain stylistic consistency across all your projects."
+                    "Inconsistent casing in code snippets, database fields, or documentation often causes structural errors and harms readability.",
+                    "Example Broken Input: A list of variables like `userName`, `User_Role`, and `LASTNAME` that need to be normalized for a JSON API.",
+                    "Why it happens: Working across different tech stacks (e.g., Python's snake_case vs. JavaScript's camelCase) creates a mismatch that is slow and error-prone to fix manually.",
+                    "Solution (Use Tool): The Case Converter workshop instantly transforms text between Camel, Pascal, Snake, and Kebab cases. It processes your data entirely within your local browser, ensuring privacy for internal variable names.",
+                    "Advanced Notes: Use the 'Smart Split' logic to preserve numbers and special characters while pivoting between case styles for multi-language development."
                 ],
                 "howTo": {
                     "heading": "How to change text case",
@@ -357,9 +365,11 @@
             },
             "content": {
                 "intro": [
-                    "Managing large lists of data—whether they are email addresses, product IDs, SEO keywords, or database logs—inevitably leads to the challenge of duplicate entries. Redundant data doesn't just waste space; it skews analytical results, causes errors in loops, and creates a messy user experience. Our Remove Duplicate Lines tool is a high-performance workshop utility built to scrub your lists and extract only the unique values you need.",
-                    "Many online 'dedup' tools are slow and require you to upload your lists to their servers, posing a significant privacy risk for sensitive data. FormatForge operates entirely in the browser, meaning your data never touches the wire. We use an optimized hash-based approach to identify duplicates in milliseconds, even when processing tens of thousands of rows. You can maintain the original order of your list or choose to sort the results alphabetically, giving you total control over the resulting clean dataset.",
-                    "This utility is particularly effective for 'data cleaning' workflows where you need to normalize content before importing it into a spreadsheet or database. You can specify whether the tool should be case-sensitive, helping you catch subtle duplicates that might otherwise be missed. For anyone from marketing professionals cleaning lead lists to developers preparing test data, this tool provides a secure and lightning-fast way to ensure data integrity."
+                    "Redundant data entries in lists or logs skew analytical results and waste processing resources.",
+                    "Example Broken Input: An export from a CRM or log file that contains repeating email addresses or duplicate error codes.",
+                    "Why it happens: Modern integration workflows often combine multiple data sources, leading to 'dirty' sets where the same key appears multiple times.",
+                    "Solution (Use Tool): The Remove Duplicate Lines workshop uses a hash-based deduplication algorithm to isolate unique values instantly in your browser.",
+                    "Advanced Notes: Use the 'Case Sensitive' toggle to catch subtle discrepancies and 'Trim Whitespace' to prevent false negatives caused by trailing spaces."
                 ],
                 "howTo": {
                     "heading": "How to remove duplicates",
@@ -478,6 +488,78 @@
             }
         },
         {
+            "id": "json-formatter",
+            "clusterId": "json",
+            "path": "/json/json-formatter/",
+            "ui": {
+                "jsModule": "json-formatter.js"
+            },
+            "seo": {
+                "title": "JSON Formatter & Validator Online | FormatForge",
+                "metaDescription": "Clean, format, and validate JSON instantly in your browser. A privacy-first developer workshop tool for debugging API responses and optimizing data structures.",
+                "h1": "JSON Formatter & Validator",
+                "subtitle": "Format, minify, and debug JSON with real-time local validation."
+            },
+            "content": {
+                "intro": [
+                    "Broken JSON often brings development to a standstill, especially when API responses are minified or configuration files contain subtle syntax errors. Our JSON Formatter & Validator is a precision workshop utility designed to restore structure and identify corruption without ever sending your data to a remote server.",
+                    "Example Broken Input: You copy a response from a browser console that contains unquoted keys or trailing commas—common artifacts that break standard parsers. The workshop handles these by providing instant feedback as you paste.",
+                    "Why it happens: Modern web APIs prioritize speed, returning minified blocks of data that are impossible for humans to audit manually. Without a dedicated formatter, spotting a missing type or a mismatched bracket in 100kb of JSON is prone to human error.",
+                    "Solution (Use Tool): This utility transforms minified strings into a clean, 2-space indented hierarchy. It acts as both a visualizer for state auditing and a high-speed validator that isolates the exact line responsible for a parsing failure. Everything happens in your browser's local sandbox, ensuring maximum privacy for production logs.",
+                    "Advanced Notes: Use the 'Minify' mode to prepare payloads for performance-critical deployments, or use the formatter to prepare clean documentation-ready snippets. For deep structural comparisons, consider pairing this with our CSV/JSON converter to flatten the hierarchy."
+                ],
+                "howTo": {
+                    "heading": "How to format JSON",
+                    "steps": [
+                        "Paste your JSON string or minified data into the input box.",
+                        "The tool will instantly attempt to parse and format the data.",
+                        "Use the 'Minify' button to strip all whitespace for production use.",
+                        "Check the Status Bar for real-time validation and size metrics."
+                    ]
+                },
+                "examples": {
+                    "heading": "JSON Transformation",
+                    "items": [
+                        {
+                            "input": "{\"id\":1,\"name\":\"test\"}",
+                            "output": "{\n  \"id\": 1,\n  \"name\": \"test\"\n}"
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [
+                        "csv-json-converter"
+                    ],
+                    "crossCluster": [
+                        "text-diff-checker"
+                    ]
+                }
+            },
+            "faq": [
+                {
+                    "q": "What happens if my JSON is invalid?",
+                    "a": "The workshop will display a 'System Error' in the status bar and highlight the reason for the parsing failure, such as a missing comma or incorrect quote marks."
+                },
+                {
+                    "q": "What is the size limit?",
+                    "a": "The tool processes JSON entirely on your device. While it can handle several megabytes of data, extremely large files may be limited by your browser's available memory."
+                },
+                {
+                    "q": "Why use FormatForge over other online tools?",
+                    "a": "Most online tools upload your data to their servers. FormatForge is a privacy-first workshop; your data never leaves your browser, making it safe for sensitive customer data or private API keys."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": null
+            }
+        },
+        {
             "id": "smart-slug-generator",
             "clusterId": "dev",
             "path": "/dev/slug-generator/",
@@ -492,9 +574,11 @@
             },
             "content": {
                 "intro": [
-                    "A well-constructed URL slug is a critical component of a professional SEO strategy. It serves as both a human-readable identifier and a powerful signal to search engine crawlers about the content of a page. Our Smart Slug Generator is a precision workshop utility designed to transform blog titles, product names, or headlines into clean, lowercase, and hyphen-separated strings that are optimized for maximum visibility and usability.",
-                    "The generator goes far beyond a simple text-to-lowercase conversion. It handles the complex nuances of 'smart' slug creation, including the automatic removal of 'stop words'—those common, low-value words like 'the', 'and', and 'of' that clutter URLs and dilute keyword density. By stripping these away, we ensure your URLs remain concise and focused on your primary keywords. Furthermore, the tool performs 'slugification' on special characters, transliterating non-English diacritics (like converting 'å' to 'a') and removing non-URL-safe symbols that could cause encoding errors in web browsers.",
-                    "As a client-side utility, the generation happens in real-time as you type, providing an immediate feedback loop for content creators and developers. You can quickly experiment with different separators (hyphens vs. underscores) to match your specific CMS or framework requirements. Whether you are building a new blog, adjusting a product catalog, or simply normalizing file names, the Smart Slug Generator ensures your URLs are professional, performant, and structurally sound."
+                    "Static site generators and modern CMS platforms require clean, URL-friendly slugs for optimal indexing and user readability.",
+                    "Example Broken Input: A title like '10 Best SEO Tips for 2026 (Updated!)' contains special characters and uppercase letters that create ugly, fragmented URLs.",
+                    "Why it happens: Standard browser encoding replaces spaces with `%20` and characters like `!` with escape codes, leading to 'leaky' SEO signals and hard-to-share links.",
+                    "Solution (Use Tool): The Smart Slug Generator instantly normalizes titles into lowercase, hyphenated strings. It handles accented characters and optional stop-word removal locally in your browser.",
+                    "Advanced Notes: Use the 'Remove Stop Words' feature to keep URLs concise (e.g., 'best-seo-tips' instead of 'the-10-best-seo-tips-for')."
                 ],
                 "howTo": {
                     "heading": "How to generate a URL slug",
@@ -565,9 +649,11 @@
             },
             "content": {
                 "intro": [
-                    "Understanding exactly what has changed between two versions of a document or code snippet is a fundamental task in debugging, content editing, and version control. Our Text Diff Checker is a high-precision workshop utility that performs an instant line-by-line comparison between two blocks of text, visually highlighting every insertion, deletion, and modification with surgical accuracy.",
-                    "Relying on external diff tools often involves significant privacy trade-offs, as you are frequently required to upload your code or private text to a third-party server. FormatForge eliminates this risk by performing the diff calculation entirely within your browser using an optimized Longest Common Subsequence (LCS) algorithm. This means you can safely compare proprietary code, sensitive configurations, or private drafts with 100% confidence that the data remains on your machine. The results are color-coded for immediate visual recognition, showing you exactly where the differences lie without any latent processing time.",
-                    "The utility is built for professional workflows where precision is non-negotiable. You can toggle case sensitivity or trim leading and trailing whitespace to focus only on substantive changes, ignoring trivial formatting differences. Whether you are auditing an API response update, verifying a configuration change, or simply tracking revisions in a long-form article, the Text Diff Checker provides a clear, focused, and secure environment to visualize your data's evolution."
+                    "Understanding exactly what has changed between two versions of a document or code snippet is fundamental to debugging and auditing.",
+                    "Example Broken Input: You have two versions of a `config.json` file and need to spot a single missing flag or an updated API endpoint.",
+                    "Why it happens: Manual visual inspection of data files is notoriously unreliable, especially with minified or high-density text where subtle changes are easily missed.",
+                    "Solution (Use Tool): The Text Diff Checker workshop performs a surgical line-by-line comparison using the Longest Common Subsequence (LCS) algorithm, highlighting additions and deletions in real-time.",
+                    "Advanced Notes: Toggle case sensitivity or whitespace trimming to ignore trivial formatting differences and focus purely on substantive data changes."
                 ],
                 "howTo": {
                     "heading": "How to compare two texts",
@@ -635,9 +721,11 @@
             },
             "content": {
                 "intro": [
-                    "In the architecture of the modern web, the Uniform Resource Locator (URL) is the most basic building block, yet it is also one of the most fragile. Certain characters carry special meaning in a URL structure, while others are simply unsafe for transmission across different browsers and servers. Our URL Encoder / Decoder is a precision workshop utility designed to sanitize your strings, ensuring they are perfectly escaped for safe, reliable web transmission.",
-                    "Percent-encoding (URL encoding) is the process of converting non-standard characters into a format that web servers can interpret without ambiguity. For example, a simple space becomes `%20`, and a reserved symbol like `&` is escaped to prevent it from being misinterpreted as a query parameter separator. Many online tools track your data or have slow, ad-heavy interfaces. FormatForge provides a zero-latency, local-first environment where your sensitive API endpoints, webhook URLs, and parameters are decoded or encoded entirely in your browser. This guarantees that your data never touches the network until you are ready to use it.",
-                    "The utility is built for developers and sysadmins who need to move quickly without compromising on security. It handles complex multi-layered encoding and ensures that decoding is performed using the robust `decodeURIComponent` standard, preventing the common 'URI malformed' errors that plague lesser tools. Whether you are debugging redirected URLs, preparing a tracking pixel, or escaping JSON objects for a `GET` request, this tool provides the speed and privacy required for a professional development workflow."
+                    "Fragile characters in URLs often break web server requests or lead to 'URI malformed' exceptions in your application code.",
+                    "Example Broken Input: Searching for 'hello world!' results in a URL that needs to encode the space and exclamation mark safely.",
+                    "Why it happens: Certain characters carry special meaning in a URL structure; failing to escape them correctly creates ambiguity and breaks redirects or analytics tracking.",
+                    "Solution (Use Tool): The URL Encoder / Decoder workshop sanitizes strings using the `encodeURIComponent` standard. It handles multi-layered escapes entirely in your browser to maintain data privacy.",
+                    "Advanced Notes: Use the decoder to audit complex redirect chains or to extract clean JSON payloads from encoded query parameters."
                 ],
                 "howTo": {
                     "heading": "How to URL Encode or Decode Text",
@@ -709,9 +797,11 @@
             },
             "content": {
                 "intro": [
-                    "Base64 is a fundamental encoding scheme used to represent binary data or complex text characters as a standard string of 64 printable ASCII characters. This transformation is essential for transmitting data through text-only channels—such as embedding image data directly into CSS (Data URIs), sending binary attachments through email (MIME), or passing tokens within JSON objects. Our Base64 Encoder / Decoder is a focused workshop utility designed to handle these conversions with maximum efficiency and local-first security.",
-                    "One of the biggest risks in modern development is using online 'conversion' tools for sensitive information like API tokens, secret keys, or authentication headers. Most online converters log your inputs, creating a significant security vulnerability. FormatForge eliminates this risk by performing the entire encoding and decoding process on your own CPU, right inside your browser. Your data is never transmitted to a server, making it the safest possible environment for handling production-level secrets or proprietary encoded payloads.",
-                    "The tool provides a streamlined, zero-latency interface that updates as you type, allowing you to instantly verify the integrity of your Base64 strings. It handles standard padding requirements automatically and provides clear, unformatted output ready for use in your source code or configuration files. Whether you are a developer masking a password for a config file, an engineer extracting data from an API response, or a designer embedding a small icon into a stylesheet, the Base64 Workshop provides the professional speed and privacy you demand."
+                    "Binary data or complex text payloads must often be represented as standard ASCII strings to be transmitted through text-only channels like JSON or CSS.",
+                    "Example Broken Input: An API token or a small icon's binary data that needs to be embedded directly as a string.",
+                    "Why it happens: Transmitting raw binary or non-standard text through HTTP headers or style sheets can cause data corruption or security filtering issues.",
+                    "Solution (Use Tool): The Base64 Workshop provides a secure, local-first environment to encode or decode strings. It handles standard padding requirements instantly on your own CPU.",
+                    "Advanced Notes: Use this for masking configuration secrets or generating CSS Data URIs for icons to optimize page load times by reducing HTTP requests."
                 ],
                 "howTo": {
                     "heading": "How to convert Base64 online",

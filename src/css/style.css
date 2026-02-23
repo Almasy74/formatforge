@@ -607,3 +607,68 @@ footer {
     border-bottom: 1px solid #ddd;
   }
 }
+
+/* Workshop Functional Status Bar */
+.workshop-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  /* Slate 50 */
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-bottom: 12px;
+  font-family: var(--mono-font);
+  font-size: 11px;
+  color: #64748b;
+  /* Slate 500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-group {
+  display: flex;
+  gap: 16px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-label {
+  opacity: 0.7;
+}
+
+.status-value {
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.status-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #cbd5e1;
+}
+
+.status-indicator.active {
+  background: #10b981;
+  /* Emerald 500 */
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.status-indicator.error {
+  background: var(--danger-color);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+.transformation-metrics {
+  font-size: 10px;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #e2e8f0;
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base & Technical Reference | FormatForge Workshop</title>
+    <meta name="description"
+        content="A centralized index of technical guides for data processing, text cleaning, and format transformation. Expert reference for the FormatForge workshop.">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="workshop-theme">
+    [HEADER_HTML]
+
+    <main class="container">
+        <header class="page-header"
+            style="margin-bottom: 40px; border-bottom: 2px solid var(--primary-color); padding-bottom: 20px;">
+            <div class="breadcrumb"
+                style="font-family: var(--mono-font); font-size: 12px; margin-bottom: 10px; opacity: 0.6;">
+                <a href="/">HOME</a> / <span style="color: var(--primary-color)">GUIDES</span>
+            </div>
+            <h1 style="margin: 0; font-family: var(--mono-font); text-transform: uppercase; letter-spacing: -0.02em;">
+                Knowledge Base & Reference</h1>
+            <p class="subtitle" style="margin-top: 10px; font-size: 1.1em; color: #64748b;">The technical manual for
+                FormatForge workshop operators.</p>
+        </header>
+
+        <section class="guides-grid"
+            style="display: grid; gap: 30px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
+            [GUIDE_LIST_HTML]
+        </section>
+
+        <section class="workshop-mission"
+            style="margin-top: 60px; padding: 40px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px;">
+            <h2 style="font-family: var(--mono-font); text-transform: uppercase;">The Utility-First Mission</h2>
+            <p>FormatForge guides are not generic blog posts. They are <strong>Technical Reference Documents</strong>
+                designed to solve specific data-layer problems. Each guide is bi-directionally linked to a workshop
+                tool, ensuring a seamless flow between understanding a problem and executing a solution.</p>
+            <div
+                style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; font-family: var(--mono-font); font-size: 12px;">
+                <span class="transformation-metrics">CLIENT-SIDE PROCESSING</span>
+                <span class="transformation-metrics">ZERO DATA LOGGING</span>
+                <span class="transformation-metrics">PRECISION TOOLS</span>
+            </div>
+        </section>
+    </main>
+
+    [FOOTER_HTML]
+</body>
+
+</html>

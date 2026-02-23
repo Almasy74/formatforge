@@ -253,6 +253,33 @@ clusters.forEach(cluster => {
     generatedUrls.push(canonicalUrl);
 });
 
+// Generated Guides Hub
+console.log('Generating knowledge hub index...');
+const guidesHubTemplate = getFile(path.join(srcDir, 'templates', 'guides-hub-template.html'));
+let guidesHubHtml = guidesHubTemplate
+    .replace(/\[HEADER_HTML\]/g, headerPartial)
+    .replace(/\[FOOTER_HTML\]/g, footerPartial);
+
+const guidesListHtml = guides.map(guide => `
+    <a href="${guide.path}" style="text-decoration: none; color: inherit; display: block; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; transition: transform 0.2s ease, box-shadow 0.2s ease; overflow: hidden; height: 100%;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.05)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+        <div style="padding: 24px;">
+            <div style="font-family: var(--mono-font); font-size: 11px; color: var(--primary-color); margin-bottom: 12px; opacity: 0.8;">[REFERENCE_GUIDE]</div>
+            <h3 style="margin: 0 0 12px 0; font-family: var(--mono-font); font-size: 18px; line-height: 1.3;">${guide.title}</h3>
+            <p style="margin: 0; font-size: 14px; color: #64748b; line-height: 1.6;">${guide.description}</p>
+        </div>
+        <div style="padding: 12px 24px; background: #f8fafc; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-family: var(--mono-font); font-size: 10px; color: #94a3b8;">${guide.relatedTools ? (guide.relatedTools.length + ' TOOLS LINKED') : 'MANUAL'}</span>
+            <span style="font-family: var(--mono-font); font-size: 12px; color: var(--primary-color);">READ_GUIDE >></span>
+        </div>
+    </a>
+`).join('\n');
+
+guidesHubHtml = guidesHubHtml.replace(/\[GUIDE_LIST_HTML\]/g, guidesListHtml);
+const guidesHubDir = path.join(publicDir, 'guides');
+if (!fs.existsSync(guidesHubDir)) fs.mkdirSync(guidesHubDir, { recursive: true });
+fs.writeFileSync(path.join(guidesHubDir, 'index.html'), guidesHubHtml, 'utf8');
+generatedUrls.push(site.domain + '/guides/');
+
 // Generated Guides
 console.log('Generating knowledge guides...');
 guides.forEach(guide => {

@@ -1,34 +1,58 @@
-<h2>What is Regex?</h2>
-<p>Regular Expressions (Regex) are an incredibly powerful way to find and manipulate text based on patterns. Think of
-    them as "Find and Replace" on steroids. While they look like a jumble of random symbols to the uninitiated, they
-    follow a strict, logical grammar that can save you hours of manual work.</p>
+<h2>Beyond Symbols: The Workshop Guide to Regular Expressions</h2>
+<p>In a technical workshop, Regex (Regular Expressions) isn't a complex math problem—it's a <strong>pattern-matching
+        surgical tool</strong>. While AI can generate regex strings, it often fails at edge cases. This guide focuses on
+    the "Experience" patterns that developers actually use to parse logs, sanitize data, and audit code.</p>
 
-<h2>The Basic Anatomy of a Regex Pattern</h2>
-<p>Regex works by using special characters (metacharacters) to represent groups of text or logical rules.</p>
+<section class="usage-scenario">
+    <h3>The "AI-Validation" Case: Fixing Hallucinated Patterns</h3>
+    <p>LLMs are notorious for providing regex patterns that are technically valid but practically dangerous (e.g.,
+        patterns that cause catastrophic backtracking). When using the <a href="/text/regex-tester/">Regex Tester
+            Workshop</a>, always test your AI-generated patterns against "edge case" inputs like extremely long strings
+        or strings with unbalanced delimiters to ensure the pattern is high-performance and secure.</p>
+</section>
 
-<ul>
-    <li><code>.</code> : Matches <strong>any</strong> single character.</li>
-    <li><code>\d</code> : Matches any <strong>digit</strong> (0-9).</li>
-    <li><code>\w</code> : Matches any <strong>word character</strong> (letters, numbers, underscores).</li>
-    <li><code>+</code> : Matches <strong>one or more</strong> of the preceding element.</li>
-    <li><code>*</code> : Matches <strong>zero or more</strong>.</li>
-    <li><code>[abc]</code> : Matches any one of the characters <strong>a, b, or c</strong>.</li>
-</ul>
+<h2>Essential Workshop Patterns</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Objective</th>
+            <th>The Pattern</th>
+            <th>Why it Matters</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Email Sanitization</strong></td>
+            <td><code>[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}</code></td>
+            <td>Prevents broken inputs in form submission logs.</td>
+        </tr>
+        <tr>
+            <td><strong>Removing HTML Tags</strong></td>
+            <td><code>&lt;[^&gt;]*&gt;</code></td>
+            <td>Clean structural noise from scraped content.</td>
+        </tr>
+        <tr>
+            <td><strong>Audit API Keys</strong></td>
+            <td><code>(?i)(api_key|secret|token)[\s:=]+['"]([a-z0-9]{32,})['"]</code></td>
+            <td>Identify potential security leaks in log files.</td>
+        </tr>
+    </tbody>
+</table>
 
-<h2>Common Examples for Your Daily Work</h2>
-<p>Regex is most useful when you have a specific pattern but don't know the exact text. For example:</p>
+<h3>Practical Example: Parsing a Raw Log Entry</h3>
+<pre><code>// Input Log
+2026-02-23 18:05:06 ERROR [json-parser] Missing bracket at L42
 
-<h3>Finding Email Addresses</h3>
-<p>Instead of searching for "john@example.com," you search for a pattern: <code>[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}</code>.
-    This matches virtually any valid email address in a document.</p>
+// Extraction Pattern
+(?&lt;date&gt;\d{4}-\d{2}-\d{2})\s(?&lt;time&gt;[\d:]{8})\s(?&lt;level&gt;\w+)</code></pre>
 
-<h3>Cleaning HTML Tags</h3>
-<p>To strip all tags from a snippet, the pattern <code><[^>]*></code> tells the computer to find every bracket and
-    everything inside it, allowing you to replace them with nothing.</p>
+<h2>Bidirectional Strategy: Regex → Clean</h2>
+<p>Regex is often the "Analysis" phase before the "Execution" phase. Once you identify a pattern of errors (like extra
+    whitespace or repeating lines), you should move directly to the specialized workshop tools like the <a
+        href="/text/remove-line-breaks/">Remove Line Breaks</a> or <a href="/text/duplicate-lines/">Deduplication
+        Workshop</a>. Using Regex for the <em>identification</em> and specialized tools for <em>transformation</em> is
+    the most reliable developer workflow.</p>
 
-<h2>Why Does Regex Feel So Hard?</h2>
-<p>The primary barrier to regex mastery is readability. Because patterns are so concise, they can become unreadable
-    quickly. The secret is to build your patterns incrementally, testing each piece as you go.</p>
-
-<p>Our <strong>Regex Tester</strong> is built for this "increment-and-verify" workflow. It gives you instant visual
-    feedback on matches as you type, ensuring you never perform a destructive replace operation by mistake.</p>
+<p><strong>Workshop Pro-Tip:</strong> Use non-capturing groups <code>(?:...)</code> when you need to group part of a
+    pattern for repetition but don't need to extract its value separately. This optimizes performance and reduces memory
+    overhead in high-density data parsing.</p>

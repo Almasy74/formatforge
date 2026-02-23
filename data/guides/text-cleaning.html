@@ -1,33 +1,66 @@
-<h2>What is Text Cleaning?</h2>
-<p>Text cleaning (or text normalization) is the process of converting raw, messy text into a clean, standardized format.
-    In the age of Large Language Models (LLMs) and Big Data, text cleaning has become an essential skill for anyone
-    working with digital information. Messy data lead to poor search rankings, broken code, and inaccurate AI responses.
-</p>
+<h2>The Technical Audit: A Professional Text Cleaning Guide</h2>
+<p>In a technical workshop, "cleaning" isn't about deleting text—it's about <strong>normalizing signals</strong>. Messy
+    data, characterized by hidden encoding artifacts and structural duplicates, is the primary cause of downstream
+    failures in databases, CMS systems, and AI models.</p>
 
-<h2>The 4 Pillars of a Clean Dataset</h2>
+<section class="usage-scenario">
+    <h3>The "Invisible Poison" Case: BOM and Null bytes</h3>
+    <p>Data scraped from legacy Windows systems often contains the "Byte Order Mark" (BOM) or null bytes that are
+        invisible to the eye but break modern JSON parsers and Python scripts. Our <a href="/text/html-cleaner/">HTML &
+            Text Cleaner</a> acts as a sanitizer, stripping these invisible characters and normalizing your text to a
+        clean UTF-8 standard. This ensures your data floats through your pipeline without triggering unexpected
+        <code>UnicodeDecodeError</code> exceptions.</p>
+</section>
 
-<h3>1. Removing Formatting Artifacts</h3>
-<p>When text is copied from the web or PDFs, it often brings hidden baggage: HTML tags, non-standard line breaks, and
-    invisible BOM (Byte Order Mark) characters. These must be stripped before the text can be used in a professional
-    context.</p>
+<h2>The 4 Pillars of Workshop Data Hygiene</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Pillar</th>
+            <th>The Problem</th>
+            <th>The Workshop Solution</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Encoding</strong></td>
+            <td>Glitched characters like <code></code> or broken emojis.</td>
+            <td>Normalize to standard UTF-8 instantly.</td>
+        </tr>
+        <tr>
+            <td><strong>Deduplication</strong></td>
+            <td>Skewed metrics from repeated rows in logs or SKU lists.</td>
+            <td>Use <a href="/text/duplicate-lines/">Deduplication Workshop</a> to isolate unique keys.</td>
+        </tr>
+        <tr>
+            <td><strong>Whitespace</strong></td>
+            <td>Trailing spaces breaking password hashes or search queries.</td>
+            <td>Trim and normalize all whitespace transitions.</td>
+        </tr>
+        <tr>
+            <td><strong>Structure</strong></td>
+            <td>Legacy hard-wrap formatting breaking reflow in modern apps.</td>
+            <td>Flatten text with the <a href="/text/remove-line-breaks/">Remove Line Breaks</a> tool.</td>
+        </tr>
+    </tbody>
+</table>
 
-<h3>2. Eliminating Duplicates</h3>
-<p>Duplicate lines are more than just a nuisance; they skew data analysis and waste resources. Whether it's a list of
-    email addresses, product SKUs, or keywords, deduplication ensures you are working with a unique set of high-quality
-    data.</p>
+<h3>Practical Example: Sanitizing a Raw Log Entry</h3>
+<pre><code>// Dirty Input (Mixed spacing, duplicates, hidden breaks)
+101, Success  
+101, Success
+102, Pending \n
 
-<h3>3. Standardizing White Space</h3>
-<p>Inconsistent spacing (Double spaces, tabs instead of spaces, trailing whitespace) can break password checks, search
-    queries, and code execution. A clean text workshop ensures every space is intentional.</p>
+// Workshop Output (Cleaned, unique, trimmed)
+101, Success
+102, Pending</code></pre>
 
-<h3>4. Normalizing Encoding</h3>
-<p>Text from different sources often uses different encoding (UTF-8, ISO-8859-1, etc.). Normalizing your text ensures
-    that special characters like emojis or diacritics don't turn into broken symbols (garbage characters like ).</p>
+<h2>Bidirectional Strategy: Clean → Analyze</h2>
+<p>Cleaning is only half the battle. Once your data is normalized, it becomes a "Knowledge Asset" that can be audited
+    for insights. We recommend moving from the cleaning tools directly to the <a href="/text/text-analyzer/">Text
+        Analyzer</a> to verify that your data density and pacing match your requirements. Clean data is silent; it just
+    works.</p>
 
-<h2>Advanced Cleaning: Regex and AI</h2>
-<p>For complex patterns, <strong>Regular Expressions</strong> are the gold standard. They allow you to define rules like
-    "remove everything between these two tags" or "find all phone numbers." For more nuanced cleaning, AI models can now
-    be used to rewrite and prune text while keeping the core meaning intact.</p>
-
-<p>At FormatForge, we provide specialized manual tools like <strong>Remove Duplicate Lines</strong> and <strong>HTML
-        Cleaner</strong> to help you perform these tasks instantly and securely.</p>
+<p><strong>Workshop Pro-Tip:</strong> Always run a "Trim Whitespace" pass before performing any structural
+    deduplication. A single trailing space on one line will make it "unique" compared to its identical neighbor, leading
+    to false negatives in your deduplication pass.</p>
