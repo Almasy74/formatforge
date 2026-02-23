@@ -65,13 +65,13 @@ if (root) {
         }
 
         // 1. Normalize and transliterate to remove accents (diacritics)
-        let slug = text.normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');
+        let slug = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
         // 2. Convert to lowercase
         slug = slug.toLowerCase();
 
         // 3. Replace apostrophes and quotes with nothing so words join properly (e.g. don't -> dont)
-        slug = slug.replace(/['\\'"]/g, '');
+        slug = slug.replace(/[''"]/g, '');
 
         // 4. Replace non-alphanumeric characters with spaces to separate words
         slug = slug.replace(/[^a-z0-9]+/g, ' ');
