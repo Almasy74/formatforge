@@ -1,7 +1,7 @@
 {
     "site": {
         "name": "FormatForge",
-        "domain": "https://formatforge.com",
+        "domain": "https://formatforge.net",
         "defaultLocale": "en",
         "canonicalTrailingSlash": true,
         "theme": {
