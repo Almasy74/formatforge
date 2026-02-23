@@ -4,50 +4,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[TITLE]</title>
+    <title>[TITLE] | FormatForge Guides</title>
     <meta name="description" content="[META_DESCRIPTION]">
     <link rel="canonical" href="[CANONICAL_URL]">
-    <link rel="stylesheet" href="/css/style.css">
 
-    <!-- Structured Data -->
+    <link rel="stylesheet" href="/css/style.css?v=2">
+
     <script type="application/ld+json">
     [SCHEMA_JSON]
     </script>
+    <style>
+        .guide-article {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+        }
+
+        .guide-article h2 {
+            margin-top: 40px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .guide-article h3 {
+            margin-top: 30px;
+        }
+
+        .guide-article p {
+            line-height: 1.8;
+            color: #334155;
+        }
+
+        .guide-article ul,
+        .guide-article ol {
+            margin-bottom: 24px;
+            padding-left: 20px;
+        }
+
+        .guide-article li {
+            margin-bottom: 12px;
+            color: #334155;
+        }
+
+        .guide-article code {
+            background: #f1f5f9;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: var(--mono-font);
+            font-size: 0.9em;
+        }
+
+        .guide-article blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 20px;
+            font-style: italic;
+            color: #64748b;
+            margin: 30px 0;
+        }
+    </style>
 </head>
 
 <body>
     [HEADER_PARTIAL]
 
-    <main class="container">
-        <div class="breadcrumb" style="margin-bottom: 20px; font-size: 14px; color: #666;">
-            <a href="/" style="color: #007bff; text-decoration: none;">Home</a> >
-            <a href="/guides/" style="color: #007bff; text-decoration: none;">Guides</a> >
-            <span>[TITLE]</span>
-        </div>
+    <main class="container" style="max-width: 800px;">
 
-        <div class="guide-layout">
-            <article class="guide-content"
-                style="background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                <header style="margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
-                    <h1 style="font-size: 32px; color: #222; margin-top: 0;">[TITLE]</h1>
-                    <p style="font-size: 18px; color: #555;">[META_DESCRIPTION]</p>
-                </header>
+        <header class="guide-header" style="margin-bottom: 40px;">
+            <div
+                style="font-family: var(--mono-font); color: var(--accent-color); font-size: 14px; margin-bottom: 10px;">
+                FORMATFORGE // KNOWLEDGE_BASE</div>
+            <h1 style="font-size: 2.5rem; line-height: 1.2;">[TITLE]</h1>
+        </header>
 
-                <div class="prose" style="line-height: 1.8; color: #333; font-size: 16px;">
-                    [GUIDE_CONTENT]
-                </div>
-            </article>
+        <article class="guide-article">
+            [GUIDE_CONTENT]
+        </article>
 
-            <aside class="guide-sidebar" style="margin-top: 40px;">
-                <div class="shadow-card" style="padding: 20px; background: #fdfdfd; border-left: 4px solid #0056b3;">
-                    <h3 style="margin-top: 0; font-size: 18px;">Related Tools</h3>
-                    <ul
-                        style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
-                        [RELATED_TOOLS_HTML]
-                    </ul>
-                </div>
-            </aside>
-        </div>
+        <section class="related-tools-section shadow-card"
+            style="padding: 30px; background: #f8fafc; border-radius: 12px;">
+            <h2 style="margin-top: 0;">Recommended Tools</h2>
+            <p style="font-size: 14px; color: #64748b; margin-bottom: 20px;">Use these professional utilities to apply
+                the concepts from this guide:</p>
+            <ul style="list-style: none; padding: 0;">
+                [RELATED_TOOLS_HTML]
+            </ul>
+        </section>
+
     </main>
 
     [FOOTER_PARTIAL]

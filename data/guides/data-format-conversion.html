@@ -1,0 +1,36 @@
+<h2>Tabular vs. Hierarchical Data</h2>
+<p>Choosing between CSV and JSON isn't about which is "better"—it's about which structure fits your specific use case.
+    Professional developers often find themselves needing to jump between these two worlds constantly.</p>
+
+<h2>When to Use CSV (Comma-Separated Values)</h2>
+<p>CSV is the king of tabular data. It is the format used by Excel, Google Sheets, and almost every database export
+    tool. It is <strong>flat</strong>, meaning it represents a grid of rows and columns.</p>
+<ul>
+    <li><strong>Pros:</strong> Extremely compact, readable by non-technical users, and easy to import into analytical
+        software.</li>
+    <li><strong>Cons:</strong> Cannot represent complex, nested relationships or metadata.</li>
+</ul>
+
+<h2>When to Use JSON (JavaScript Object Notation)</h2>
+<p>JSON is the standard for web applications and APIs. It is <strong>hierarchical</strong>, meaning a single record can
+    contain other objects or lists (arrays) nested inside it.</p>
+<ul>
+    <li><strong>Pros:</strong> Can represent complex data structures, natively supported by web browsers and modern
+        programming languages.</li>
+    <li><strong>Cons:</strong> Larger file sizes due to repetitive keys, harder for humans to scan in large quantities.
+    </li>
+</ul>
+
+<h2>Common Conversion Pitfalls</h2>
+<p>The biggest challenge in converting CSV to JSON (and vice versa) is <strong>handling the hierarchy.</strong></p>
+<ol>
+    <li><strong>Flattening JSON:</strong> When moving from JSON to CSV, nested objects must be "flattened" into multiple
+        columns. This can lead to data loss if not handled systematically.</li>
+    <li><strong>Parsing Types:</strong> CSV doesn't distinguish between strings and numbers. A good converter must
+        decide if "123" is a text ID or a numerical value during the JSON generation process.</li>
+    <li><strong>Encoding Errors:</strong> Since CSVs often come from diverse local systems (like a Norwegian Excel
+        export using semicolons), your converter needs to be flexible with delimiters and character sets.</li>
+</ol>
+
+<p>Our <strong>CSV ↔ JSON Converter</strong> addresses these issues by offering a robust, client-side workshop
+    environment where you can tune these parameters and see results instantly.</p>

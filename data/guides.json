@@ -1,22 +1,51 @@
 [
     {
-        "id": "regular-expressions-explained",
-        "title": "Regex Explained for Beginners",
-        "description": "Learn what regular expressions are, how they work, and when to use them.",
-        "path": "/guides/regular-expressions-explained/",
+        "id": "remove-line-breaks",
+        "title": "How to Remove Line Breaks from Text: 3 Pro Methods",
+        "description": "A deep dive into cleaning text by removing unwanted carriage returns and newline characters while preserving readability.",
+        "path": "/guides/remove-line-breaks/",
         "relatedTools": [
-            "regex-tester",
-            "html-cleaner"
+            "remove-line-breaks",
+            "text-analyzer"
         ]
     },
     {
-        "id": "data-cleaning-best-practices",
-        "title": "Data Cleaning: Removing Duplicates and Broken Formatting",
-        "description": "A guide to effectively cleaning datasets, email lists, and scraped text using our utilities.",
-        "path": "/guides/data-cleaning-best-practices/",
+        "id": "json-formatting",
+        "title": "Mastering JSON Formatting and Minification",
+        "description": "Learn why JSON formatting matters for debugging and how to effectively minify data for production performance.",
+        "path": "/guides/json-formatting/",
+        "relatedTools": [
+            "json-formatter",
+            "csv-json-converter"
+        ]
+    },
+    {
+        "id": "text-cleaning",
+        "title": "The Ultimate Guide to Text Cleaning and Normalization",
+        "description": "How to prepare text data for AI models, databases, or content publishing by removing noise and duplicates.",
+        "path": "/guides/text-cleaning/",
         "relatedTools": [
             "remove-duplicate-lines",
-            "remove-line-breaks",
+            "html-cleaner",
+            "text-analyzer"
+        ]
+    },
+    {
+        "id": "data-format-conversion",
+        "title": "Converting Between CSV and JSON: When and Why",
+        "description": "Understanding the structural differences between tabular data (CSV) and hierarchical data (JSON) and how to convert them.",
+        "path": "/guides/data-format-conversion/",
+        "relatedTools": [
+            "csv-json-converter"
+        ]
+    },
+    {
+        "id": "regex-basics",
+        "title": "Regex Basics: Regular Expressions for Beginners",
+        "description": "A non-intimidating introduction to the powerful world of pattern matching and how to use it in your daily text work.",
+        "path": "/guides/regex-basics/",
+        "relatedTools": [
+            "regex-tester",
             "html-cleaner"
         ]
     }

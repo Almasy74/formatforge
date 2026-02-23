@@ -1,15 +1,20 @@
 /* CSS Variables */
 :root {
-  --primary-color: #0052cc;
-  --primary-hover: #003d99;
-  --danger-color: #b91c1c;
-  --danger-hover: #991b1b;
-  --bg-color: #f9fafb;
-  --text-color: #1f2937;
+  --primary-color: #0f172a;
+  /* Slate 900 */
+  --primary-hover: #1e293b;
+  /* Slate 800 */
+  --accent-color: #3b82f6;
+  /* Blue 500 */
+  --danger-color: #ef4444;
+  --danger-hover: #dc2626;
+  --bg-color: #ffffff;
+  --text-color: #0f172a;
   --card-bg: #ffffff;
-  --border-color: #e5e7eb;
-  --shadow-color: rgba(0, 0, 0, 0.06);
+  --border-color: #e2e8f0;
+  --shadow-color: rgba(0, 0, 0, 0.05);
   --header-height: 80px;
+  --mono-font: 'JetBrains Mono', 'IBM Plex Mono', monospace;
 }
 
 
@@ -25,8 +30,13 @@ html {
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg-color);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  background-image:
+    radial-gradient(#e5e7eb 0.5px, transparent 0.5px),
+    radial-gradient(#e5e7eb 0.5px, transparent 0.5px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
   color: var(--text-color);
   line-height: 1.6;
   min-height: 100vh;
@@ -143,10 +153,18 @@ a:focus-visible {
 }
 
 /* Headings and text */
+h1,
+h2,
+h3 {
+  font-family: var(--mono-font);
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
 .tool-header h1 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 
 .tool-header p {

@@ -1,0 +1,34 @@
+<h2>What is Regex?</h2>
+<p>Regular Expressions (Regex) are an incredibly powerful way to find and manipulate text based on patterns. Think of
+    them as "Find and Replace" on steroids. While they look like a jumble of random symbols to the uninitiated, they
+    follow a strict, logical grammar that can save you hours of manual work.</p>
+
+<h2>The Basic Anatomy of a Regex Pattern</h2>
+<p>Regex works by using special characters (metacharacters) to represent groups of text or logical rules.</p>
+
+<ul>
+    <li><code>.</code> : Matches <strong>any</strong> single character.</li>
+    <li><code>\d</code> : Matches any <strong>digit</strong> (0-9).</li>
+    <li><code>\w</code> : Matches any <strong>word character</strong> (letters, numbers, underscores).</li>
+    <li><code>+</code> : Matches <strong>one or more</strong> of the preceding element.</li>
+    <li><code>*</code> : Matches <strong>zero or more</strong>.</li>
+    <li><code>[abc]</code> : Matches any one of the characters <strong>a, b, or c</strong>.</li>
+</ul>
+
+<h2>Common Examples for Your Daily Work</h2>
+<p>Regex is most useful when you have a specific pattern but don't know the exact text. For example:</p>
+
+<h3>Finding Email Addresses</h3>
+<p>Instead of searching for "john@example.com," you search for a pattern: <code>[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}</code>.
+    This matches virtually any valid email address in a document.</p>
+
+<h3>Cleaning HTML Tags</h3>
+<p>To strip all tags from a snippet, the pattern <code><[^>]*></code> tells the computer to find every bracket and
+    everything inside it, allowing you to replace them with nothing.</p>
+
+<h2>Why Does Regex Feel So Hard?</h2>
+<p>The primary barrier to regex mastery is readability. Because patterns are so concise, they can become unreadable
+    quickly. The secret is to build your patterns incrementally, testing each piece as you go.</p>
+
+<p>Our <strong>Regex Tester</strong> is built for this "increment-and-verify" workflow. It gives you instant visual
+    feedback on matches as you type, ensuring you never perform a destructive replace operation by mistake.</p>
