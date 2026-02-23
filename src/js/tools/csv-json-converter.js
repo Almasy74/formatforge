@@ -6,14 +6,14 @@ if (root) {
     root.innerHTML = `
         <div class="tool-layout">
             <div class="tool-panel tool-input-panel" style="flex: 1; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <label for="input-data" style="font-weight: bold; margin-top: 0;">Input (CSV or JSON)</label>
-                    <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Paste Text</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label for="input-data" style="font-weight: bold; margin-top: 0;">Input (CSV or JSON)</label>
+                        <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Paste Text</button>
+                    </div>
+                    <span id="detected-format" style="font-size: 12px; font-weight: bold; padding: 3px 8px; border-radius: 4px; display: none;"></span>
                 </div>
-                    <span id="detected-format" style="font-size: 12px; font-weight: bold; padding: 3px 8px; border-radius: 4px; background: #e0e0e0; color: #555;">Waiting for input...</span>
-                </div>
-                <textarea id="input-data" autofocus placeholder="Paste CSV text or a JSON array here... The format is detected automatically." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; min-height: 400px; white-space: pre; overflow-wrap: normal; overflow-x: auto;"></textarea>
+                <textarea id="input-data" autofocus placeholder="Paste CSV text or a JSON array here... The format is detected automatically." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; min-height: 400px; margin-bottom: 20px; white-space: pre; overflow-wrap: normal; overflow-x: auto;"></textarea>
             </div>
 
             <div class="tool-controls" style="display: flex; flex-direction: column; justify-content: flex-start; gap: 15px; min-width: 200px;">
@@ -152,6 +152,7 @@ if (root) {
             detectedFormatLabel.textContent = 'Detected: JSON';
             detectedFormatLabel.style.background = '#e3f2fd'; // Blue
             detectedFormatLabel.style.color = '#1565c0';
+            detectedFormatLabel.style.display = 'inline-block';
 
             jsonOptions.style.display = 'none'; // Only applies to CSV->JSON
             csvOptions.style.display = 'block'; // Applies to JSON->CSV
@@ -160,13 +161,12 @@ if (root) {
             detectedFormatLabel.textContent = 'Detected: CSV';
             detectedFormatLabel.style.background = '#e8f5e9'; // Green
             detectedFormatLabel.style.color = '#2e7d32';
+            detectedFormatLabel.style.display = 'inline-block';
 
             jsonOptions.style.display = 'block'; // Applies to CSV->JSON
             csvOptions.style.display = 'block'; // To choose which delimiter it's parsing
         } else {
-            detectedFormatLabel.textContent = 'Waiting for input...';
-            detectedFormatLabel.style.background = '#e0e0e0';
-            detectedFormatLabel.style.color = '#555';
+            detectedFormatLabel.style.display = 'none';
 
             jsonOptions.style.display = 'none';
             csvOptions.style.display = 'none';
