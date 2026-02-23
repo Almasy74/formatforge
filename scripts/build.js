@@ -52,6 +52,7 @@ tools.forEach(tool => {
 const getFile = (filePath) => fs.readFileSync(filePath, 'utf8');
 const template = getFile(path.join(srcDir, 'templates', 'tool-template.html'));
 const homeTemplate = getFile(path.join(srcDir, 'templates', 'home-template.html'));
+const pageTemplate = getFile(path.join(srcDir, 'templates', 'page-template.html'));
 const guideTemplatePath = path.join(srcDir, 'templates', 'guide-template.html');
 const guideTemplate = fs.existsSync(guideTemplatePath) ? getFile(guideTemplatePath) : '';
 const headerPartial = getFile(path.join(srcDir, 'partials', 'header.html'));
@@ -334,6 +335,37 @@ const allToolsHtml = tools.filter(t => t.flags.enabled).map(t => `
 homeHtml = homeHtml.replace(/\[TOOL_LIST_HTML\]/g, allToolsHtml);
 
 fs.writeFileSync(path.join(publicDir, 'index.html'), homeHtml, 'utf8');
+
+// Generate Static Pages (Privacy, Contact, etc.)
+console.log('Generating static pages...');
+const pagesDir = path.join(srcDir, 'pages');
+if (fs.existsSync(pagesDir)) {
+    const pageFiles = fs.readdirSync(pagesDir).filter(f => f.endsWith('.html'));
+    pageFiles.forEach(file => {
+        const pageId = file.replace('.html', '');
+        const pageContent = getFile(path.join(pagesDir, file));
+
+        let pageHtml = pageTemplate;
+        pageHtml = pageHtml.replace(/\[HEADER_PARTIAL\]/g, headerPartial);
+        pageHtml = pageHtml.replace(/\[FOOTER_PARTIAL\]/g, footerPartial);
+
+        // Very simple mapping for title and desc
+        let title = pageId.charAt(0).toUpperCase() + pageId.slice(1);
+        if (pageId === 'privacy') title = 'Privacy Policy';
+        if (pageId === 'contact') title = 'Contact Us';
+
+        pageHtml = pageHtml.replace(/\[PAGE_TITLE\]/g, title);
+        pageHtml = pageHtml.replace(/\[PAGE_DESC\]/g, `FormatForge ${title} page.`);
+        pageHtml = pageHtml.replace(/\[PAGE_URL\]/g, `/${pageId}`);
+        pageHtml = pageHtml.replace(/\[PAGE_CONTENT\]/g, pageContent);
+
+        const pageDestDir = path.join(publicDir, pageId);
+        if (!fs.existsSync(pageDestDir)) fs.mkdirSync(pageDestDir, { recursive: true });
+        fs.writeFileSync(path.join(pageDestDir, 'index.html'), pageHtml, 'utf8');
+
+        generatedUrls.push(`${BASE_URL}/${pageId}`);
+    });
+}
 
 // Generate Sitemap
 console.log('Generating sitemap.xml...');
