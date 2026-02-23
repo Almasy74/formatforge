@@ -48,5 +48,35 @@
             "regex-tester",
             "html-cleaner"
         ]
+    },
+    {
+        "id": "unicode-normalization",
+        "title": "Unicode Normalization: Handling NFC and NFD Forms",
+        "description": "Learn how to detect and fix hidden character encoding issues that can break database queries and search algorithms.",
+        "path": "/guides/unicode-normalization/",
+        "relatedTools": [
+            "text-analyzer",
+            "url-encoder-decoder"
+        ]
+    },
+    {
+        "id": "data-deduplication",
+        "title": "Advanced Data Deduplication and List Merging Strategies",
+        "description": "Strategies for cleaning massive datasets by removing near-duplicates and normalizing keys for accurate merging.",
+        "path": "/guides/data-deduplication/",
+        "relatedTools": [
+            "remove-duplicate-lines",
+            "text-diff-checker"
+        ]
+    },
+    {
+        "id": "regex-debugging",
+        "title": "Debugging Regular Expression Patterns for Data Transformation",
+        "description": "A field manual for troubleshooting regex patterns that fail on complex edge cases like multiline logs or escaped characters.",
+        "path": "/guides/regex-debugging/",
+        "relatedTools": [
+            "regex-tester",
+            "text-analyzer"
+        ]
     }
 ]

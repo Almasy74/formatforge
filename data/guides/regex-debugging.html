@@ -1,0 +1,60 @@
+<h2>Precision Matching: A Field Manual for Debugging Regex</h2>
+<p>In a high-stakes data workshop, a single incorrect Regular Expression can be the difference between a clean migration
+    and a corrupted database. Debugging Regex is about more than just matching strings—it is about anticipating
+    <strong>Edge Case Friction</strong>.</p>
+
+<section class="usage-scenario">
+    <h3>The "Greedy Match" Debugging Case</h3>
+    <p>A common failure in text cleaning is the "Greedy Trap." When trying to extract content between quotes, a pattern
+        like <code>".*"</code> might match everything from the first quote of the first sentence to the last quote of
+        the file. Our <a href="/tools/regex-tester/">Regex Workshop</a> allows you to test lazy matching
+        (<code>".*?"</code>) in real-time to isolate specific segments without "over-matching" your data.</p>
+</section>
+
+<h2>Workshop Benchmarks: The Regex Audit</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Common Failure</th>
+            <th>The Symptom</th>
+            <th>The Workshop Fix</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Newline Blindness</strong></td>
+            <td>Patterns match within lines but fail across paragraph breaks.</td>
+            <td>Enable <code>/s</code> (dotAll) or <code>/m</code> (multiline) flags.</td>
+        </tr>
+        <tr>
+            <td><strong>Escaping Artifacts</strong></td>
+            <td>Regex fails when encountering literal periods or brackets.</td>
+            <td>Use backslash escaping (<code>\.</code>) for literal matches.</td>
+        </tr>
+        <tr>
+            <td><strong>Lookahead Complexity</strong></td>
+            <td>Regex becomes too slow on large datasets (Catastrophic Backtracking).</td>
+            <td>Simplify patterns or use non-capturing groups <code>(?:...)</code>.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Practical Example: The Log-Parsing Fail</h3>
+<pre><code>// Raw Log Line
+"ERROR [2024-05-12] - Database timeout in 'production' cluster"
+
+// Failing Pattern (Too broad)
+/\[.*\]/  // Unexpectedly matches content past the bracket if others exist
+
+// Recommended Pattern (Anchored)
+/\[(\d{4}-\d{2}-\d{2})\]/ // Precisely targets the ISO date format</code></pre>
+
+<h2>Bidirectional Strategy: Test → Clean → Validate</h2>
+<p>Successful data transformation follows a three-step pipe. First, use the <a href="/tools/regex-tester/">Regex
+        Tester</a> to verify your logic on a small sample. Second, apply the transformation in bulk. Finally, pass the
+    output through the <a href="/text/analyzer/">Text Analyzer</a> to ensure that the resulting character counts and
+    structures align with your expectations.</p>
+
+<p><strong>Workshop Pro-Tip:</strong> When dealing with AI-generated regex, always verify the "Lookbehind" support. Many
+    web-based environments (legacy browsers) do not support variable-length lookbeinds, which can lead to silent
+    failures in production code.</p>

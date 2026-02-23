@@ -1,0 +1,59 @@
+<h2>Precision Cleaning: Advanced Data Deduplication Strategies</h2>
+<p>Removing exact duplicates is the baseline for any data workshop. However, real-world data is rarely that clean.
+    Strategic deduplication requires <strong>Normalization Keys</strong>—transforming records into a "lowest common
+    denominator" before performing the uniqueness check.</p>
+
+<section class="usage-scenario">
+    <h3>The "Dirty List" Debugging Case</h3>
+    <p>Consider a list of URLs where some have trailing slashes, some have `https://`, and others `www.`. An exact-match
+        deduplicator would miss these. Our <a href="/text/remove-duplicate-lines/">Deduplication Workshop</a> encourages
+        a "Clean-First" workflow: strip protocols, lowercase, and remove trailing slashes before running the uniqueness
+        filter.</p>
+</section>
+
+<h2>Workshop Benchmarks: The Deduplication Audit</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Strategy</th>
+            <th>The Use Case</th>
+            <th>The Workshop Tool</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Exact Match</strong></td>
+            <td>Removing raw log redundancy.</td>
+            <td>Remove Duplicate Lines (Case Sensitive).</td>
+        </tr>
+        <tr>
+            <td><strong>Canonical Mapping</strong></td>
+            <td>Merging user lists from different sources.</td>
+            <td>Pre-process with Slug Generator or Case Converter.</td>
+        </tr>
+        <tr>
+            <td><strong>White-Space Audit</strong></td>
+            <td>Cleaning user-submitted form data.</td>
+            <td>Text Cleaning (Trim & Whitespace collapse).</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Practical Example: The Normalization Key</h3>
+<pre><code>// Raw Input
+" Google.com "
+"google.com/"
+"https://google.com"
+
+// Normalization (Lower + Trim + Path Strip)
+"google.com" (Unique Key)</code></pre>
+
+<h2>Bidirectional Strategy: Deduplicate → Diff</h2>
+<p>A professional cleaning workflow doesn't stop at the filter. After removing duplicates from a massive dataset, use
+    the <a href="/text/diff-checker/">Text Diff Workshop</a> to compare the original raw file against the deduplicated
+    output. This manual audit ensures that your normalization keys weren't too aggressive and didn't accidentally merge
+    distinct records.</p>
+
+<p><strong>Workshop Pro-Tip:</strong> When working with huge CSV exports, always deduplicate by a primary ID (like an
+    email or SKU) rather than the entire row. This preserves the "richest" version of the data if two rows have the same
+    ID but different metadata.</p>
