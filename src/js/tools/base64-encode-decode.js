@@ -93,7 +93,7 @@ if (root) {
                 outputData.value = encodeUTF8Base64(text);
             } else {
                 // Ensure text has no extra whitespaces when decoding base64
-                text = text.replace(/\\s/g, '');
+                text = text.replace(/\s/g, '');
                 outputData.value = decodeUTF8Base64(text);
             }
         } catch (err) {
@@ -119,7 +119,7 @@ if (root) {
 
 // Automatic Paste Binding
 setTimeout(() => {
-    
+
     const btnPaste = $('#btn-paste');
     if (btnPaste) {
         on(btnPaste, 'click', async () => {

@@ -70,14 +70,14 @@ if (root) {
 
     // Text Transformation functions
     const toTitleCase = (str) => {
-        return str.toLowerCase().replace(/\\b[a-z](?=[a-z]{2})/g, function (letter) {
+        return str.toLowerCase().replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
             return letter.toUpperCase();
         });
     };
 
     const toSentenceCase = (str) => {
         // Simple sentence case: Capitalize very first letter, and first letter after a dot, exclamation, or question mark.
-        return str.toLowerCase().replace(/(^\\s*|[.!?]\\s+)([a-z])/g, (match) => {
+        return str.toLowerCase().replace(/(^\s*|[.!?]\s+)([a-z])/g, (match) => {
             return match.toUpperCase();
         });
     };
@@ -131,7 +131,7 @@ if (root) {
         } else if (mode === 'camel' || mode === 'snake' || mode === 'kebab' || mode === 'pascal') {
             // Programming cases apply line by line usually, or across the whole text if it's one block.
             // Let's do it per line to respect user's multi-line inputs
-            const lines = text.split(/\\r?\\n/);
+            const lines = text.split(/\r?\n/);
             const transformedLines = lines.map(line => {
                 if (!line.trim()) return '';
                 const words = getWords(line);
@@ -147,7 +147,7 @@ if (root) {
                     return words.map(w => w.toLowerCase()).join('-');
                 }
             });
-            result = transformedLines.join('\\n');
+            result = transformedLines.join('\n');
         }
 
         outputData.value = result;

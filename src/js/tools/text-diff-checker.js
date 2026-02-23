@@ -54,8 +54,8 @@ if (root) {
             return;
         }
 
-        let oldLines = oldStr.split('\\n');
-        let newLines = newStr.split('\\n');
+        let oldLines = oldStr.split('\n');
+        let newLines = newStr.split('\n');
 
         // Hard cap to prevent memory exhaustion in simple LCS algorithm
         const MAX_LINES = 2500;

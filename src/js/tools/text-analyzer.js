@@ -96,10 +96,10 @@ if (root) {
 
         // Characters
         const charCount = text.length;
-        const charsNoSpaceCount = text.replace(/\\s/g, '').length;
+        const charsNoSpaceCount = text.replace(/\s/g, '').length;
 
         // Words
-        const words = trimmedText.split(/\\s+/).filter(w => w.length > 0);
+        const words = trimmedText.split(/\s+/).filter(w => w.length > 0);
         const wordCount = words.length;
 
         // Sentences
@@ -107,7 +107,7 @@ if (root) {
         const sentenceCount = sentences.length;
 
         // Paragraphs
-        const paragraphs = text.split(/\\n+/).filter(p => p.trim().length > 0);
+        const paragraphs = text.split(/\n+/).filter(p => p.trim().length > 0);
         const paragraphCount = paragraphs.length;
 
         // Averages

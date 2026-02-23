@@ -71,7 +71,7 @@ if (root) {
             return;
         }
 
-        let lines = text.split(/\\r?\\n/);
+        let lines = text.split(/\r?\n/);
         const originalCount = lines.length;
 
         const shouldTrim = optTrim.checked;
@@ -105,7 +105,7 @@ if (root) {
             uniqueLines.sort((a, b) => a.localeCompare(b));
         }
 
-        outputData.value = uniqueLines.join('\\n');
+        outputData.value = uniqueLines.join('\n');
 
         // Update stats
         const uniqueCount = uniqueLines.length;
@@ -133,7 +133,7 @@ if (root) {
 
 // Automatic Paste Binding
 setTimeout(() => {
-    
+
     const btnPaste = $('#btn-paste');
     if (btnPaste) {
         on(btnPaste, 'click', async () => {

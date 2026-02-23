@@ -53,7 +53,7 @@ const processRegex = () => {
         }
 
         if (results.length > 0) {
-            outRegex.textContent = results.join('\\n');
+            outRegex.textContent = results.join('\n');
         } else {
             outRegex.textContent = 'No matches found.';
         }
