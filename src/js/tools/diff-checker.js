@@ -7,8 +7,8 @@ if (root) {
             <button id="btn-compare" class="btn primary">Compare Text</button>
         </div>
         <div class="tool-layout-split" style="display:flex; gap:20px; margin-bottom: 20px;">
-            <textarea id="input-original" placeholder="Original text..." style="width:50%; height:200px; padding:10px; font-family:monospace;"></textarea>
-            <textarea id="input-modified" placeholder="Modified text..." style="width:50%; height:200px; padding:10px; font-family:monospace;"></textarea>
+            <textarea id="input-original" placeholder="Original text..." style="width:50%; height:300px; padding:10px; font-family:monospace;"></textarea>
+            <textarea id="input-modified" placeholder="Modified text..." style="width:50%; height:300px; padding:10px; font-family:monospace;"></textarea>
         </div>
         <div class="output-wrapper">
             <h3>Differences:</h3>
@@ -44,7 +44,7 @@ on(btnCompare, 'click', () => {
 
 // Automatic Paste Binding
 setTimeout(() => {
-    
+
     const btnPaste = $('#btn-paste');
     if (btnPaste) {
         on(btnPaste, 'click', async () => {

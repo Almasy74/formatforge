@@ -696,6 +696,41 @@ footer {
   margin-bottom: 0.5rem;
 }
 
+/* Global Fixes for Pre/Code Overflow */
+pre {
+  background: var(--bg-color);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+  max-width: 100%;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+pre code {
+  white-space: pre;
+  word-wrap: normal;
+}
+
+/* Tool Textarea Standards */
+textarea {
+  min-height: 200px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-family: 'Inter', monospace;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
 .page-content p,
 .seo-content p,
 .guide-body p {

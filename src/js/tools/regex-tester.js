@@ -12,7 +12,7 @@ if (root) {
                 <label style="font-weight: bold;">Test String</label>
                 <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Paste Text</button>
             </div>
-            <textarea id="input-text" placeholder="Test string..." style="width:100%; height:150px; padding:10px; font-family:monospace; margin-bottom: 20px;"></textarea>
+            <textarea id="input-text" placeholder="Test string..." style="width:100%; height:300px; padding:10px; font-family:monospace; margin-bottom: 20px;"></textarea>
             <div class="output-wrapper">
                 <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                     <h3 style="margin: 0; font-size:16px;">Matches</h3>

@@ -10,7 +10,7 @@ if (root) {
                     <label for="input-data" style="font-weight: bold; margin-top: 0;">Input: Title or Text</label>
                     <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Paste Text</button>
                 </div>
-                <textarea id="input-data" autofocus placeholder="Type or paste your text here to generate a slug..." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; min-height: 200px; font-size: 16px;"></textarea>
+                <textarea id="input-data" autofocus placeholder="Type or paste your text here to generate a slug..." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; min-height: 300px; font-size: 16px;"></textarea>
             </div>
 
             <div class="tool-controls" style="display: flex; flex-direction: column; justify-content: flex-start; gap: 15px; min-width: 200px;">
@@ -38,7 +38,7 @@ if (root) {
                     <label for="output-data" style="font-weight: bold;">Output: URL Slug</label>
                     <button id="btn-copy" class="btn primary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Copy Slug</button>
                 </div>
-                <textarea id="output-data" readonly placeholder="your-generated-slug-appears-here" style="flex: 1; padding: 10px; font-family: monospace; font-size: 16px; resize: none; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9; min-height: 200px;"></textarea>
+                <textarea id="output-data" readonly placeholder="your-generated-slug-appears-here" style="flex: 1; padding: 10px; font-family: monospace; font-size: 16px; resize: none; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9; min-height: 300px;"></textarea>
             </div>
         </div>
     `;
@@ -109,7 +109,7 @@ if (root) {
 
 // Automatic Paste Binding
 setTimeout(() => {
-    
+
     const btnPaste = $('#btn-paste');
     if (btnPaste) {
         on(btnPaste, 'click', async () => {

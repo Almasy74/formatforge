@@ -34,14 +34,14 @@ if (root) {
                     <label>Input (CSV or JSON)</label>
                     <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center; margin-top: 0;">Paste</button>
                 </div>
-                <textarea id="input-data" placeholder="Paste CSV or JSON here..."></textarea>
+                <textarea id="input-data" placeholder="Paste CSV or JSON here..." style="width:100%; height:300px; padding:10px; font-family:monospace; margin-bottom: 20px;"></textarea>
             </div>
             <div class="output-panel">
                 <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                     <label>Output</label>
                     <button id="btn-copy" class="btn primary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Copy</button>
                 </div>
-                <textarea id="output-data" readonly placeholder="Result will appear here..."></textarea>
+                <textarea id="output-data" readonly placeholder="Result will appear here..." style="width:100%; height:300px; padding:10px; font-family:monospace; margin-bottom: 20px;"></textarea>
             </div>
         </div>
         <div id="error-msg" class="error hidden" style="margin-top:15px; font-family:monospace; font-size:13px;"></div>
