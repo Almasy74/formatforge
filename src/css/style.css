@@ -672,3 +672,39 @@ footer {
   border-radius: 3px;
   border: 1px solid #e2e8f0;
 }
+
+/* Content Typography & Lists */
+.page-content ul,
+.seo-content ul,
+.guide-body ul {
+  padding-inline-start: 1.5rem;
+  margin-bottom: 1.5rem;
+  list-style-type: disc;
+}
+
+.page-content ol,
+.seo-content ol,
+.guide-body ol {
+  padding-inline-start: 1.5rem;
+  margin-bottom: 1.5rem;
+  list-style-type: decimal;
+}
+
+.page-content li,
+.seo-content li,
+.guide-body li {
+  margin-bottom: 0.5rem;
+}
+
+.page-content p,
+.seo-content p,
+.guide-body p {
+  margin-bottom: 1rem;
+}
+
+.page-content h2,
+.seo-content h2,
+.guide-body h2 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
