@@ -16,16 +16,16 @@ if (root) {
             <div class="tool-controls" style="display: flex; flex-direction: column; justify-content: flex-start; gap: 15px; min-width: 200px;">
                 <div class="settings-group" style="background: #f4f6f8; padding: 15px; border-radius: 8px;">
                     <h3 style="margin-top: 0; font-size: 14px; margin-bottom: 10px;">Cleaning Mode</h3>
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
-                        <input type="radio" name="mode" value="remove-styles" checked>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin: 0;">
+                        <input type="radio" name="mode" value="remove-styles" checked style="margin: 0;">
                         <span>Remove Inline Styles & Classes</span>
                     </label>
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin-top: 8px;">
-                        <input type="radio" name="mode" value="strip-tags">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin-top: 8px; margin-bottom: 0;">
+                        <input type="radio" name="mode" value="strip-tags" style="margin: 0;">
                         <span>Strip All HTML Tags (Plain Text)</span>
                     </label>
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin-top: 8px;">
-                        <input type="radio" name="mode" value="allowed-tags">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin-top: 8px; margin-bottom: 0;">
+                        <input type="radio" name="mode" value="allowed-tags" style="margin: 0;">
                         <span>Keep Only Basic Tags (&lt;p&gt;, &lt;b&gt;, &lt;a&gt;)</span>
                     </label>
                 </div>
