@@ -135,6 +135,18 @@ tools.filter(t => t.flags.enabled).forEach(tool => {
     html = html.replace(/\[SUBTITLE_DESCRIPTION\]/g, tool.seo.subtitle || '');
 
     // Content Blocks
+    const aeoDescHtml = tool.content.aeoDescription ? `<p class="aeo-description" style="font-size: 1.1em; font-weight: 500; color: #333; margin-bottom: 20px;">${tool.content.aeoDescription}</p>` : '';
+    html = html.replace(/\[AEO_DESCRIPTION_HTML\]/g, aeoDescHtml);
+
+    const capabilitiesHtml = (tool.content.capabilities && tool.content.capabilities.length > 0) ?
+        `<div class="aeo-capabilities" style="margin-bottom: 25px;">
+            <p style="font-weight: bold; margin-bottom: 10px;">Supports:</p>
+            <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 15px;">
+                ${tool.content.capabilities.map(c => `<li>${c}</li>`).join('\n                ')}
+            </ul>
+        </div>` : '';
+    html = html.replace(/\[CAPABILITIES_HTML\]/g, capabilitiesHtml);
+
     const introHtml = tool.content.intro.map(p => `<p>${p}</p>`).join('\n');
     html = html.replace(/\[SEO_INTRO_HTML\]/g, introHtml);
 
@@ -181,8 +193,10 @@ tools.filter(t => t.flags.enabled).forEach(tool => {
         schemaObj["@graph"].push({
             "@type": "SoftwareApplication",
             "name": tool.seo.h1,
-            "operatingSystem": "All",
-            "applicationCategory": "DeveloperApplication"
+            "description": tool.content.aeoDescription || tool.seo.metaDescription,
+            "operatingSystem": "Web",
+            "applicationCategory": "DeveloperApplication",
+            "featureList": tool.content.capabilities || []
         });
     }
     if (tool.schema.faqPage && faqSchema.length > 0) {

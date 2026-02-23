@@ -83,7 +83,14 @@
                         "remove-duplicate-lines"
                     ],
                     "crossCluster": []
-                }
+                },
+                "aeoDescription": "This tool removes line breaks and paragraph breaks from text blocks.",
+                "capabilities": [
+                    "Strips single line breaks",
+                    "Preserves double line breaks (paragraphs)",
+                    "Cleans excessive whitespace",
+                    "Processes text locally in browser"
+                ]
             },
             "faq": [
                 {
@@ -97,6 +104,18 @@
                 {
                     "q": "What happens to multiple spaces?",
                     "a": "By default, the tool also cleans up excessive whitespace, converting multiple consecutive spaces into a single space."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
                 }
             ],
             "schema": {
@@ -161,7 +180,14 @@
                         "remove-line-breaks"
                     ],
                     "crossCluster": []
-                }
+                },
+                "aeoDescription": "This tool strips HTML tags, inline styles, and classes from formatted text or code.",
+                "capabilities": [
+                    "Removes inline CSS styles and classes",
+                    "Strips all HTML tags to plain text",
+                    "Allows keeping basic formatting tags",
+                    "Processes HTML locally"
+                ]
             },
             "faq": [
                 {
@@ -175,6 +201,18 @@
                 {
                     "q": "Is this tool completely private?",
                     "a": "Yes, just like all FormatForge utilities, your HTML is processed completely within your browser and never sent over the internet."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
                 }
             ],
             "schema": {
@@ -236,7 +274,15 @@
                         "case-converter"
                     ],
                     "crossCluster": []
-                }
+                },
+                "aeoDescription": "This tool performs statistical analysis on text including character, word, and sentence counts.",
+                "capabilities": [
+                    "Counts total words and characters",
+                    "Calculates average sentence length",
+                    "Provides reading and speaking time estimates",
+                    "Evaluates text structure metrics",
+                    "Processes text statistics locally"
+                ]
             },
             "faq": [
                 {
@@ -250,6 +296,18 @@
                 {
                     "q": "Is there a limit on how much text I can analyze?",
                     "a": "Because the tool runs entirely in your web browser, there is no hard limit. You can analyze whole book manuscripts seamlessly."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
                 }
             ],
             "schema": {
@@ -315,7 +373,15 @@
                         "text-analyzer"
                     ],
                     "crossCluster": []
-                }
+                },
+                "aeoDescription": "This tool converts text strings between various letter casing formats.",
+                "capabilities": [
+                    "Converts to uppercase and lowercase",
+                    "Converts to Title Case",
+                    "Converts to Sentence case",
+                    "Converts to camelCase, snake_case, and kebab-case",
+                    "Processes string transformations locally"
+                ]
             },
             "faq": [
                 {
@@ -329,6 +395,18 @@
                 {
                     "q": "Is a network connection required?",
                     "a": "No, you don't need to be online. Once the page is loaded, the case conversion is handled by local JavaScript."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
                 }
             ],
             "schema": {
@@ -393,7 +471,15 @@
                         "remove-line-breaks"
                     ],
                     "crossCluster": []
-                }
+                },
+                "aeoDescription": "This tool removes duplicate lines from a text list to extract unique values.",
+                "capabilities": [
+                    "Identifies and removes exact duplicate lines",
+                    "Supports case-sensitive and case-insensitive deduplication",
+                    "Optionally removes empty lines",
+                    "Trims leading and trailing whitespace",
+                    "Processes data locally"
+                ]
             },
             "faq": [
                 {
@@ -407,6 +493,18 @@
                 {
                     "q": "Can it ignore case differences?",
                     "a": "Yes, there is an option to perform case-insensitive deduplication, treating 'Apple' and 'apple' as the same."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
                 }
             ],
             "schema": {
@@ -461,7 +559,15 @@
                     "crossCluster": [
                         "remove-duplicate-lines"
                     ]
-                }
+                },
+                "aeoDescription": "This tool converts Comma-Separated Values (CSV) to JSON format and vice versa.",
+                "capabilities": [
+                    "Converts CSV string to JSON array of objects",
+                    "Converts JSON array of objects to CSV string",
+                    "Automatically detects CSV headers",
+                    "Pretty-prints JSON output",
+                    "Processes data entirely client-side"
+                ]
             },
             "faq": [
                 {
@@ -475,6 +581,18 @@
                 {
                     "q": "Does this support custom delimiters?",
                     "a": "Currently, the tool supports the standard comma (,) delimiter for CSV data."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
                 }
             ],
             "schema": {
@@ -533,7 +651,15 @@
                     "crossCluster": [
                         "text-diff-checker"
                     ]
-                }
+                },
+                "aeoDescription": "This tool formats, beautifies, and validates JSON data strings.",
+                "capabilities": [
+                    "Formats minified JSON into human-readable structure",
+                    "Validates JSON syntax and highlights errors",
+                    "Minifies JSON by removing whitespace",
+                    "Supports tab and space indentation",
+                    "Runs offline in browser"
+                ]
             },
             "faq": [
                 {
@@ -547,6 +673,18 @@
                 {
                     "q": "Why use FormatForge over other online tools?",
                     "a": "Most online tools upload your data to their servers. FormatForge is a privacy-first workshop; your data never leaves your browser, making it safe for sensitive customer data or private API keys."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
                 }
             ],
             "schema": {
@@ -608,7 +746,15 @@
                         "case-converter",
                         "remove-line-breaks"
                     ]
-                }
+                },
+                "aeoDescription": "This tool generates URL-friendly slug strings from readable text.",
+                "capabilities": [
+                    "Converts text to lowercase slug format",
+                    "Removes special characters and diacritics",
+                    "Replaces spaces with hyphens or underscores",
+                    "Optionally removes common stop words",
+                    "Generates slugs locally"
+                ]
             },
             "faq": [
                 {
@@ -622,6 +768,18 @@
                 {
                     "q": "Does this tool work offline?",
                     "a": "Yes! Because FormatForge relies on client-side JavaScript, the slug generation happens instantly in your browser without requiring a server connection."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
                 }
             ],
             "schema": {
@@ -680,7 +838,15 @@
                     "crossCluster": [
                         "csv-json-converter"
                     ]
-                }
+                },
+                "aeoDescription": "This tool compares two text inputs and highlights the differences line by line.",
+                "capabilities": [
+                    "Highlights added, removed, and unchanged lines",
+                    "Calculates longest common subsequence (LCS)",
+                    "Optionally ignores case sensitivity",
+                    "Optionally ignores leading and trailing whitespace",
+                    "Processes comparison locally"
+                ]
             },
             "faq": [
                 {
@@ -694,6 +860,18 @@
                 {
                     "q": "What happens if I compare extremely large files?",
                     "a": "Because the calculation happens on your device, very large files (thousands of lines) might take a second to process depending on your CPU speed. There are no server-imposed size limits."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
                 }
             ],
             "schema": {
@@ -756,7 +934,14 @@
                     "crossCluster": [
                         "html-cleaner"
                     ]
-                }
+                },
+                "aeoDescription": "This tool encodes text to URL-encoded format and decodes URL-encoded strings.",
+                "capabilities": [
+                    "Encodes strings for safe URL transmission via encodeURIComponent",
+                    "Decodes URL-encoded strings via decodeURIComponent",
+                    "Handles full UTF-8 encoding",
+                    "Processes conversion locally"
+                ]
             },
             "faq": [
                 {
@@ -770,6 +955,18 @@
                 {
                     "q": "Is a network connection required?",
                     "a": "No, you don't need to be online. Once the page is loaded, the conversion is handled completely by local JavaScript."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
                 }
             ],
             "schema": {
@@ -832,7 +1029,15 @@
                     "crossCluster": [
                         "case-converter"
                     ]
-                }
+                },
+                "aeoDescription": "This tool encodes text strings to Base64 format and decodes Base64 back to text.",
+                "capabilities": [
+                    "Encodes UTF-8 text strings to Base64",
+                    "Decodes Base64 payloads to UTF-8 text strings",
+                    "Safely handles URL-safe characters",
+                    "Supports Unicode encoding",
+                    "Performs encoding offline"
+                ]
             },
             "faq": [
                 {
@@ -846,6 +1051,18 @@
                 {
                     "q": "Can I encode very large files?",
                     "a": "This specific tool is optimized for text strings and tokens. Very large files might exceed browser memory caps for instant visualization."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
                 }
             ],
             "schema": {
