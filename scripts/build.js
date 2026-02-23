@@ -135,17 +135,23 @@ tools.filter(t => t.flags.enabled).forEach(tool => {
     html = html.replace(/\[SUBTITLE_DESCRIPTION\]/g, tool.seo.subtitle || '');
 
     // Content Blocks
-    const aeoDescHtml = tool.content.aeoDescription ? `<p class="aeo-description" style="font-size: 1.1em; font-weight: 500; color: #333; margin-bottom: 20px;">${tool.content.aeoDescription}</p>` : '';
-    html = html.replace(/\[AEO_DESCRIPTION_HTML\]/g, aeoDescHtml);
-
-    const capabilitiesHtml = (tool.content.capabilities && tool.content.capabilities.length > 0) ?
-        `<div class="aeo-capabilities" style="margin-bottom: 25px;">
-            <p style="font-weight: bold; margin-bottom: 10px;">Supports:</p>
-            <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 15px;">
-                ${tool.content.capabilities.map(c => `<li>${c}</li>`).join('\n                ')}
-            </ul>
-        </div>` : '';
-    html = html.replace(/\[CAPABILITIES_HTML\]/g, capabilitiesHtml);
+    const aeoHeaderHtml = `
+<div class="aeo-capability-header shadow-card" style="margin-bottom: 25px; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; background-color: #fafbfc;">
+    <h2 style="font-size: 1.25em; margin-top: 0; margin-bottom: 12px; color: var(--header-color);">What this tool does</h2>
+    <p style="margin-bottom: 15px; font-size: 1.05em; color: var(--text-color);">${tool.content.aeoDescription}</p>
+    
+    <div style="display: flex; gap: 30px; font-size: 0.95em; margin-bottom: 15px;">
+        <div><strong>Input formats:</strong> ${tool.content.ioFormats ? tool.content.ioFormats.input : 'Text / Data'}</div>
+        <div><strong>Output formats:</strong> ${tool.content.ioFormats ? tool.content.ioFormats.output : 'Text / Data'}</div>
+    </div>
+    
+    <div class="privacy-badge" style="display: inline-flex; align-items: center; background-color: #e6f4ea; color: #1e8e3e; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 0.9em; margin-top: 5px;">
+        <svg style="width:18px; height:18px; margin-right:8px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2l6 3v4c0 4.418-2.686 8-6 8s-6-3.582-6-8V5l6-3zm0 2.236L5.5 6.472v2.528c0 3.328 2.016 6.136 4.5 6.136s4.5-2.808 4.5-6.136V6.472L10 4.236z" clip-rule="evenodd"></path></svg>
+        Processing method: All processing happens locally in your browser.
+    </div>
+</div>
+`;
+    html = html.replace(/\[AEO_HEADER_TMPL\]/g, aeoHeaderHtml);
 
     const introHtml = tool.content.intro.map(p => `<p>${p}</p>`).join('\n');
     html = html.replace(/\[SEO_INTRO_HTML\]/g, introHtml);

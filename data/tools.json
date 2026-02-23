@@ -90,7 +90,11 @@
                     "Preserves double line breaks (paragraphs)",
                     "Cleans excessive whitespace",
                     "Processes text locally in browser"
-                ]
+                ],
+                "ioFormats": {
+                    "input": "Raw Text",
+                    "output": "Formatted Text"
+                }
             },
             "faq": [
                 {
@@ -187,7 +191,11 @@
                     "Strips all HTML tags to plain text",
                     "Allows keeping basic formatting tags",
                     "Processes HTML locally"
-                ]
+                ],
+                "ioFormats": {
+                    "input": "HTML String",
+                    "output": "Clean HTML / Text"
+                }
             },
             "faq": [
                 {
@@ -282,7 +290,11 @@
                     "Provides reading and speaking time estimates",
                     "Evaluates text structure metrics",
                     "Processes text statistics locally"
-                ]
+                ],
+                "ioFormats": {
+                    "input": "Raw Text",
+                    "output": "Statistical Data"
+                }
             },
             "faq": [
                 {
@@ -381,7 +393,11 @@
                     "Converts to Sentence case",
                     "Converts to camelCase, snake_case, and kebab-case",
                     "Processes string transformations locally"
-                ]
+                ],
+                "ioFormats": {
+                    "input": "Raw Text Strings",
+                    "output": "Formatted Case Strings"
+                }
             },
             "faq": [
                 {
@@ -479,7 +495,11 @@
                     "Optionally removes empty lines",
                     "Trims leading and trailing whitespace",
                     "Processes data locally"
-                ]
+                ],
+                "ioFormats": {
+                    "input": "Text List (Newline separated)",
+                    "output": "Unique Text List"
+                }
             },
             "faq": [
                 {
@@ -567,7 +587,11 @@
                     "Automatically detects CSV headers",
                     "Pretty-prints JSON output",
                     "Processes data entirely client-side"
-                ]
+                ],
+                "ioFormats": {
+                    "input": "CSV / JSON",
+                    "output": "JSON / CSV"
+                }
             },
             "faq": [
                 {
@@ -659,7 +683,11 @@
                     "Minifies JSON by removing whitespace",
                     "Supports tab and space indentation",
                     "Runs offline in browser"
-                ]
+                ],
+                "ioFormats": {
+                    "input": "JSON String",
+                    "output": "Pretty JSON"
+                }
             },
             "faq": [
                 {
@@ -695,6 +723,200 @@
             "flags": {
                 "enabled": true,
                 "variantOf": null
+            }
+        },
+        {
+            "id": "json-validator",
+            "clusterId": "json",
+            "path": "/json/json-validator/",
+            "ui": {
+                "jsModule": "json-formatter.js"
+            },
+            "seo": {
+                "title": "Free JSON Validator Online | FormatForge",
+                "metaDescription": "Clean, format, and validate JSON instantly in your browser. A privacy-first developer workshop tool for debugging API responses and optimizing data structures.",
+                "h1": "JSON Validator",
+                "subtitle": "Format, minify, and debug JSON with real-time local validation.",
+                "canonical": "/json/json-validator/"
+            },
+            "content": {
+                "intro": [
+                    "Broken JSON often brings development to a standstill, especially when API responses are minified or configuration files contain subtle syntax errors. Our JSON Formatter & Validator is a precision workshop utility designed to restore structure and identify corruption without ever sending your data to a remote server.",
+                    "Example Broken Input: You copy a response from a browser console that contains unquoted keys or trailing commas—common artifacts that break standard parsers. The workshop handles these by providing instant feedback as you paste.",
+                    "Why it happens: Modern web APIs prioritize speed, returning minified blocks of data that are impossible for humans to audit manually. Without a dedicated formatter, spotting a missing type or a mismatched bracket in 100kb of JSON is prone to human error.",
+                    "Solution (Use Tool): This utility transforms minified strings into a clean, 2-space indented hierarchy. It acts as both a visualizer for state auditing and a high-speed validator that isolates the exact line responsible for a parsing failure. Everything happens in your browser's local sandbox, ensuring maximum privacy for production logs.",
+                    "Advanced Notes: Use the 'Minify' mode to prepare payloads for performance-critical deployments, or use the formatter to prepare clean documentation-ready snippets. For deep structural comparisons, consider pairing this with our CSV/JSON converter to flatten the hierarchy."
+                ],
+                "howTo": {
+                    "heading": "How to format JSON",
+                    "steps": [
+                        "Paste your JSON string or minified data into the input box.",
+                        "The tool will instantly attempt to parse and format the data.",
+                        "Use the 'Minify' button to strip all whitespace for production use.",
+                        "Check the Status Bar for real-time validation and size metrics."
+                    ]
+                },
+                "examples": {
+                    "heading": "JSON Transformation",
+                    "items": [
+                        {
+                            "input": "{\"id\":1,\"name\":\"test\"}",
+                            "output": "{\n  \"id\": 1,\n  \"name\": \"test\"\n}"
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [
+                        "csv-json-converter"
+                    ],
+                    "crossCluster": [
+                        "text-diff-checker"
+                    ]
+                },
+                "aeoDescription": "This tool parses JSON string payloads and validates them against strict JSON syntax rules, highlighting errors block by block.",
+                "capabilities": [
+                    "Formats minified JSON into human-readable structure",
+                    "Validates JSON syntax and highlights errors",
+                    "Minifies JSON by removing whitespace",
+                    "Supports tab and space indentation",
+                    "Runs offline in browser"
+                ],
+                "ioFormats": {
+                    "input": "JSON String",
+                    "output": "Validation Stream"
+                }
+            },
+            "faq": [
+                {
+                    "q": "What happens if my JSON is invalid?",
+                    "a": "The workshop will display a 'System Error' in the status bar and highlight the reason for the parsing failure, such as a missing comma or incorrect quote marks."
+                },
+                {
+                    "q": "What is the size limit?",
+                    "a": "The tool processes JSON entirely on your device. While it can handle several megabytes of data, extremely large files may be limited by your browser's available memory."
+                },
+                {
+                    "q": "Why use FormatForge over other online tools?",
+                    "a": "Most online tools upload your data to their servers. FormatForge is a privacy-first workshop; your data never leaves your browser, making it safe for sensitive customer data or private API keys."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": "json-formatter"
+            }
+        },
+        {
+            "id": "json-minifier",
+            "clusterId": "json",
+            "path": "/json/json-minifier/",
+            "ui": {
+                "jsModule": "json-formatter.js"
+            },
+            "seo": {
+                "title": "Free JSON Minifier Online | FormatForge",
+                "metaDescription": "Clean, format, and validate JSON instantly in your browser. A privacy-first developer workshop tool for debugging API responses and optimizing data structures.",
+                "h1": "JSON Minifier & Compressor",
+                "subtitle": "Format, minify, and debug JSON with real-time local validation.",
+                "canonical": "/json/json-minifier/"
+            },
+            "content": {
+                "intro": [
+                    "Broken JSON often brings development to a standstill, especially when API responses are minified or configuration files contain subtle syntax errors. Our JSON Formatter & Validator is a precision workshop utility designed to restore structure and identify corruption without ever sending your data to a remote server.",
+                    "Example Broken Input: You copy a response from a browser console that contains unquoted keys or trailing commas—common artifacts that break standard parsers. The workshop handles these by providing instant feedback as you paste.",
+                    "Why it happens: Modern web APIs prioritize speed, returning minified blocks of data that are impossible for humans to audit manually. Without a dedicated formatter, spotting a missing type or a mismatched bracket in 100kb of JSON is prone to human error.",
+                    "Solution (Use Tool): This utility transforms minified strings into a clean, 2-space indented hierarchy. It acts as both a visualizer for state auditing and a high-speed validator that isolates the exact line responsible for a parsing failure. Everything happens in your browser's local sandbox, ensuring maximum privacy for production logs.",
+                    "Advanced Notes: Use the 'Minify' mode to prepare payloads for performance-critical deployments, or use the formatter to prepare clean documentation-ready snippets. For deep structural comparisons, consider pairing this with our CSV/JSON converter to flatten the hierarchy."
+                ],
+                "howTo": {
+                    "heading": "How to format JSON",
+                    "steps": [
+                        "Paste your JSON string or minified data into the input box.",
+                        "The tool will instantly attempt to parse and format the data.",
+                        "Use the 'Minify' button to strip all whitespace for production use.",
+                        "Check the Status Bar for real-time validation and size metrics."
+                    ]
+                },
+                "examples": {
+                    "heading": "JSON Transformation",
+                    "items": [
+                        {
+                            "input": "{\"id\":1,\"name\":\"test\"}",
+                            "output": "{\n  \"id\": 1,\n  \"name\": \"test\"\n}"
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [
+                        "csv-json-converter"
+                    ],
+                    "crossCluster": [
+                        "text-diff-checker"
+                    ]
+                },
+                "aeoDescription": "This tool compresses JSON data by removing all unnecessary whitespace, newlines, and tabs, returning a minified string.",
+                "capabilities": [
+                    "Formats minified JSON into human-readable structure",
+                    "Validates JSON syntax and highlights errors",
+                    "Minifies JSON by removing whitespace",
+                    "Supports tab and space indentation",
+                    "Runs offline in browser"
+                ],
+                "ioFormats": {
+                    "input": "JSON Object / String",
+                    "output": "Minified JSON String"
+                }
+            },
+            "faq": [
+                {
+                    "q": "What happens if my JSON is invalid?",
+                    "a": "The workshop will display a 'System Error' in the status bar and highlight the reason for the parsing failure, such as a missing comma or incorrect quote marks."
+                },
+                {
+                    "q": "What is the size limit?",
+                    "a": "The tool processes JSON entirely on your device. While it can handle several megabytes of data, extremely large files may be limited by your browser's available memory."
+                },
+                {
+                    "q": "Why use FormatForge over other online tools?",
+                    "a": "Most online tools upload your data to their servers. FormatForge is a privacy-first workshop; your data never leaves your browser, making it safe for sensitive customer data or private API keys."
+                },
+                {
+                    "q": "Does this tool run locally?",
+                    "a": "Yes, this tool runs entirely locally in your browser sandbox using JavaScript."
+                },
+                {
+                    "q": "Is my data uploaded to a server?",
+                    "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
+                },
+                {
+                    "q": "Can I use this tool offline?",
+                    "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": "json-formatter"
             }
         },
         {
@@ -754,7 +976,11 @@
                     "Replaces spaces with hyphens or underscores",
                     "Optionally removes common stop words",
                     "Generates slugs locally"
-                ]
+                ],
+                "ioFormats": {
+                    "input": "Raw Text Title",
+                    "output": "URL-safe Slug"
+                }
             },
             "faq": [
                 {
@@ -846,7 +1072,11 @@
                     "Optionally ignores case sensitivity",
                     "Optionally ignores leading and trailing whitespace",
                     "Processes comparison locally"
-                ]
+                ],
+                "ioFormats": {
+                    "input": "Original Text + Edited Text",
+                    "output": "Diff Analysis"
+                }
             },
             "faq": [
                 {
@@ -941,7 +1171,11 @@
                     "Decodes URL-encoded strings via decodeURIComponent",
                     "Handles full UTF-8 encoding",
                     "Processes conversion locally"
-                ]
+                ],
+                "ioFormats": {
+                    "input": "UTF-8 String / URL Encoded",
+                    "output": "URL Encoded / UTF-8 String"
+                }
             },
             "faq": [
                 {
@@ -1037,7 +1271,11 @@
                     "Safely handles URL-safe characters",
                     "Supports Unicode encoding",
                     "Performs encoding offline"
-                ]
+                ],
+                "ioFormats": {
+                    "input": "UTF-8 String / Base64 Payload",
+                    "output": "Base64 Payload / UTF-8 String"
+                }
             },
             "faq": [
                 {
