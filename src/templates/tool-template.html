@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[PAGE_TITLE]</title>
+    <meta name="description" content="[META_DESCRIPTION]">
+    <meta name="robots" content="[META_ROBOTS]">
+    <link rel="canonical" href="[CANONICAL_URL]">
+
+    <link rel="stylesheet" href="__ASSETS__css/style.css">
+
+    <script type="application/ld+json">
+    [SCHEMA_JSON]
+    </script>
+</head>
+
+<body>
+    [HEADER_PARTIAL]
+
+    <main class="container">
+
+        <header class="tool-header">
+            <h1>[H1_TITLE]</h1>
+            <p class="subtitle">[SUBTITLE_DESCRIPTION]</p>
+        </header>
+
+        <div class="ad-slot top-ad">
+            [ADS_PARTIAL]
+        </div>
+
+        <section class="tool-workspace">
+            <div id="tool-root"></div>
+        </section>
+
+        <div class="ad-slot bottom-ad">
+            [ADS_PARTIAL]
+        </div>
+
+        <article class="seo-content shadow-card">
+            [SEO_INTRO_HTML]
+
+            [HOW_TO_HTML]
+
+            [EXAMPLES_HTML]
+        </article>
+
+        <section class="faq-section shadow-card">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-accordion">
+                [FAQ_HTML]
+            </div>
+        </section>
+
+        <nav class="related-tools shadow-card" aria-label="Related Tools">
+            <h2>Related Developer Tools</h2>
+            <div class="tool-grid">
+                [RELATED_CLUSTER_HTML]
+            </div>
+        </nav>
+
+        [GUIDES_HTML]
+
+    </main>
+
+    [FOOTER_PARTIAL]
+
+    <script type="module" src="__ASSETS__js/tools/[SCRIPT_FILE]"></script>
+</body>
+
+</html>

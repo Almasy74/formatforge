@@ -1,0 +1,23 @@
+[
+    {
+        "id": "regular-expressions-explained",
+        "title": "Regex Explained for Beginners",
+        "description": "Learn what regular expressions are, how they work, and when to use them.",
+        "path": "/guides/regular-expressions-explained/",
+        "relatedTools": [
+            "regex-tester",
+            "html-cleaner"
+        ]
+    },
+    {
+        "id": "data-cleaning-best-practices",
+        "title": "Data Cleaning: Removing Duplicates and Broken Formatting",
+        "description": "A guide to effectively cleaning datasets, email lists, and scraped text using our utilities.",
+        "path": "/guides/data-cleaning-best-practices/",
+        "relatedTools": [
+            "remove-duplicate-lines",
+            "remove-line-breaks",
+            "html-cleaner"
+        ]
+    }
+]

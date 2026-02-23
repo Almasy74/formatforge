@@ -1,0 +1,413 @@
+{
+    "site": {
+        "name": "FormatForge",
+        "domain": "https://formatforge.com",
+        "defaultLocale": "en",
+        "canonicalTrailingSlash": true,
+        "theme": {
+            "brandName": "FormatForge",
+            "logoPath": "/assets/logo.svg"
+        }
+    },
+    "clusters": [
+        {
+            "id": "text",
+            "label": "Text Tools",
+            "hubPath": "/text/",
+            "description": "Clean, transform, and analyze text with fast no-login tools."
+        },
+        {
+            "id": "dev",
+            "label": "Developer Tools",
+            "hubPath": "/dev/",
+            "description": "Developer utilities for encoding, conversion, and formatting."
+        },
+        {
+            "id": "json",
+            "label": "JSON Tools",
+            "hubPath": "/json/",
+            "description": "Format, validate, minify, and convert JSON instantly in your browser."
+        }
+    ],
+    "tools": [
+        {
+            "id": "remove-line-breaks",
+            "clusterId": "text",
+            "path": "/text/remove-line-breaks/",
+            "ui": {
+                "type": "textarea-tool",
+                "jsModule": "remove-line-breaks.js",
+                "inputLabel": "Paste Text with Line Breaks",
+                "outputLabel": "Clean Text",
+                "actions": [
+                    "copy",
+                    "download"
+                ]
+            },
+            "seo": {
+                "h1": "Remove Line Breaks & Clean Text",
+                "subtitle": "Fix copied text formatting, remove paragraph breaks, and join lines instantly.",
+                "title": "Remove Line Breaks from Text Online | FormatForge",
+                "metaDescription": "Instantly remove line breaks, paragraph breaks, and weird formatting from text copied from PDFs, Word, or emails. No reload, no login. Paste and fix.",
+                "robots": "index,follow",
+                "canonical": "/text/remove-line-breaks/"
+            },
+            "content": {
+                "intro": [
+                    "When copying text from PDFs, emails, or Word documents, you often get unwanted line breaks or hard returns inside sentences.",
+                    "This tool fixes text formatting instantly. Whether you want to join all lines into a single block of text or strictly format paragraphs, it runs entirely in your browser with zero latency.",
+                    "It is the perfect utility for cleaning up AI-generated output or messy emails before pasting them into your own documents."
+                ],
+                "howTo": {
+                    "heading": "How to remove line breaks",
+                    "steps": [
+                        "Paste your messy text into the input area.",
+                        "The tool analyzes your text and removes line breaks instantly.",
+                        "Copy the cleaned text to your clipboard."
+                    ]
+                },
+                "examples": {
+                    "heading": "Example",
+                    "items": [
+                        {
+                            "input": "This is text\ncopied from a\nPDF document.",
+                            "output": "This is text copied from a PDF document."
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [
+                        "html-cleaner",
+                        "remove-duplicate-lines"
+                    ],
+                    "crossCluster": []
+                }
+            },
+            "faq": [
+                {
+                    "q": "Can it preserve paragraph breaks?",
+                    "a": "Yes, we offer an option to preserve double line breaks (paragraphs) while removing single line breaks."
+                },
+                {
+                    "q": "Is my text saved on a server?",
+                    "a": "No. The formatting is performed completely on your device in your web browser. Nothing is uploaded to any server."
+                },
+                {
+                    "q": "What happens to multiple spaces?",
+                    "a": "By default, the tool also cleans up excessive whitespace, converting multiple consecutive spaces into a single space."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": null
+            }
+        },
+        {
+            "id": "html-cleaner",
+            "clusterId": "text",
+            "path": "/text/html-cleaner/",
+            "ui": {
+                "type": "textarea-tool",
+                "jsModule": "html-cleaner.js",
+                "inputLabel": "Paste Dirty HTML or Text",
+                "outputLabel": "Clean HTML/Text",
+                "actions": [
+                    "copy",
+                    "download"
+                ]
+            },
+            "seo": {
+                "h1": "HTML Cleaner & Tag Stripper",
+                "subtitle": "Clean pasted HTML, remove inline styles, or strip HTML tags completely.",
+                "title": "Clean HTML & Remove Inline Styles Online | FormatForge",
+                "metaDescription": "Clean messy HTML code instantly. Strip inline CSS, remove unnecessary tags, or extract pure text from HTML snippets. Entirely private and browser-based.",
+                "robots": "index,follow",
+                "canonical": "/text/html-cleaner/"
+            },
+            "content": {
+                "intro": [
+                    "Pasting content from word processors like MS Word or visual page builders often brings along massive amounts of inline CSS and broken HTML tags.",
+                    "Our HTML cleaner strips out inline styles, classes, and empty tags to give you pure, semantic HTML. It's the perfect pre-processing step for content editors and developers.",
+                    "If you just want the words, you can use the 'Strip Tags' mode to completely remove all HTML syntax and get pure text."
+                ],
+                "howTo": {
+                    "heading": "How to clean HTML",
+                    "steps": [
+                        "Paste your dirty HTML code.",
+                        "Select your cleaning mode (Remove formatting vs Strip all tags).",
+                        "Copy the clean output."
+                    ]
+                },
+                "examples": {
+                    "heading": "Example",
+                    "items": [
+                        {
+                            "input": "<p style=\"color: red;\" class=\"ms-word\">Hello <b>World</b></p>",
+                            "output": "<p>Hello <strong>World</strong></p>"
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [
+                        "remove-line-breaks"
+                    ],
+                    "crossCluster": []
+                }
+            },
+            "faq": [
+                {
+                    "q": "Will this tool remove my links?",
+                    "a": "By default, no. We preserve semantic tags like <a>, <strong>, and <em> while removing inline styles. You can opt to strip everything if needed."
+                },
+                {
+                    "q": "Does it fix broken HTML?",
+                    "a": "It relies on your browser's built-in parser, which automatically tries to fix unclosed tags and basic structural errors before cleaning."
+                },
+                {
+                    "q": "Is this tool completely private?",
+                    "a": "Yes, just like all FormatForge utilities, your HTML is processed completely within your browser and never sent over the internet."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": null
+            }
+        },
+        {
+            "id": "text-analyzer",
+            "clusterId": "text",
+            "path": "/text/text-analyzer/",
+            "ui": {
+                "type": "textarea-tool",
+                "jsModule": "text-analyzer.js",
+                "inputLabel": "Paste Text to Analyze",
+                "outputLabel": "Statistics",
+                "actions": []
+            },
+            "seo": {
+                "h1": "Advanced Text Analyzer & Word Counter",
+                "subtitle": "Get instant word counts, reading time, sentence length, and character analysis.",
+                "title": "Free Text Analyzer & Word Counter Online | FormatForge",
+                "metaDescription": "Analyze your text instantly. Beyond a simple word counter, get character lengths, reading and speaking times, and paragraph analysis directly in your browser.",
+                "robots": "index,follow",
+                "canonical": "/text/text-analyzer/"
+            },
+            "content": {
+                "intro": [
+                    "Witers, students, and SEO professionals need to know more than just a raw word count. Our Text Analyzer gives you deep insights instantaneously.",
+                    "As you paste or type, we estimate reading time, count sentences and paragraphs, and provide character density without any loading screens.",
+                    "It handles massive documents efficiently directly in your browser without saving your data anywhere."
+                ],
+                "howTo": {
+                    "heading": "How to analyze text",
+                    "steps": [
+                        "Simply paste or type your content into the text area.",
+                        "All statistics update dynamically in real-time.",
+                        "Review your metrics!"
+                    ]
+                },
+                "examples": {
+                    "heading": "Example",
+                    "items": [
+                        {
+                            "input": "This is a simple sentence.",
+                            "output": "Words: 5, Characters: 26, Reading Time: ~1 sec."
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [
+                        "case-converter"
+                    ],
+                    "crossCluster": []
+                }
+            },
+            "faq": [
+                {
+                    "q": "How is the reading time estimated?",
+                    "a": "We use a standard rate of 225 words per minute for silent adult reading."
+                },
+                {
+                    "q": "Does it count spaces as characters?",
+                    "a": "We provide two character counts: one that includes all characters (including spaces and punctuation) and one that excludes spaces for specific academic limits."
+                },
+                {
+                    "q": "Is there a limit on how much text I can analyze?",
+                    "a": "Because the tool runs entirely in your web browser, there is no hard limit. You can analyze whole book manuscripts seamlessly."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": null
+            }
+        },
+        {
+            "id": "case-converter",
+            "clusterId": "text",
+            "path": "/text/case-converter/",
+            "ui": {
+                "type": "textarea-tool",
+                "jsModule": "case-converter.js",
+                "inputLabel": "Paste Text",
+                "outputLabel": "Converted Text",
+                "actions": [
+                    "copy",
+                    "download"
+                ]
+            },
+            "seo": {
+                "h1": "Text Case Converter",
+                "subtitle": "Convert text to UPPERCASE, lowercase, Title Case, camelCase, or snake_case instantly.",
+                "title": "Text Case Converter: Uppercase, Lowercase, Title Case | FormatForge",
+                "metaDescription": "Easily convert your text between uppercase, lowercase, sentence case, title case, camelCase, and snake_case. Free online case converter tool.",
+                "robots": "index,follow",
+                "canonical": "/text/case-converter/"
+            },
+            "content": {
+                "intro": [
+                    "Whether you accidentally left Caps Lock on, need to format a title properly, or are a developer needing camelCase variables, the Case Converter handles it all.",
+                    "With just one click, transform your entire text block to the precise casing format you need.",
+                    "Everything occurs instantly with no page reloads, making it the fastest way to fix casing errors."
+                ],
+                "howTo": {
+                    "heading": "How to change text case",
+                    "steps": [
+                        "Paste the text that needs fixing.",
+                        "Select the desired case format from the options.",
+                        "Copy the converted text to your clipboard."
+                    ]
+                },
+                "examples": {
+                    "heading": "Example",
+                    "items": [
+                        {
+                            "input": "HELLO WORLD",
+                            "output": "hello world (Lowercase)"
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [
+                        "remove-duplicate-lines",
+                        "text-analyzer"
+                    ],
+                    "crossCluster": []
+                }
+            },
+            "faq": [
+                {
+                    "q": "Do you support developer formats like camelCase?",
+                    "a": "Yes! Alongside standard grammatical cases, we support camelCase, snake_case, PascalCase, and kebab-case for developers."
+                },
+                {
+                    "q": "How does Sentence case work?",
+                    "a": "Sentence case capitalizes the very first letter of the text, as well as the first letter following any period, exclamation mark, or question mark."
+                },
+                {
+                    "q": "Is a network connection required?",
+                    "a": "No, you don't need to be online. Once the page is loaded, the case conversion is handled by local JavaScript."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": null
+            }
+        },
+        {
+            "id": "remove-duplicate-lines",
+            "clusterId": "text",
+            "path": "/text/remove-duplicate-lines/",
+            "ui": {
+                "type": "textarea-tool",
+                "jsModule": "remove-duplicate-lines.js",
+                "inputLabel": "Paste List",
+                "outputLabel": "Unique Lines",
+                "actions": [
+                    "copy",
+                    "download"
+                ]
+            },
+            "seo": {
+                "h1": "Remove Duplicate Lines",
+                "subtitle": "Quickly remove duplicate lines from a list to extract unique values.",
+                "title": "Remove Duplicate Lines from Text Online | FormatForge",
+                "metaDescription": "Filter out repeated lines from text lists instantly. Paste any list, dedupe lines, keep their original order, and export unique values securely in your browser.",
+                "robots": "index,follow",
+                "canonical": "/text/remove-duplicate-lines/"
+            },
+            "content": {
+                "intro": [
+                    "When working with large databases, email lists, SEO keyword exports, or Excel data, you frequently run into duplicate entries.",
+                    "This tool strips out repeated lines from any list rapidly, leaving you with only unique values. You can choose to maintain the original list order, or sort it alphabetically automatically.",
+                    "Ideal for data cleanup operations, completely private, and highly optimized for large datasets."
+                ],
+                "howTo": {
+                    "heading": "How to remove duplicates",
+                    "steps": [
+                        "Paste a list of items, one per line.",
+                        "Click 'Remove Duplicates'.",
+                        "Copy the cleansed list."
+                    ]
+                },
+                "examples": {
+                    "heading": "Example",
+                    "items": [
+                        {
+                            "input": "apple\nbanana\napple\npear\nbanana",
+                            "output": "apple\nbanana\npear"
+                        }
+                    ]
+                },
+                "related": {
+                    "sameCluster": [
+                        "remove-line-breaks"
+                    ],
+                    "crossCluster": []
+                }
+            },
+            "faq": [
+                {
+                    "q": "Is the original order preserved?",
+                    "a": "Yes, by default, the first occurrence of an item is kept in its original place, and any subsequent duplicates are deleted."
+                },
+                {
+                    "q": "Is this tool safe for email lists?",
+                    "a": "Absolutely. It runs exclusively on the frontend. Data never touches our servers."
+                },
+                {
+                    "q": "Can it ignore case differences?",
+                    "a": "Yes, there is an option to perform case-insensitive deduplication, treating 'Apple' and 'apple' as the same."
+                }
+            ],
+            "schema": {
+                "webApp": true,
+                "faqPage": true,
+                "howTo": true
+            },
+            "flags": {
+                "enabled": true,
+                "variantOf": null
+            }
+        }
+    ]
+}
