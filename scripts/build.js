@@ -349,12 +349,22 @@ let homeHtml = homeTemplate;
 homeHtml = homeHtml.replace(/\[HEADER_PARTIAL\]/g, headerPartial);
 homeHtml = homeHtml.replace(/\[FOOTER_PARTIAL\]/g, footerPartial);
 
+const getTagStyle = (cluster) => {
+    switch ((cluster || '').toLowerCase()) {
+        case 'json': return 'background: #e3f2fd; color: #003c8f;'; // Light blue, dark blue text
+        case 'text': return 'background: #e8f5e9; color: #1b5e20;'; // Light green, dark green text
+        case 'seo': return 'background: #fff3e0; color: #e65100;';  // Light orange, dark orange text
+        case 'developer': return 'background: #f3e5f5; color: #4a148c;'; // Light purple, dark purple text
+        default: return 'background: #eee; color: #333;';
+    }
+};
+
 const allToolsHtml = tools.filter(t => t.flags.enabled).map(t => `
     <article class="tool-card shadow-card" style="padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 15px;">
         <h2><a href="${t.path}" style="text-decoration: none; color: #0056b3;">${t.seo.h1}</a></h2>
         <p>${t.seo.subtitle}</p>
-        <div style="margin-top: 10px; font-size: 0.85em; color: #666;">
-            <span style="background: #eee; padding: 3px 8px; border-radius: 4px; margin-right: 5px; text-transform: uppercase;">${t.clusterId}</span>
+        <div style="margin-top: 10px; font-size: 0.85em; font-weight: 600;">
+            <span style="${getTagStyle(t.clusterId)} padding: 3px 8px; border-radius: 4px; margin-right: 5px; text-transform: uppercase;">${t.clusterId}</span>
         </div>
     </article>
 `).join('\n');
