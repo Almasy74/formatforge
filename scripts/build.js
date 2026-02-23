@@ -428,4 +428,12 @@ if (fs.existsSync(srcAssets)) {
     copyRecursiveSync(srcAssets, path.join(publicDir, 'assets'));
 }
 
+// Copy root static files (like ads.txt)
+const srcStatic = path.join(srcDir, 'static');
+if (fs.existsSync(srcStatic)) {
+    fs.readdirSync(srcStatic).forEach(file => {
+        fs.copyFileSync(path.join(srcStatic, file), path.join(publicDir, file));
+    });
+}
+
 console.log(`Build complete! ${tools.length} tool pages generated. ${clusters.length} hub pages. Sitemap and index.html saved.`);
