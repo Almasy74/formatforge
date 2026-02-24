@@ -420,7 +420,12 @@ if (fs.existsSync(pagesDir)) {
         if (!fs.existsSync(pageDestDir)) fs.mkdirSync(pageDestDir, { recursive: true });
         fs.writeFileSync(path.join(pageDestDir, 'index.html'), pageHtml, 'utf8');
 
-        generatedUrls.push(`${BASE_URL}/${pageId}`);
+        // Enforce trailing slash for static pages in sitemap
+        let pageUrl = `${BASE_URL}/${pageId}`;
+        if (site.canonicalTrailingSlash && !pageUrl.endsWith('/')) {
+            pageUrl += '/';
+        }
+        generatedUrls.push(pageUrl);
     });
 }
 
@@ -429,7 +434,12 @@ console.log('Generating sitemap.xml...');
 let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 sitemapXml += `  <url><loc>${BASE_URL}/</loc></url>\n`;
 generatedUrls.forEach(url => {
-    sitemapXml += `  <url><loc>${url}</loc></url>\n`;
+    // Double check trailing slashes for all items pushed to sitemap if policy is true
+    let finalUrl = url;
+    if (site.canonicalTrailingSlash && !finalUrl.endsWith('/')) {
+        finalUrl += '/';
+    }
+    sitemapXml += `  <url><loc>${finalUrl}</loc></url>\n`;
 });
 sitemapXml += `</urlset>`;
 fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapXml, 'utf8');
