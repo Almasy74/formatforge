@@ -145,7 +145,7 @@ tools.filter(t => t.flags.enabled).forEach(tool => {
         <div><strong>Output formats:</strong> ${tool.content.ioFormats ? tool.content.ioFormats.output : 'Text / Data'}</div>
     </div>
     
-    <div class="privacy-badge" style="display: inline-flex; align-items: center; background-color: #e6f4ea; color: #1e8e3e; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 0.9em; margin-top: 5px;">
+    <div class="privacy-badge" style="display: inline-flex; align-items: center; background-color: #dcfce7; color: #14532d; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 0.9em; margin-top: 5px;">
         <svg style="width:18px; height:18px; margin-right:8px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2l6 3v4c0 4.418-2.686 8-6 8s-6-3.582-6-8V5l6-3zm0 2.236L5.5 6.472v2.528c0 3.328 2.016 6.136 4.5 6.136s4.5-2.808 4.5-6.136V6.472L10 4.236z" clip-rule="evenodd"></path></svg>
         Processing method: All processing happens locally in your browser.
     </div>
