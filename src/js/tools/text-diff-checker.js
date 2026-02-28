@@ -1,35 +1,36 @@
 import { $, on } from '../core/dom.js';
+import { bindPasteButton } from '../core/clipboard.js';
 
 const root = $('#tool-root');
 if (root) {
     root.innerHTML = `
-        <div class="tool-layout" style="flex-direction: column;">
-            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                <div class="tool-panel tool-input-panel" style="flex: 1; display: flex; flex-direction: column; min-width: 300px;">
-                    <label for="input-original" style="font-weight: bold; margin-bottom: 5px;">Original Text</label>
-                    <textarea id="input-original" placeholder="Paste the original text here..." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; min-height: 300px; white-space: pre; overflow-wrap: normal; overflow-x: auto;"></textarea>
+        <div class="tool-layout tool-layout-column">
+            <div class="tool-flex-row-wrap">
+                <div class="tool-panel tool-input-panel tool-panel-column tool-min-w-300">
+                    <label for="input-original">Original Text</label>
+                    <textarea id="input-original" class="tool-textarea-fill tool-textarea-code-nowrap" placeholder="Paste the original text here..."></textarea>
                 </div>
 
-                <div class="tool-panel tool-input-panel" style="flex: 1; display: flex; flex-direction: column; min-width: 300px;">
-                    <label for="input-changed" style="font-weight: bold; margin-bottom: 5px;">Modified Text</label>
-                    <textarea id="input-changed" placeholder="Paste the changed text here..." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; min-height: 300px; white-space: pre; overflow-wrap: normal; overflow-x: auto;"></textarea>
+                <div class="tool-panel tool-input-panel tool-panel-column tool-min-w-300">
+                    <label for="input-changed">Modified Text</label>
+                    <textarea id="input-changed" class="tool-textarea-fill tool-textarea-code-nowrap" placeholder="Paste the changed text here..."></textarea>
                 </div>
             </div>
 
-            <div class="tool-controls" style="display: flex; gap: 15px; margin-top: 20px; align-items: center; background: #f4f6f8; padding: 15px; border-radius: 8px;">
-                <span style="font-weight: bold; font-size: 14px;">Options:</span>
-                <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; margin: 0;">
-                    <input type="checkbox" id="opt-ignore-case" style="margin: 0;"> Ignore Case
+            <div class="tool-controls diff-options">
+                <span class="diff-options-title">Options:</span>
+                <label class="option-row option-row-compact">
+                    <input type="checkbox" id="opt-ignore-case"> Ignore Case
                 </label>
-                <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; margin: 0;">
-                    <input type="checkbox" id="opt-trim-whitespace" checked style="margin: 0;"> Ignore Leading/Trailing Whitespace
+                <label class="option-row option-row-compact">
+                    <input type="checkbox" id="opt-trim-whitespace" checked> Ignore Leading/Trailing Whitespace
                 </label>
             </div>
 
-            <div class="tool-panel tool-output-panel" style="margin-top: 20px; display: flex; flex-direction: column;">
-                <label style="font-weight: bold; margin-bottom: 5px;">Diff Output</label>
-                <div id="diff-output" style="border: 1px solid #ccc; border-radius: 4px; background: #fff; min-height: 300px; max-height: 600px; overflow-y: auto; font-family: monospace; font-size: 14px; white-space: pre-wrap; word-break: break-all;">
-                    <div style="padding: 15px; color: #777; font-style: italic;">Diff will appear here instantly...</div>
+            <div class="tool-panel tool-output-panel tool-panel-column tool-mt-20">
+                <label>Diff Output</label>
+                <div id="diff-output" class="tool-output-scroll">
+                    <div class="tool-output-placeholder">Diff will appear here instantly...</div>
                 </div>
             </div>
         </div>
@@ -50,7 +51,7 @@ if (root) {
         let newStr = inputChanged.value;
 
         if (!oldStr && !newStr) {
-            diffOutput.innerHTML = '<div style="padding: 15px; color: #777; font-style: italic;">Diff will appear here instantly...</div>';
+            diffOutput.innerHTML = '<div class="tool-output-placeholder">Diff will appear here instantly...</div>';
             return;
         }
 
@@ -60,7 +61,7 @@ if (root) {
         // Hard cap to prevent memory exhaustion in simple LCS algorithm
         const MAX_LINES = 2500;
         if (oldLines.length > MAX_LINES || newLines.length > MAX_LINES) {
-            diffOutput.innerHTML = `< div style = "padding: 15px; color: #c62828; font-weight: bold;" > Error: File too large.The browser - based diff supports up to ${MAX_LINES} lines max to prevent crashing your tab.</div > `;
+            diffOutput.innerHTML = `<div class="tool-error-strong">Error: File too large. The browser-based diff supports up to ${MAX_LINES} lines max to prevent crashing your tab.</div>`;
             return;
         }
 
@@ -128,11 +129,11 @@ if (root) {
             if (escapedText === "") escapedText = " "; // keep empty lines visible
 
             if (item.type === 'added') {
-                htmlSnippet += `<div style="background-color: #e6ffed; padding: 2px 10px; border-left: 4px solid #388e3c;"><span style="color: #388e3c; margin-right: 10px; user-select: none;">+</span>${escapedText}</div>`;
+                htmlSnippet += `<div class="diff-line diff-line-added"><span class="diff-sign diff-sign-added">+</span>${escapedText}</div>`;
             } else if (item.type === 'removed') {
-                htmlSnippet += `<div style="background-color: #ffeef0; padding: 2px 10px; border-left: 4px solid #c62828;"><span style="color: #c62828; margin-right: 10px; user-select: none;">-</span>${escapedText}</div>`;
+                htmlSnippet += `<div class="diff-line diff-line-removed"><span class="diff-sign diff-sign-removed">-</span>${escapedText}</div>`;
             } else {
-                htmlSnippet += `<div style="padding: 2px 10px; color: #555;"><span style="color: #eee; margin-right: 10px; user-select: none;"> </span>${escapedText}</div>`;
+                htmlSnippet += `<div class="diff-line diff-line-unchanged"><span class="diff-sign diff-sign-unchanged"> </span>${escapedText}</div>`;
             }
         });
 
@@ -151,23 +152,6 @@ if (root) {
     on(optTrimWhitespace, 'change', computeDiff);
 }
 
-// Automatic Paste Binding
-setTimeout(() => {
 
-    const btnPaste = $('#btn-paste');
-    if (btnPaste) {
-        on(btnPaste, 'click', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                const input = $('#input-data') || $('#input-text') || document.querySelector('textarea');
-                if (input) {
-                    input.value = text;
-                    input.dispatchEvent(new Event('input'));
-                }
-            } catch (err) {
-                console.error('Failed to read clipboard', err);
-            }
-        });
-    }
-
-}, 100);
+const btnPaste = $('#btn-paste');
+bindPasteButton(btnPaste, () => $('#input-data') || $('#input-text') || document.querySelector('textarea'));

@@ -1,42 +1,42 @@
 import { $, on } from '../core/dom.js';
-import { copyToClipboard } from '../core/clipboard.js';
+import { bindPasteButton, copyToClipboard } from '../core/clipboard.js';
 
 const root = $('#tool-root');
 if (root) {
     root.innerHTML = `
         <div class="tool-layout">
-            <div class="tool-panel tool-input-panel" style="flex: 1; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <label for="input-data" style="font-weight: bold; margin-top: 0;">Input: Dirty HTML or Text</label>
-                    <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Paste Text</button>
+            <div class="tool-panel tool-input-panel tool-panel-column">
+                <div class="tool-label-row">
+                    <label for="input-data">Input: Dirty HTML or Text</label>
+                    <button id="btn-paste" class="btn secondary btn-sm">Paste Text</button>
                 </div>
-                <textarea id="input-data" autofocus placeholder="Paste messy HTML code or rich text from Word..." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; min-height: 300px;"></textarea>
+                <textarea id="input-data" class="tool-textarea-fill" autofocus placeholder="Paste messy HTML code or rich text from Word..."></textarea>
             </div>
 
-            <div class="tool-controls" style="display: flex; flex-direction: column; justify-content: flex-start; gap: 15px; min-width: 200px;">
-                <div class="settings-group" style="background: #f4f6f8; padding: 15px; border-radius: 8px;">
-                    <h3 style="margin-top: 0; font-size: 14px; margin-bottom: 10px;">Cleaning Mode</h3>
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin: 0;">
-                        <input type="radio" name="mode" value="remove-styles" checked style="margin: 0;">
+            <div class="tool-controls tool-controls-side">
+                <div class="settings-group">
+                    <h3 class="settings-title">Cleaning Mode</h3>
+                    <label class="option-row option-row-first">
+                        <input type="radio" name="mode" value="remove-styles" checked>
                         <span>Remove Inline Styles & Classes</span>
                     </label>
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin-top: 8px; margin-bottom: 0;">
-                        <input type="radio" name="mode" value="strip-tags" style="margin: 0;">
+                    <label class="option-row">
+                        <input type="radio" name="mode" value="strip-tags">
                         <span>Strip All HTML Tags (Plain Text)</span>
                     </label>
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin-top: 8px; margin-bottom: 0;">
-                        <input type="radio" name="mode" value="allowed-tags" style="margin: 0;">
+                    <label class="option-row">
+                        <input type="radio" name="mode" value="allowed-tags">
                         <span>Keep Only Basic Tags (&lt;p&gt;, &lt;b&gt;, &lt;a&gt;)</span>
                     </label>
                 </div>
             </div>
 
-            <div class="tool-panel tool-output-panel" style="flex: 1; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <label for="output-data" style="font-weight: bold;">Output: Clean Result</label>
-                    <button id="btn-copy" class="btn primary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Copy Text</button>
+            <div class="tool-panel tool-output-panel tool-panel-column">
+                <div class="tool-label-row">
+                    <label for="output-data">Output: Clean Result</label>
+                    <button id="btn-copy" class="btn primary btn-sm">Copy Text</button>
                 </div>
-                <textarea id="output-data" readonly placeholder="Cleaned output will appear here instantly..." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9; min-height: 300px;"></textarea>
+                <textarea id="output-data" class="tool-textarea-fill tool-textarea-output" readonly placeholder="Cleaned output will appear here instantly..."></textarea>
             </div>
         </div>
     `;
@@ -104,30 +104,10 @@ if (root) {
     // Copy to clipboard
     on(btnCopy, 'click', () => {
         if (!outputData.value) return;
-        copyToClipboard(outputData.value);
-        const originalText = btnCopy.textContent;
-        btnCopy.textContent = 'Copied!';
-        setTimeout(() => btnCopy.textContent = originalText, 2000);
+        copyToClipboard(outputData.value, btnCopy);
     });
 }
 
-// Automatic Paste Binding
-setTimeout(() => {
 
-    const btnPaste = $('#btn-paste');
-    if (btnPaste) {
-        on(btnPaste, 'click', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                const input = $('#input-data') || $('#input-text') || document.querySelector('textarea');
-                if (input) {
-                    input.value = text;
-                    input.dispatchEvent(new Event('input'));
-                }
-            } catch (err) {
-                console.error('Failed to read clipboard', err);
-            }
-        });
-    }
-
-}, 100);
+const btnPaste = $('#btn-paste');
+bindPasteButton(btnPaste, () => $('#input-data') || $('#input-text') || document.querySelector('textarea'));

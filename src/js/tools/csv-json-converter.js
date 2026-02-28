@@ -1,5 +1,5 @@
 import { $, on, show, hide } from '../core/dom.js';
-import { copyToClipboard } from '../core/clipboard.js';
+import { bindPasteButton, copyToClipboard } from '../core/clipboard.js';
 
 const root = $('#tool-root');
 if (root) {
@@ -26,25 +26,25 @@ if (root) {
 
         <div class="tool-controls">
             <button id="btn-convert" class="btn primary">Convert Now</button>
-            <button id="btn-clear" class="btn secondary" style="width: auto;">Clear</button>
+            <button id="btn-clear" class="btn secondary btn-auto">Clear</button>
         </div>
         <div class="tool-layout-split">
             <div class="input-panel">
-                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <div class="tool-label-row">
                     <label>Input (CSV or JSON)</label>
-                    <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center; margin-top: 0;">Paste</button>
+                    <button id="btn-paste" class="btn secondary btn-sm">Paste</button>
                 </div>
-                <textarea id="input-data" placeholder="Paste CSV or JSON here..." style="width:100%; height:300px; padding:10px; font-family:monospace; margin-bottom: 20px;"></textarea>
+                <textarea id="input-data" class="tool-textarea-lg" placeholder="Paste CSV or JSON here..."></textarea>
             </div>
             <div class="output-panel">
-                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <div class="tool-label-row">
                     <label>Output</label>
-                    <button id="btn-copy" class="btn primary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Copy</button>
+                    <button id="btn-copy" class="btn primary btn-sm">Copy</button>
                 </div>
-                <textarea id="output-data" readonly placeholder="Result will appear here..." style="width:100%; height:300px; padding:10px; font-family:monospace; margin-bottom: 20px;"></textarea>
+                <textarea id="output-data" class="tool-textarea-lg" readonly placeholder="Result will appear here..."></textarea>
             </div>
         </div>
-        <div id="error-msg" class="error hidden" style="margin-top:15px; font-family:monospace; font-size:13px;"></div>
+        <div id="error-msg" class="error hidden tool-error-inline"></div>
     `;
 }
 
@@ -74,37 +74,135 @@ const updateStatus = (state, msg) => {
 };
 
 function csvToJson(csv) {
-    const lines = csv.trim().split(/\r?\n/);
-    if (lines.length < 2) return [];
-    const headers = lines[0].split(',').map(h => h.trim());
-    return lines.slice(1).map(line => {
-        const values = line.split(',').map(v => v.trim());
-        const obj = {};
-        headers.forEach((header, i) => {
-            obj[header] = values[i] || '';
-        });
-        return obj;
+    const rows = parseCsvRows(csv);
+    if (rows.length === 0) return [];
+
+    const headerRow = rows[0];
+    const maxColumns = rows.reduce((max, row) => Math.max(max, row.length), headerRow.length);
+    const headers = Array.from({ length: maxColumns }, (_, i) => {
+        const rawHeader = (headerRow[i] ?? '').trim();
+        return rawHeader || `column_${i + 1}`;
     });
+
+    return rows
+        .slice(1)
+        .filter(row => row.some(cell => cell !== ''))
+        .map(row => {
+            const obj = {};
+            headers.forEach((header, i) => {
+                obj[header] = row[i] ?? '';
+            });
+            return obj;
+        });
 }
 
 function jsonToCsv(json) {
     try {
         const arr = typeof json === 'string' ? JSON.parse(json) : json;
-        if (!Array.isArray(arr) || arr.length === 0) return '';
-        const headers = Object.keys(arr[0]);
+        if (!Array.isArray(arr)) {
+            throw new Error('Expected a JSON array');
+        }
+        if (arr.length === 0) return '';
+
+        const headers = [];
+        const seen = new Set();
+        arr.forEach(item => {
+            if (!item || typeof item !== 'object' || Array.isArray(item)) {
+                throw new Error('Each row must be an object');
+            }
+            Object.keys(item).forEach(key => {
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    headers.push(key);
+                }
+            });
+        });
+
         const csvRows = [];
-        csvRows.push(headers.join(','));
+        csvRows.push(headers.map(escapeCsvField).join(','));
         for (const row of arr) {
             const values = headers.map(header => {
-                const val = row[header] === null ? '' : row[header];
-                return `"${String(val).replace(/"/g, '""')}"`;
+                const val = row[header];
+                return escapeCsvField(val);
             });
             csvRows.push(values.join(','));
         }
         return csvRows.join('\n');
     } catch (e) {
-        throw new Error('Invalid JSON structure for CSV conversion');
+        throw new Error(`Invalid JSON structure for CSV conversion: ${e.message}`);
     }
+}
+
+function parseCsvRows(csv, delimiter = ',') {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let inQuotes = false;
+    const input = String(csv).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    for (let i = 0; i < input.length; i++) {
+        const char = input[i];
+
+        if (char === '"') {
+            if (inQuotes && input[i + 1] === '"') {
+                field += '"';
+                i++;
+            } else {
+                inQuotes = !inQuotes;
+            }
+            continue;
+        }
+
+        if (char === delimiter && !inQuotes) {
+            row.push(field);
+            field = '';
+            continue;
+        }
+
+        if (char === '\n' && !inQuotes) {
+            row.push(field);
+            rows.push(row);
+            row = [];
+            field = '';
+            continue;
+        }
+
+        field += char;
+    }
+
+    if (inQuotes) {
+        throw new Error('Malformed CSV: unmatched quote detected');
+    }
+
+    row.push(field);
+    rows.push(row);
+
+    if (rows.length > 0 && rows[rows.length - 1].every(cell => cell === '')) {
+        rows.pop();
+    }
+
+    return rows;
+}
+
+function escapeCsvField(value) {
+    if (value === null || value === undefined) return '';
+
+    let str = value;
+    if (typeof value === 'object') {
+        str = JSON.stringify(value);
+    }
+    str = String(str);
+
+    const needsQuotes =
+        str.includes('"') ||
+        str.includes(',') ||
+        str.includes('\n') ||
+        str.includes('\r') ||
+        /^\s/.test(str) ||
+        /\s$/.test(str);
+
+    if (!needsQuotes) return str;
+    return `"${str.replace(/"/g, '""')}"`;
 }
 
 function process() {
@@ -167,20 +265,6 @@ on(inputData, 'input', () => {
     }
 });
 
-// Automatic Paste Binding
-setTimeout(() => {
-    const btnPaste = $('#btn-paste');
-    if (btnPaste) {
-        on(btnPaste, 'click', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                if (inputData) {
-                    inputData.value = text;
-                    process();
-                }
-            } catch (err) {
-                console.error('Failed to read clipboard', err);
-            }
-        });
-    }
-}, 100);
+
+const btnPaste = $('#btn-paste');
+bindPasteButton(btnPaste, () => inputData, { onPaste: () => process() });

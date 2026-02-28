@@ -1,24 +1,25 @@
 import { $, on } from '../core/dom.js';
+import { bindPasteButton, copyToClipboard } from '../core/clipboard.js';
 
 const root = $('#tool-root');
 if (root) {
     root.innerHTML = `
         <div class="tool-layout">
-            <div style="display:flex; gap:10px; margin-bottom:20px;">
-                <input type="text" id="input-regex" placeholder="Regular expression (e.g. \\\\d+)" style="flex:1; padding:10px; font-family:monospace;">
-                <input type="text" id="input-flags" placeholder="Flags (e.g. g, i, m)" value="g" style="width:100px; padding:10px; font-family:monospace;">
+            <div class="tool-row mb-20">
+                <input type="text" id="input-regex" class="tool-input-regex" placeholder="Regular expression (e.g. \\\\d+)">
+                <input type="text" id="input-flags" class="tool-input-flags" placeholder="Flags (e.g. g, i, m)" value="g">
             </div>
-            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                <label style="font-weight: bold;">Test String</label>
-                <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Paste Text</button>
+            <div class="tool-label-row">
+                <label>Test String</label>
+                <button id="btn-paste" class="btn secondary btn-sm">Paste Text</button>
             </div>
-            <textarea id="input-text" placeholder="Test string..." style="width:100%; height:300px; padding:10px; font-family:monospace; margin-bottom: 20px;"></textarea>
+            <textarea id="input-text" class="tool-textarea-lg" placeholder="Test string..."></textarea>
             <div class="output-wrapper">
-                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <h3 style="margin: 0; font-size:16px;">Matches</h3>
-                    <button id="btn-copy" class="btn primary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Copy Matches</button>
+                <div class="tool-label-row">
+                    <h3 class="tool-subheading">Matches</h3>
+                    <button id="btn-copy" class="btn primary btn-sm">Copy Matches</button>
                 </div>
-                <pre id="regex-output" style="background:#f4f4f4; padding:15px; min-height:100px; font-family:monospace;"></pre>
+                <pre id="regex-output" class="tool-pre-output"></pre>
             </div>
         </div>
     `;
@@ -71,30 +72,10 @@ const outCopyBtn = $('#btn-copy');
 if (outCopyBtn) {
     on(outCopyBtn, 'click', () => {
         if (!outRegex.textContent) return;
-        navigator.clipboard.writeText(outRegex.textContent);
-        const originalText = outCopyBtn.textContent;
-        outCopyBtn.textContent = 'Copied!';
-        setTimeout(() => outCopyBtn.textContent = originalText, 2000);
+        copyToClipboard(outRegex.textContent, outCopyBtn);
     });
 }
 
-// Automatic Paste Binding
-setTimeout(() => {
 
-    const btnPaste = $('#btn-paste');
-    if (btnPaste) {
-        on(btnPaste, 'click', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                const input = $('#input-data') || $('#input-text') || document.querySelector('textarea');
-                if (input) {
-                    input.value = text;
-                    input.dispatchEvent(new Event('input'));
-                }
-            } catch (err) {
-                console.error('Failed to read clipboard', err);
-            }
-        });
-    }
-
-}, 100);
+const btnPaste = $('#btn-paste');
+bindPasteButton(btnPaste, () => $('#input-data') || $('#input-text') || document.querySelector('textarea'));

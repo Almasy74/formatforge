@@ -1,52 +1,52 @@
 import { $, on } from '../core/dom.js';
-import { copyToClipboard } from '../core/clipboard.js';
+import { bindPasteButton, copyToClipboard } from '../core/clipboard.js';
 
 const root = $('#tool-root');
 if (root) {
     root.innerHTML = `
         <div class="tool-layout">
-            <div class="tool-panel tool-input-panel" style="flex: 1; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <label for="input-data" style="font-weight: bold; margin-top: 0;">Input: List with Duplicates</label>
-                    <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Paste Text</button>
+            <div class="tool-panel tool-input-panel tool-panel-column">
+                <div class="tool-label-row">
+                    <label for="input-data">Input: List with Duplicates</label>
+                    <button id="btn-paste" class="btn secondary btn-sm">Paste Text</button>
                 </div>
-                <textarea id="input-data" autofocus placeholder="Paste list containing duplicate items, one per line..." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; min-height: 300px;"></textarea>
+                <textarea id="input-data" class="tool-textarea-fill" autofocus placeholder="Paste list containing duplicate items, one per line..."></textarea>
             </div>
 
-            <div class="tool-controls" style="display: flex; flex-direction: column; justify-content: flex-start; gap: 15px; min-width: 200px;">
-                <div class="settings-group" style="background: #f4f6f8; padding: 15px; border-radius: 8px;">
-                    <h3 style="margin-top: 0; font-size: 14px; margin-bottom: 10px;">Options</h3>
+            <div class="tool-controls tool-controls-side">
+                <div class="settings-group">
+                    <h3 class="settings-title">Options</h3>
                     
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                    <label class="option-row">
                         <input type="checkbox" id="option-sort" value="sort">
                         <span>Sort alphabetically</span>
                     </label>
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin-top: 8px;">
+                    <label class="option-row">
                         <input type="checkbox" id="option-ignore-case" value="ignore-case">
                         <span>Case-insensitive deduplication</span>
                     </label>
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin-top: 8px;">
+                    <label class="option-row">
                         <input type="checkbox" id="option-trim" value="trim" checked>
                         <span>Trim whitespace</span>
                     </label>
                 </div>
 
-                <div style="background: #f4f6f8; padding: 15px; border-radius: 8px; text-align: center;">
-                    <span style="font-size: 12px; color: #555; text-transform: uppercase;">Removed</span>
-                    <div id="stat-removed" style="font-size: 24px; font-weight: bold; margin-top: 5px; color: #d32f2f;">0</div>
+                <div class="stat-card">
+                    <span class="stat-label">Removed</span>
+                    <div id="stat-removed" class="stat-value stat-value-danger">0</div>
                 </div>
-                <div style="background: #f4f6f8; padding: 15px; border-radius: 8px; text-align: center;">
-                    <span style="font-size: 12px; color: #555; text-transform: uppercase;">Unique Remaining</span>
-                    <div id="stat-unique" style="font-size: 24px; font-weight: bold; margin-top: 5px; color: #388e3c;">0</div>
+                <div class="stat-card">
+                    <span class="stat-label">Unique Remaining</span>
+                    <div id="stat-unique" class="stat-value stat-value-success">0</div>
                 </div>
             </div>
 
-            <div class="tool-panel tool-output-panel" style="flex: 1; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <label for="output-data" style="font-weight: bold;">Output: Unique List</label>
-                    <button id="btn-copy" class="btn primary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Copy List</button>
+            <div class="tool-panel tool-output-panel tool-panel-column">
+                <div class="tool-label-row">
+                    <label for="output-data">Output: Unique List</label>
+                    <button id="btn-copy" class="btn primary btn-sm">Copy List</button>
                 </div>
-                <textarea id="output-data" readonly placeholder="Unique lines will appear here instantly..." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9; min-height: 300px;"></textarea>
+                <textarea id="output-data" class="tool-textarea-fill tool-textarea-output" readonly placeholder="Unique lines will appear here instantly..."></textarea>
             </div>
         </div>
     `;
@@ -124,30 +124,10 @@ if (root) {
     // Copy to clipboard
     on(btnCopy, 'click', () => {
         if (!outputData.value) return;
-        copyToClipboard(outputData.value);
-        const originalText = btnCopy.textContent;
-        btnCopy.textContent = 'Copied!';
-        setTimeout(() => btnCopy.textContent = originalText, 2000);
+        copyToClipboard(outputData.value, btnCopy);
     });
 }
 
-// Automatic Paste Binding
-setTimeout(() => {
 
-    const btnPaste = $('#btn-paste');
-    if (btnPaste) {
-        on(btnPaste, 'click', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                const input = $('#input-data') || $('#input-text') || document.querySelector('textarea');
-                if (input) {
-                    input.value = text;
-                    input.dispatchEvent(new Event('input'));
-                }
-            } catch (err) {
-                console.error('Failed to read clipboard', err);
-            }
-        });
-    }
-
-}, 100);
+const btnPaste = $('#btn-paste');
+bindPasteButton(btnPaste, () => $('#input-data') || $('#input-text') || document.querySelector('textarea'));

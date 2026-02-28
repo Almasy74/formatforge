@@ -1,18 +1,19 @@
 import { $, on } from '../core/dom.js';
+import { bindPasteButton } from '../core/clipboard.js';
 
 const root = $('#tool-root');
 if (root) {
     root.innerHTML = `
-        <div class="tool-controls" style="margin-bottom: 20px;">
+        <div class="tool-controls mb-20">
             <button id="btn-compare" class="btn primary">Compare Text</button>
         </div>
-        <div class="tool-layout-split" style="display:flex; gap:20px; margin-bottom: 20px;">
-            <textarea id="input-original" placeholder="Original text..." style="width:50%; height:300px; padding:10px; font-family:monospace;"></textarea>
-            <textarea id="input-modified" placeholder="Modified text..." style="width:50%; height:300px; padding:10px; font-family:monospace;"></textarea>
+        <div class="tool-layout-split compare-input-grid">
+            <textarea id="input-original" class="tool-textarea-lg" placeholder="Original text..."></textarea>
+            <textarea id="input-modified" class="tool-textarea-lg" placeholder="Modified text..."></textarea>
         </div>
         <div class="output-wrapper">
             <h3>Differences:</h3>
-            <div id="diff-output" class="diff-viewer" style="background:#f4f4f4; padding:15px; min-height:200px; font-family:monospace;"></div>
+            <div id="diff-output" class="diff-viewer tool-pre-output tool-min-h-200"></div>
         </div>
     `;
 }
@@ -33,32 +34,15 @@ on(btnCompare, 'click', () => {
         const mLine = modLines[i] !== undefined ? modLines[i] : null;
 
         if (oLine === mLine) {
-            html += `<div style="color:#666;">  ${oLine}</div>`;
+            html += `<div class="diff-line diff-line-unchanged">  ${oLine}</div>`;
         } else {
-            if (oLine !== null) html += `<div style="color:#d32f2f; background:#ffebee;">- ${oLine}</div>`;
-            if (mLine !== null) html += `<div style="color:#2e7d32; background:#e8f5e9;">+ ${mLine}</div>`;
+            if (oLine !== null) html += `<div class="diff-line diff-line-removed"><span class="diff-sign diff-sign-removed">-</span>${oLine}</div>`;
+            if (mLine !== null) html += `<div class="diff-line diff-line-added"><span class="diff-sign diff-sign-added">+</span>${mLine}</div>`;
         }
     }
     outDiff.innerHTML = html;
 });
 
-// Automatic Paste Binding
-setTimeout(() => {
 
-    const btnPaste = $('#btn-paste');
-    if (btnPaste) {
-        on(btnPaste, 'click', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                const input = $('#input-data') || $('#input-text') || document.querySelector('textarea');
-                if (input) {
-                    input.value = text;
-                    input.dispatchEvent(new Event('input'));
-                }
-            } catch (err) {
-                console.error('Failed to read clipboard', err);
-            }
-        });
-    }
-
-}, 100);
+const btnPaste = $('#btn-paste');
+bindPasteButton(btnPaste, () => $('#input-data') || $('#input-text') || document.querySelector('textarea'));

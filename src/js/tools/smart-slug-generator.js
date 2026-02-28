@@ -1,44 +1,44 @@
 import { $, on } from '../core/dom.js';
-import { copyToClipboard } from '../core/clipboard.js';
+import { bindPasteButton, copyToClipboard } from '../core/clipboard.js';
 
 const root = $('#tool-root');
 if (root) {
     root.innerHTML = `
         <div class="tool-layout">
-            <div class="tool-panel tool-input-panel" style="flex: 1; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <label for="input-data" style="font-weight: bold; margin-top: 0;">Input: Title or Text</label>
-                    <button id="btn-paste" class="btn secondary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Paste Text</button>
+            <div class="tool-panel tool-input-panel tool-panel-column">
+                <div class="tool-label-row">
+                    <label for="input-data">Input: Title or Text</label>
+                    <button id="btn-paste" class="btn secondary btn-sm">Paste Text</button>
                 </div>
-                <textarea id="input-data" autofocus placeholder="Type or paste your text here to generate a slug..." style="flex: 1; padding: 10px; font-family: monospace; resize: none; border: 1px solid #ccc; border-radius: 4px; min-height: 300px; font-size: 16px;"></textarea>
+                <textarea id="input-data" class="tool-textarea-fill tool-text-lg" autofocus placeholder="Type or paste your text here to generate a slug..."></textarea>
             </div>
 
-            <div class="tool-controls" style="display: flex; flex-direction: column; justify-content: flex-start; gap: 15px; min-width: 200px;">
-                <div class="settings-group" style="background: #f4f6f8; padding: 15px; border-radius: 8px;">
-                    <h3 style="margin-top: 0; font-size: 14px; margin-bottom: 10px;">Slug Options</h3>
+            <div class="tool-controls tool-controls-side">
+                <div class="settings-group">
+                    <h3 class="settings-title">Slug Options</h3>
                     
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin-bottom: 10px;">
-                        <select id="opt-separator" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
+                    <label class="option-row">
+                        <select id="opt-separator" class="tool-select-sm">
                             <option value="-">Hyphen (-)</option>
                             <option value="_">Underscore (_)</option>
                         </select>
                         <span>Word Separator</span>
                     </label>
 
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                    <label class="option-row">
                         <input type="checkbox" id="opt-remove-stopwords" value="true" checked>
                         <span>Remove Stop Words</span>
                     </label>
-                    <p style="font-size: 11px; color: #777; margin: 4px 0 0 24px;">Removes words like 'a', 'the', 'and', 'or', 'in'.</p>
+                    <p class="tool-help-text">Removes words like 'a', 'the', 'and', 'or', 'in'.</p>
                 </div>
             </div>
 
-            <div class="tool-panel tool-output-panel" style="flex: 1; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <label for="output-data" style="font-weight: bold;">Output: URL Slug</label>
-                    <button id="btn-copy" class="btn primary btn-sm" style="padding: 4px 12px; font-size: 13px; width: auto; align-self: center;">Copy Slug</button>
+            <div class="tool-panel tool-output-panel tool-panel-column">
+                <div class="tool-label-row">
+                    <label for="output-data">Output: URL Slug</label>
+                    <button id="btn-copy" class="btn primary btn-sm">Copy Slug</button>
                 </div>
-                <textarea id="output-data" readonly placeholder="your-generated-slug-appears-here" style="flex: 1; padding: 10px; font-family: monospace; font-size: 16px; resize: none; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9; min-height: 300px;"></textarea>
+                <textarea id="output-data" class="tool-textarea-fill tool-textarea-output tool-text-lg" readonly placeholder="your-generated-slug-appears-here"></textarea>
             </div>
         </div>
     `;
@@ -100,30 +100,10 @@ if (root) {
     // Copy to clipboard
     on(btnCopy, 'click', () => {
         if (!outputData.value) return;
-        copyToClipboard(outputData.value);
-        const originalText = btnCopy.textContent;
-        btnCopy.textContent = 'Copied!';
-        setTimeout(() => btnCopy.textContent = originalText, 2000);
+        copyToClipboard(outputData.value, btnCopy);
     });
 }
 
-// Automatic Paste Binding
-setTimeout(() => {
 
-    const btnPaste = $('#btn-paste');
-    if (btnPaste) {
-        on(btnPaste, 'click', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                const input = $('#input-data') || $('#input-text') || document.querySelector('textarea');
-                if (input) {
-                    input.value = text;
-                    input.dispatchEvent(new Event('input'));
-                }
-            } catch (err) {
-                console.error('Failed to read clipboard', err);
-            }
-        });
-    }
-
-}, 100);
+const btnPaste = $('#btn-paste');
+bindPasteButton(btnPaste, () => $('#input-data') || $('#input-text') || document.querySelector('textarea'));
