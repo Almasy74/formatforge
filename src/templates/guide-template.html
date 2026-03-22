@@ -56,12 +56,89 @@
             font-size: 0.9em;
         }
 
+        .guide-article pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+
+        .guide-article pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+            font-size: inherit;
+        }
+
         .guide-article blockquote {
             border-left: 4px solid var(--accent-color);
             padding-left: 20px;
             font-style: italic;
             color: #64748b;
             margin: 30px 0;
+        }
+
+        .guide-article table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .guide-article table th,
+        .guide-article table td {
+            padding: 12px 16px;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+        }
+
+        .guide-article table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .guide-article table tr:nth-child(even) {
+            background: #fafbfc;
+        }
+
+        .guide-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .guide-meta-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .guide-faq details {
+            margin-bottom: 12px;
+            background: #f9f9f9;
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .guide-faq summary {
+            cursor: pointer;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .guide-faq details p {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -76,6 +153,14 @@
                 style="font-family: var(--mono-font); color: var(--accent-color); font-size: 14px; margin-bottom: 10px;">
                 FORMATFORGE // KNOWLEDGE_BASE</div>
             <h1 style="font-size: 2.5rem; line-height: 1.2;">[TITLE]</h1>
+            <div class="guide-meta" style="margin-top: 12px;">
+                <span class="guide-meta-badge" style="background: #dcfce7; color: #14532d;">
+                    <svg style="width:14px;height:14px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2l6 3v4c0 4.418-2.686 8-6 8s-6-3.582-6-8V5l6-3z" clip-rule="evenodd"></path></svg>
+                    Runs locally in your browser
+                </span>
+                <span class="guide-meta-badge" style="background: #e0f2fe; color: #0c4a6e;">Updated: March 2026</span>
+                <span class="guide-meta-badge" style="background: #f1f5f9; color: #475569;">No data upload required</span>
+            </div>
         </header>
 
         <article class="guide-article">

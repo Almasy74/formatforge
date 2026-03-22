@@ -1,82 +1,92 @@
 [
-    {
-        "id": "remove-line-breaks",
-        "title": "How to Remove Line Breaks from Text: 3 Pro Methods",
-        "description": "A deep dive into cleaning text by removing unwanted carriage returns and newline characters while preserving readability.",
-        "path": "/guides/remove-line-breaks/",
-        "relatedTools": [
-            "remove-line-breaks",
-            "text-analyzer"
-        ]
-    },
-    {
-        "id": "json-formatting",
-        "title": "Mastering JSON Formatting and Minification",
-        "description": "Learn why JSON formatting matters for debugging and how to effectively minify data for production performance.",
-        "path": "/guides/json-formatting/",
-        "relatedTools": [
-            "json-formatter",
-            "csv-json-converter"
-        ]
-    },
-    {
-        "id": "text-cleaning",
-        "title": "The Ultimate Guide to Text Cleaning and Normalization",
-        "description": "How to prepare text data for AI models, databases, or content publishing by removing noise and duplicates.",
-        "path": "/guides/text-cleaning/",
-        "relatedTools": [
-            "remove-duplicate-lines",
-            "html-cleaner",
-            "text-analyzer"
-        ]
-    },
-    {
-        "id": "data-format-conversion",
-        "title": "Converting Between CSV and JSON: When and Why",
-        "description": "Understanding the structural differences between tabular data (CSV) and hierarchical data (JSON) and how to convert them.",
-        "path": "/guides/data-format-conversion/",
-        "relatedTools": [
-            "csv-json-converter"
-        ]
-    },
-    {
-        "id": "regex-basics",
-        "title": "Regex Basics: Regular Expressions for Beginners",
-        "description": "A non-intimidating introduction to the powerful world of pattern matching and how to use it in your daily text work.",
-        "path": "/guides/regex-basics/",
-        "relatedTools": [
-            "regex-tester",
-            "html-cleaner"
-        ]
-    },
-    {
-        "id": "unicode-normalization",
-        "title": "Unicode Normalization: Handling NFC and NFD Forms",
-        "description": "Learn how to detect and fix hidden character encoding issues that can break database queries and search algorithms.",
-        "path": "/guides/unicode-normalization/",
-        "relatedTools": [
-            "text-analyzer",
-            "url-encoder-decoder"
-        ]
-    },
-    {
-        "id": "data-deduplication",
-        "title": "Advanced Data Deduplication and List Merging Strategies",
-        "description": "Strategies for cleaning massive datasets by removing near-duplicates and normalizing keys for accurate merging.",
-        "path": "/guides/data-deduplication/",
-        "relatedTools": [
-            "remove-duplicate-lines",
-            "text-diff-checker"
-        ]
-    },
-    {
-        "id": "regex-debugging",
-        "title": "Debugging Regular Expression Patterns for Data Transformation",
-        "description": "A field manual for troubleshooting regex patterns that fail on complex edge cases like multiline logs or escaped characters.",
-        "path": "/guides/regex-debugging/",
-        "relatedTools": [
-            "regex-tester",
-            "text-analyzer"
-        ]
-    }
+  {
+    "id": "remove-line-breaks",
+    "title": "How to Remove Line Breaks from Text: 3 Pro Methods",
+    "description": "A deep dive into cleaning text by removing unwanted carriage returns and newline characters while preserving readability.",
+    "path": "/guides/remove-line-breaks/",
+    "relatedTools": [
+      "remove-line-breaks",
+      "text-analyzer"
+    ]
+  },
+  {
+    "id": "json-formatting",
+    "title": "Mastering JSON Formatting and Minification",
+    "description": "Learn the difference between JSON formatting and minification, when to use each, common JSON syntax errors, and how to debug malformed payloads. Includes code examples and comparison tables.",
+    "path": "/guides/json-formatting/",
+    "relatedTools": [
+      "json-formatter",
+      "json-validator",
+      "json-minifier",
+      "csv-json-converter",
+      "xml-json-converter"
+    ]
+  },
+  {
+    "id": "text-cleaning",
+    "title": "The Ultimate Guide to Text Cleaning and Normalization",
+    "description": "How to prepare text data for AI models, databases, or content publishing by removing noise and duplicates.",
+    "path": "/guides/text-cleaning/",
+    "relatedTools": [
+      "remove-duplicate-lines",
+      "html-cleaner",
+      "text-analyzer",
+      "remove-line-breaks",
+      "case-converter"
+    ]
+  },
+  {
+    "id": "data-format-conversion",
+    "title": "Converting Between CSV and JSON: When and Why",
+    "description": "Understanding the structural differences between tabular data (CSV) and hierarchical data (JSON) and how to convert them.",
+    "path": "/guides/data-format-conversion/",
+    "relatedTools": [
+      "csv-json-converter"
+    ]
+  },
+  {
+    "id": "regex-basics",
+    "title": "Regex Basics: Regular Expressions for Beginners",
+    "description": "A non-intimidating introduction to the powerful world of pattern matching and how to use it in your daily text work.",
+    "path": "/guides/regex-basics/",
+    "relatedTools": [
+      "regex-tester",
+      "html-cleaner",
+      "remove-line-breaks",
+      "remove-duplicate-lines"
+    ]
+  },
+  {
+    "id": "unicode-normalization",
+    "title": "Unicode Normalization: Handling NFC and NFD Forms",
+    "description": "A comprehensive guide to Unicode normalization forms (NFC, NFD, NFKC, NFKD), with comparison tables, code examples in JavaScript and Python, and common failure scenarios in databases, search indexing, and slug generation.",
+    "path": "/guides/unicode-normalization/",
+    "relatedTools": [
+      "text-analyzer",
+      "url-encoder-decoder",
+      "smart-slug-generator",
+      "remove-line-breaks"
+    ]
+  },
+  {
+    "id": "data-deduplication",
+    "title": "Advanced Data Deduplication and List Merging Strategies",
+    "description": "Strategies for cleaning massive datasets by removing near-duplicates and normalizing keys for accurate merging.",
+    "path": "/guides/data-deduplication/",
+    "relatedTools": [
+      "remove-duplicate-lines",
+      "text-diff-checker"
+    ]
+  },
+  {
+    "id": "regex-debugging",
+    "title": "Debugging Regular Expression Patterns for Data Transformation",
+    "description": "A field manual for troubleshooting regex patterns that fail on complex edge cases like multiline logs or escaped characters.",
+    "path": "/guides/regex-debugging/",
+    "relatedTools": [
+      "regex-tester",
+      "text-analyzer",
+      "remove-line-breaks"
+    ]
+  }
 ]

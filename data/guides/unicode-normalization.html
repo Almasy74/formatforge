@@ -1,58 +1,238 @@
-<h2>The Invisible Ghost: Unicode Normalization in Data Pipelines</h2>
-<p>In a technical workshop, few bugs are as frustrating as the "Identity Paradox"—where two pieces of text look
-    identical on your screen but fail an equality check in your database. This is usually a sign of mismatched
-    <strong>Unicode Normalization Forms</strong>.</p>
+<h2>What Is Unicode Normalization?</h2>
+<p><strong>Unicode normalization is the process of converting Unicode text into a single, consistent byte representation so that visually identical characters always produce the same byte sequence.</strong> This matters because Unicode allows many characters — like accented letters, ligatures, and symbols — to be encoded in more than one way. Without normalization, two strings that look identical on screen can fail equality checks, break database lookups, and produce inconsistent search results.</p>
 
-<section class="usage-scenario">
-    <h3>NFC vs. NFD: The Canonical Split</h3>
-    <p>Unicode allows some characters to be represented in multiple ways. For example, the character `é` can be a single
-        code point (NFC - Combined) or a base `e` followed by a combining accent (NFD - Decomposed). While users see the
-        same glyph, your code sees different byte sequences. Our <a href="/text/analyzer/">Text Analyzer Workshop</a>
-        helps detect these hidden artifacts before they poison your dataset.</p>
-</section>
+<p>The Unicode Standard defines four normalization forms: <strong>NFC</strong>, <strong>NFD</strong>, <strong>NFKC</strong>, and <strong>NFKD</strong>. The two most important for everyday development are NFC (composed) and NFD (decomposed). Understanding the difference between them — and knowing when each causes problems — is the key to avoiding subtle encoding bugs in your applications.</p>
 
-<h2>Workshop Benchmarks: The Normalization Audit</h2>
+<h2>NFC vs NFD: The Core Difference</h2>
+<p><strong>NFC (Canonical Decomposition, followed by Canonical Composition)</strong> combines base characters and their combining marks into single precomposed code points wherever possible. <strong>NFD (Canonical Decomposition)</strong> does the opposite — it splits precomposed characters into their base character plus separate combining marks.</p>
+
 <table>
     <thead>
         <tr>
-            <th>artifact Type</th>
-            <th>The Risk</th>
-            <th>The Fix</th>
+            <th>Property</th>
+            <th>NFC (Composed)</th>
+            <th>NFD (Decomposed)</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td><strong>NFD (Decomposed)</strong></td>
-            <td>Database lookups fail; regex patterns don't match.</td>
-            <td>Normalize to NFC for production storage.</td>
+            <td><strong>How it stores <code>é</code></strong></td>
+            <td><code>U+00E9</code> (1 code point)</td>
+            <td><code>U+0065 U+0301</code> (2 code points)</td>
         </tr>
         <tr>
-            <td><strong>Zero-Width Joiners</strong></td>
-            <td>Hidden "ghost" characters that mess up string lengths.</td>
-            <td>Strip non-printing characters during pre-processing.</td>
+            <td><strong>Byte length (UTF-8)</strong></td>
+            <td>2 bytes</td>
+            <td>3 bytes</td>
         </tr>
         <tr>
-            <td><strong>BOM Artifacts</strong></td>
-            <td>Header noise that breaks some CSV parsers.</td>
-            <td>Detect and remove Byte Order Marks at the start of pipes.</td>
+            <td><strong>Visual appearance</strong></td>
+            <td>é</td>
+            <td>é (identical)</td>
+        </tr>
+        <tr>
+            <td><strong>String equality</strong></td>
+            <td colspan="2">NFC ≠ NFD without normalization</td>
+        </tr>
+        <tr>
+            <td><strong>Best for</strong></td>
+            <td>Storage, databases, APIs, search indexing</td>
+            <td>Text analysis, character-level processing</td>
+        </tr>
+        <tr>
+            <td><strong>Default in</strong></td>
+            <td>W3C, HTML, most databases</td>
+            <td>macOS HFS+ filenames</td>
         </tr>
     </tbody>
 </table>
 
-<h3>Practical Example: The Equality Trap</h3>
-<pre><code>// Visual: "é" vs "é"
-// Logical (NFC): \u00E9
-// Logical (NFD): \u0065\u0301
+<h2>All Four Unicode Normalization Forms</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Form</th>
+            <th>Full Name</th>
+            <th>What It Does</th>
+            <th>Use Case</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>NFC</strong></td>
+            <td>Canonical Decomposition + Composition</td>
+            <td>Decomposes then recomposes into shortest form</td>
+            <td>Standard storage, web, databases</td>
+        </tr>
+        <tr>
+            <td><strong>NFD</strong></td>
+            <td>Canonical Decomposition</td>
+            <td>Fully decomposes into base + combining marks</td>
+            <td>Character analysis, sorting</td>
+        </tr>
+        <tr>
+            <td><strong>NFKC</strong></td>
+            <td>Compatibility Decomposition + Composition</td>
+            <td>Like NFC, but also replaces compatibility characters (ﬁ→fi, ²→2)</td>
+            <td>Search indexing, identifier comparison</td>
+        </tr>
+        <tr>
+            <td><strong>NFKD</strong></td>
+            <td>Compatibility Decomposition</td>
+            <td>Like NFD, but also decomposes compatibility characters</td>
+            <td>Full text decomposition, phonetic analysis</td>
+        </tr>
+    </tbody>
+</table>
 
-if ("\u00E9" === "\u0065\u301") {
-   // This returns FALSE without normalization
+<h2>When to Use NFC</h2>
+<p>NFC is the default recommendation for almost all production scenarios. The W3C recommends NFC for all web content. Use NFC when you need:</p>
+<ul>
+    <li><strong>Database storage</strong> — consistent byte representation ensures <code>WHERE name = 'café'</code> matches every time</li>
+    <li><strong>Search indexing</strong> — normalized terms prevent missed matches when users type accented queries</li>
+    <li><strong>URL <a href="/dev/slug-generator/">slug generation</a></strong> — NFC ensures consistent transliteration of diacritics before slug creation</li>
+    <li><strong>API payloads</strong> — consistent encoding prevents checksum and signature mismatches</li>
+    <li><strong>User authentication</strong> — username and password comparison must normalize first to avoid false rejections</li>
+</ul>
+
+<h2>When NFD Causes Problems</h2>
+<p>NFD is rarely the right default, but it appears more often than you might expect — macOS's HFS+ filesystem stores filenames in NFD form, and some text editors preserve decomposed input. Here are common failure scenarios:</p>
+
+<ul>
+    <li><strong>Regex doesn't match</strong> — the pattern <code>/[a-z]/</code> matches the base <code>e</code> in NFD but not the combining accent <code>U+0301</code>, causing partial matches</li>
+    <li><strong>String length is wrong</strong> — <code>"é".length</code> returns 1 in NFC but 2 in NFD, breaking character limits and truncation logic</li>
+    <li><strong>Database lookups fail</strong> — if one row was inserted as NFC and another as NFD, a <code>SELECT DISTINCT</code> query returns "duplicates" that look identical</li>
+    <li><strong>File deduplication breaks</strong> — two files with the same NFD name on macOS and NFC name on Windows appear as different files in version control</li>
+    <li><strong><a href="/text/text-analyzer/">Text analysis</a></strong> gives inflated character counts when combining marks are counted separately</li>
+</ul>
+
+<h2>Code Examples</h2>
+<h3>JavaScript — String.prototype.normalize()</h3>
+<pre><code>// The "Identity Paradox" — looks the same, fails equality
+const nfc = "\u00E9";           // é as precomposed (NFC)
+const nfd = "e\u0301";          // e + combining acute accent (NFD)
+
+console.log(nfc === nfd);       // false — different byte sequences!
+console.log(nfc.length);        // 1
+console.log(nfd.length);        // 2
+
+// Fix: normalize both to the same form
+console.log(nfc === nfd.normalize("NFC"));  // true ✓
+
+// Practical pattern: always normalize user input
+function sanitizeInput(text) {
+    return text.normalize("NFC").trim();
+}
+
+// Slug generation: normalize before transliteration
+function toSlug(title) {
+    return title
+        .normalize("NFC")
+        .toLowerCase()
+        .replace(/[\u0300-\u036f]/g, "")  // strip combining marks
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
 }</code></pre>
 
-<h2>Bidirectional Strategy: Analyze → Normalize</h2>
-<p>Before you perform massive search-and-replace operations with our <a href="/tools/regex-tester/">Regex Workshop</a>,
-    we recommend running a normalization pass. This ensures that your regex patterns (like <code>[a-z]</code>) aren't
-    bypassed by decomposed characters that split the base letter from its accent.</p>
+<h3>Python — unicodedata.normalize()</h3>
+<pre><code>import unicodedata
 
-<p><strong>Workshop Pro-Tip:</strong> Modern LLMs are surprisingly sensitive to normalization forms. "Cleaning" your
-    prompt data to a consistent NFC form can slightly reduce token usage and improve model predictability in
-    multilingual contexts.</p>
+nfc = "\u00E9"                    # é precomposed
+nfd = "e\u0301"                   # e + combining acute
+
+print(nfc == nfd)                 # False
+print(len(nfc), len(nfd))         # 1 2
+
+# Normalize to NFC
+normalized = unicodedata.normalize("NFC", nfd)
+print(nfc == normalized)          # True ✓
+
+# Remove all diacritics (useful for search indexing)
+def strip_accents(text):
+    nfkd = unicodedata.normalize("NFKD", text)
+    return "".join(c for c in nfkd if not unicodedata.combining(c))
+
+print(strip_accents("café résumé"))  # "cafe resume"
+
+# Database normalization pattern
+def db_normalize(value):
+    """Normalize text before database INSERT or comparison."""
+    if isinstance(value, str):
+        return unicodedata.normalize("NFC", value).strip()
+    return value</code></pre>
+
+<h2>Common Failures and How to Fix Them</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Failure Scenario</th>
+            <th>Root Cause</th>
+            <th>Fix</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Database lookup returns no results for accented names</td>
+            <td>Data was inserted as NFD, query uses NFC (or vice versa)</td>
+            <td>Normalize all input to NFC before INSERT and before SELECT</td>
+        </tr>
+        <tr>
+            <td>Regex <code>/^[a-z]+$/</code> fails on "café"</td>
+            <td>NFD decomposes é into <code>e</code> + combining mark, which doesn't match <code>[a-z]</code> range</td>
+            <td>Normalize to NFC first, or use Unicode-aware regex <code>/^\p{L}+$/u</code></td>
+        </tr>
+        <tr>
+            <td>Search index treats "café" and "café" as different terms</td>
+            <td>One source provides NFC, another provides NFD</td>
+            <td>Normalize to NFC at indexing time and at query time</td>
+        </tr>
+        <tr>
+            <td><a href="/dev/slug-generator/">Slug generator</a> produces different URLs for the same title</td>
+            <td>Accented characters have different byte representations</td>
+            <td>Always <code>.normalize("NFC")</code> before slug conversion</td>
+        </tr>
+        <tr>
+            <td>String length validation rejects valid input</td>
+            <td>NFD uses 2+ code points per character, exceeding maxlength</td>
+            <td>Normalize to NFC before length checks</td>
+        </tr>
+        <tr>
+            <td>Zero-width characters inflate word/character counts</td>
+            <td>Hidden joiners (U+200D) and non-joiners (U+200C) add invisible length</td>
+            <td>Strip zero-width characters in preprocessing — use our <a href="/text/text-analyzer/">Text Analyzer</a> to detect them</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Frequently Asked Questions</h2>
+<div class="guide-faq">
+    <details>
+        <summary>Should I always use NFC?</summary>
+        <p>For storage, databases, web content, and APIs: yes, NFC is the W3C and Unicode Consortium's default recommendation. Use NFD only when you specifically need character-level decomposition (e.g., removing accents for search indexing).</p>
+    </details>
+    <details>
+        <summary>Does JavaScript normalize strings automatically?</summary>
+        <p>No. JavaScript strings preserve whatever form they were created in. You must explicitly call <code>.normalize("NFC")</code> to convert. This applies to user input, fetch responses, and file content alike.</p>
+    </details>
+    <details>
+        <summary>What about NFKC and NFKD — when do I need those?</summary>
+        <p>NFKC and NFKD also handle "compatibility" equivalences — for example, converting the ligature <code>ﬁ</code> to <code>fi</code>, or the superscript <code>²</code> to <code>2</code>. Use NFKC for search indexing or username comparison where you want maximum compatibility. Avoid it for display text, since it can change visual meaning.</p>
+    </details>
+    <details>
+        <summary>How do I detect normalization issues in existing data?</summary>
+        <p>Paste your text into <a href="/text/text-analyzer/">FormatForge's Text Analyzer</a> to inspect character counts and detect hidden combining marks or zero-width characters. If a string's character count differs from its visual length, you likely have normalization inconsistencies.</p>
+    </details>
+    <details>
+        <summary>Do databases normalize Unicode automatically?</summary>
+        <p>Most do not. PostgreSQL, MySQL, and SQLite store strings as-is. You must normalize in your application layer before INSERT and before comparison queries. Some collations treat NFC and NFD as equal for sorting, but byte-level comparison (used in <code>WHERE</code> clauses and unique constraints) does not.</p>
+    </details>
+</div>
+
+<h2>Related Tools & Next Steps</h2>
+<p>Put these concepts into practice with FormatForge's privacy-first tools:</p>
+<ul>
+    <li><a href="/text/text-analyzer/">Text Analyzer</a> — detect hidden combining marks, zero-width characters, and character count anomalies</li>
+    <li><a href="/dev/slug-generator/">Slug Generator</a> — generate normalized, URL-safe slugs from titles with accented characters</li>
+    <li><a href="/text/remove-line-breaks/">Remove Line Breaks</a> — clean text from PDFs and emails before normalization</li>
+    <li><a href="/dev/url-encode-decode/">URL Encoder/Decoder</a> — handle percent-encoded Unicode in URLs and query strings</li>
+</ul>

@@ -14,19 +14,37 @@
       "id": "text",
       "label": "Text Tools",
       "hubPath": "/text/",
-      "description": "Clean, transform, and analyze text with fast no-login tools."
+      "description": "Clean, transform, and analyze text with fast no-login tools.",
+      "seo": {
+        "title": "Text Cleaning & Analysis Tools — Online, Private | FormatForge",
+        "h1": "Text Cleaning & Analysis Tools",
+        "metaDescription": "Free online tools to clean text, remove line breaks, strip HTML, analyze readability, convert case, and deduplicate lines. All processing runs locally in your browser.",
+        "intro": "FormatForge Text Tools help you clean, transform, and analyze text data entirely in your browser. Remove formatting artifacts from PDFs and emails, strip HTML noise, convert between case styles, deduplicate lists, and get instant readability metrics — without uploading a single character."
+      }
     },
     {
       "id": "dev",
       "label": "Developer Tools",
       "hubPath": "/dev/",
-      "description": "Developer utilities for encoding, conversion, and formatting."
+      "description": "Developer utilities for encoding, conversion, and formatting.",
+      "seo": {
+        "title": "Developer Utilities: Encoding, Regex, Slugs & Tokens | FormatForge",
+        "h1": "Developer Utilities for Encoding, Regex & Tokens",
+        "metaDescription": "Free browser-based developer tools for URL encoding, Base64 conversion, regex testing, slug generation, and JWT inspection. Private, offline-capable, zero-login.",
+        "intro": "FormatForge Dev Tools give developers instant access to encoding, decoding, pattern testing, and token inspection utilities — all running locally in your browser. Encode URLs and Base64 strings, debug regex patterns visually, generate SEO-friendly slugs, and inspect JWT claims without sending data to any server."
+      }
     },
     {
       "id": "json",
       "label": "JSON Tools",
       "hubPath": "/json/",
-      "description": "Format, validate, minify, and convert JSON instantly in your browser."
+      "description": "Format, validate, minify, and convert JSON instantly in your browser.",
+      "seo": {
+        "title": "JSON Tools: Formatter, Validator, Converter & Diff | FormatForge",
+        "h1": "JSON Tools — Format, Validate, Convert & Compare",
+        "metaDescription": "Free online JSON tools to format, validate, minify, diff, and convert JSON to CSV, XML, or TypeScript. Privacy-first — all processing runs locally in your browser.",
+        "intro": "FormatForge JSON Tools cover the full JSON workflow: pretty-print minified payloads, validate syntax with line-level error reporting, compress data for production, convert between CSV/XML/TypeScript, and compare datasets structurally. Every operation runs in your browser sandbox — your API responses and config files never leave your machine."
+      }
     }
   ],
   "tools": [
@@ -80,9 +98,12 @@
         "related": {
           "sameCluster": [
             "html-cleaner",
-            "remove-duplicate-lines"
+            "remove-duplicate-lines",
+            "text-analyzer"
           ],
-          "crossCluster": []
+          "crossCluster": [
+            "smart-slug-generator"
+          ]
         },
         "aeoDescription": "This tool removes line breaks and paragraph breaks from text blocks.",
         "capabilities": [
@@ -181,9 +202,12 @@
         },
         "related": {
           "sameCluster": [
-            "remove-line-breaks"
+            "remove-line-breaks",
+            "text-analyzer"
           ],
-          "crossCluster": []
+          "crossCluster": [
+            "url-encoder-decoder"
+          ]
         },
         "aeoDescription": "This tool strips HTML tags, inline styles, and classes from formatted text or code.",
         "capabilities": [
@@ -279,9 +303,13 @@
         },
         "related": {
           "sameCluster": [
-            "case-converter"
+            "remove-line-breaks",
+            "case-converter",
+            "remove-duplicate-lines"
           ],
-          "crossCluster": []
+          "crossCluster": [
+            "url-encoder-decoder"
+          ]
         },
         "aeoDescription": "This tool performs statistical analysis on text including character, word, and sentence counts.",
         "capabilities": [
@@ -382,9 +410,12 @@
         "related": {
           "sameCluster": [
             "remove-duplicate-lines",
-            "text-analyzer"
+            "text-analyzer",
+            "remove-line-breaks"
           ],
-          "crossCluster": []
+          "crossCluster": [
+            "smart-slug-generator"
+          ]
         },
         "aeoDescription": "This tool converts text strings between various letter casing formats.",
         "capabilities": [
@@ -484,9 +515,13 @@
         },
         "related": {
           "sameCluster": [
-            "remove-line-breaks"
+            "remove-line-breaks",
+            "text-diff-checker",
+            "text-analyzer"
           ],
-          "crossCluster": []
+          "crossCluster": [
+            "csv-json-converter"
+          ]
         },
         "aeoDescription": "This tool removes duplicate lines from a text list to extract unique values.",
         "capabilities": [
@@ -575,7 +610,11 @@
           ]
         },
         "related": {
-          "sameCluster": [],
+          "sameCluster": [
+            "json-formatter",
+            "xml-json-converter",
+            "data-diff-structured"
+          ],
           "crossCluster": [
             "remove-duplicate-lines"
           ]
@@ -638,9 +677,9 @@
       },
       "seo": {
         "title": "JSON Formatter & Validator Online | FormatForge",
-        "metaDescription": "Clean, format, and validate JSON instantly in your browser. A privacy-first developer workshop tool for debugging API responses and optimizing data structures.",
+        "metaDescription": "Paste minified JSON and get clean, indented output instantly. Debug API responses, find structural issues, and format JSON for documentation — all privately in your browser.",
         "h1": "JSON Formatter & Validator",
-        "subtitle": "Format, minify, and debug JSON with real-time local validation."
+        "subtitle": "Pretty-print, indent, and debug JSON data with instant local formatting."
       },
       "content": {
         "intro": [
@@ -670,7 +709,10 @@
         },
         "related": {
           "sameCluster": [
-            "csv-json-converter"
+            "json-validator",
+            "json-minifier",
+            "csv-json-converter",
+            "xml-json-converter"
           ],
           "crossCluster": [
             "text-diff-checker"
@@ -734,26 +776,24 @@
       },
       "seo": {
         "title": "Free JSON Validator Online | FormatForge",
-        "metaDescription": "Clean, format, and validate JSON instantly in your browser. A privacy-first developer workshop tool for debugging API responses and optimizing data structures.",
+        "metaDescription": "Validate JSON syntax online with detailed error reporting. Catch missing commas, unclosed brackets, trailing commas, and type mismatches without uploading data to any server.",
         "h1": "JSON Validator",
-        "subtitle": "Format, minify, and debug JSON with real-time local validation.",
+        "subtitle": "Check JSON syntax, find parsing errors, and pinpoint broken lines instantly.",
         "canonical": "/json/json-validator/"
       },
       "content": {
         "intro": [
-          "Broken JSON often brings development to a standstill, especially when API responses are minified or configuration files contain subtle syntax errors. Our JSON Formatter & Validator is a precision workshop utility designed to restore structure and identify corruption without ever sending your data to a remote server.",
-          "Example Broken Input: You copy a response from a browser console that contains unquoted keys or trailing commas—common artifacts that break standard parsers. The workshop handles these by providing instant feedback as you paste.",
-          "Why it happens: Modern web APIs prioritize speed, returning minified blocks of data that are impossible for humans to audit manually. Without a dedicated formatter, spotting a missing type or a mismatched bracket in 100kb of JSON is prone to human error.",
-          "Solution (Use Tool): This utility transforms minified strings into a clean, 2-space indented hierarchy. It acts as both a visualizer for state auditing and a high-speed validator that isolates the exact line responsible for a parsing failure. Everything happens in your browser's local sandbox, ensuring maximum privacy for production logs.",
-          "Advanced Notes: Use the 'Minify' mode to prepare payloads for performance-critical deployments, or use the formatter to prepare clean documentation-ready snippets. For deep structural comparisons, consider pairing this with our CSV/JSON converter to flatten the hierarchy."
+          "When a JSON payload breaks your application, the first question is always: where is the syntax error? The JSON Validator is a dedicated diagnostic tool that parses your data strictly against the JSON specification and reports exactly which line and character position caused the failure — without sending your data anywhere.",
+          "Unlike a general-purpose formatter, this tool is optimized for one job: finding what's wrong. It catches missing commas, unclosed brackets, trailing commas (not allowed in strict JSON), unquoted keys, single-quoted strings, and other common mistakes that standard JSON.parse() rejects with unhelpful error messages.",
+          "The validator is especially useful for debugging API responses, CI/CD configuration files (package.json, tsconfig.json), and data exports from legacy systems. Paste your JSON, get a precise error report, and fix the issue — all within your browser's local sandbox."
         ],
         "howTo": {
-          "heading": "How to format JSON",
+          "heading": "How to validate JSON syntax",
           "steps": [
-            "Paste your JSON string or minified data into the input box.",
-            "The tool will instantly attempt to parse and format the data.",
-            "Use the 'Minify' button to strip all whitespace for production use.",
-            "Check the Status Bar for real-time validation and size metrics."
+            "Paste your JSON string into the input area.",
+            "The validator instantly parses the data against strict JSON rules.",
+            "If valid, you see a success confirmation with key and depth statistics.",
+            "If invalid, the exact line number, character position, and error type are highlighted."
           ]
         },
         "examples": {
@@ -767,13 +807,15 @@
         },
         "related": {
           "sameCluster": [
+            "json-formatter",
+            "json-minifier",
             "csv-json-converter"
           ],
           "crossCluster": [
             "text-diff-checker"
           ]
         },
-        "aeoDescription": "This tool parses JSON string payloads and validates them against strict JSON syntax rules, highlighting errors block by block.",
+        "aeoDescription": "This tool parses JSON payloads against strict syntax rules and reports the exact line and character position of parsing errors.",
         "capabilities": [
           "Formats minified JSON into human-readable structure",
           "Validates JSON syntax and highlights errors",
@@ -788,16 +830,16 @@
       },
       "faq": [
         {
-          "q": "What happens if my JSON is invalid?",
-          "a": "The workshop will display a 'System Error' in the status bar and highlight the reason for the parsing failure, such as a missing comma or incorrect quote marks."
+          "q": "What JSON errors does this validator catch?",
+          "a": "It catches missing commas, extra trailing commas, unclosed brackets and braces, unquoted keys, single-quoted strings, undefined values, and any other deviation from the ECMA-404 JSON standard."
         },
         {
-          "q": "What is the size limit?",
-          "a": "The tool processes JSON entirely on your device. While it can handle several megabytes of data, extremely large files may be limited by your browser's available memory."
+          "q": "How is this different from the JSON Formatter?",
+          "a": "The Formatter focuses on pretty-printing and readability. The Validator focuses on strict syntax checking and detailed error diagnostics — it tells you exactly which line and character position is broken."
         },
         {
-          "q": "Why use FormatForge over other online tools?",
-          "a": "Most online tools upload your data to their servers. FormatForge is a privacy-first workshop; your data never leaves your browser, making it safe for sensitive customer data or private API keys."
+          "q": "Can it validate JSON Schema?",
+          "a": "This tool validates JSON syntax (is the structure parseable?), not JSON Schema compliance (does it match a specific data model). For schema validation, you would need a separate schema validator."
         },
         {
           "q": "Does this tool run locally?",
@@ -831,26 +873,24 @@
       },
       "seo": {
         "title": "Free JSON Minifier Online | FormatForge",
-        "metaDescription": "Clean, format, and validate JSON instantly in your browser. A privacy-first developer workshop tool for debugging API responses and optimizing data structures.",
+        "metaDescription": "Minify JSON online by removing all whitespace, indentation, and line breaks. Reduce payload size for production APIs and CDN transfers — processed locally in your browser.",
         "h1": "JSON Minifier & Compressor",
-        "subtitle": "Format, minify, and debug JSON with real-time local validation.",
+        "subtitle": "Strip whitespace and compress JSON for smaller API payloads and faster transfers.",
         "canonical": "/json/json-minifier/"
       },
       "content": {
         "intro": [
-          "Broken JSON often brings development to a standstill, especially when API responses are minified or configuration files contain subtle syntax errors. Our JSON Formatter & Validator is a precision workshop utility designed to restore structure and identify corruption without ever sending your data to a remote server.",
-          "Example Broken Input: You copy a response from a browser console that contains unquoted keys or trailing commas—common artifacts that break standard parsers. The workshop handles these by providing instant feedback as you paste.",
-          "Why it happens: Modern web APIs prioritize speed, returning minified blocks of data that are impossible for humans to audit manually. Without a dedicated formatter, spotting a missing type or a mismatched bracket in 100kb of JSON is prone to human error.",
-          "Solution (Use Tool): This utility transforms minified strings into a clean, 2-space indented hierarchy. It acts as both a visualizer for state auditing and a high-speed validator that isolates the exact line responsible for a parsing failure. Everything happens in your browser's local sandbox, ensuring maximum privacy for production logs.",
-          "Advanced Notes: Use the 'Minify' mode to prepare payloads for performance-critical deployments, or use the formatter to prepare clean documentation-ready snippets. For deep structural comparisons, consider pairing this with our CSV/JSON converter to flatten the hierarchy."
+          "Pretty-printed JSON is great for debugging, but it wastes bandwidth in production. The JSON Minifier strips all unnecessary whitespace, indentation, and line breaks from your JSON data, producing the smallest possible valid payload for API responses, CDN delivery, and configuration storage.",
+          "Minification typically reduces JSON payload size by 15–40% depending on indentation depth and key length. For high-traffic APIs serving millions of requests, this translates directly into lower bandwidth costs and faster response times for end users.",
+          "The tool also validates your JSON before minifying — if your data contains syntax errors, you'll see them before the minification step. Everything runs locally in your browser, so production API responses and internal configuration files remain private."
         ],
         "howTo": {
-          "heading": "How to format JSON",
+          "heading": "How to minify JSON",
           "steps": [
-            "Paste your JSON string or minified data into the input box.",
-            "The tool will instantly attempt to parse and format the data.",
-            "Use the 'Minify' button to strip all whitespace for production use.",
-            "Check the Status Bar for real-time validation and size metrics."
+            "Paste your pretty-printed or indented JSON into the input area.",
+            "The tool validates the JSON syntax first.",
+            "Click 'Minify' to strip all whitespace and produce compact output.",
+            "The status bar shows original vs. minified size for comparison."
           ]
         },
         "examples": {
@@ -864,13 +904,15 @@
         },
         "related": {
           "sameCluster": [
+            "json-formatter",
+            "json-validator",
             "csv-json-converter"
           ],
           "crossCluster": [
             "text-diff-checker"
           ]
         },
-        "aeoDescription": "This tool compresses JSON data by removing all unnecessary whitespace, newlines, and tabs, returning a minified string.",
+        "aeoDescription": "This tool compresses JSON data by removing all unnecessary whitespace, newlines, and indentation, returning the smallest valid JSON string.",
         "capabilities": [
           "Formats minified JSON into human-readable structure",
           "Validates JSON syntax and highlights errors",
@@ -885,16 +927,20 @@
       },
       "faq": [
         {
-          "q": "What happens if my JSON is invalid?",
-          "a": "The workshop will display a 'System Error' in the status bar and highlight the reason for the parsing failure, such as a missing comma or incorrect quote marks."
+          "q": "How much smaller will my JSON get?",
+          "a": "Typical reduction is 15–40% depending on indentation depth. Deeply nested structures with long keys see the biggest savings."
         },
         {
-          "q": "What is the size limit?",
-          "a": "The tool processes JSON entirely on your device. While it can handle several megabytes of data, extremely large files may be limited by your browser's available memory."
+          "q": "How is this different from the JSON Formatter?",
+          "a": "The Formatter adds whitespace for readability. The Minifier does the opposite — it removes all non-essential whitespace to produce the smallest valid JSON string for production use."
         },
         {
-          "q": "Why use FormatForge over other online tools?",
-          "a": "Most online tools upload your data to their servers. FormatForge is a privacy-first workshop; your data never leaves your browser, making it safe for sensitive customer data or private API keys."
+          "q": "Does minification change the data?",
+          "a": "No. Minification only removes whitespace characters (spaces, tabs, newlines) that are insignificant in JSON. All keys, values, and structure remain identical."
+        },
+        {
+          "q": "When should I minify JSON?",
+          "a": "Minify JSON for production API responses, CDN-hosted configuration files, localStorage payloads, and any context where smaller file size improves performance."
         },
         {
           "q": "Does this tool run locally?",
@@ -903,10 +949,6 @@
         {
           "q": "Is my data uploaded to a server?",
           "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
-        },
-        {
-          "q": "Can I use this tool offline?",
-          "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
         }
       ],
       "schema": {
@@ -963,7 +1005,10 @@
           ]
         },
         "related": {
-          "sameCluster": [],
+          "sameCluster": [
+            "url-encoder-decoder",
+            "base64-encode-decode"
+          ],
           "crossCluster": [
             "case-converter",
             "remove-line-breaks"
@@ -1059,10 +1104,12 @@
         },
         "related": {
           "sameCluster": [
-            "remove-duplicate-lines"
+            "remove-duplicate-lines",
+            "text-analyzer"
           ],
           "crossCluster": [
-            "csv-json-converter"
+            "csv-json-converter",
+            "data-diff-structured"
           ]
         },
         "aeoDescription": "This tool compares two text inputs and highlights the differences line by line.",
@@ -1450,7 +1497,9 @@
           ],
           "crossCluster": [
             "text-diff-checker",
-            "remove-line-breaks"
+            "remove-line-breaks",
+            "text-analyzer",
+            "html-cleaner"
           ]
         },
         "aeoDescription": "This tool executes regular expressions against text and explains regex syntax in plain language.",

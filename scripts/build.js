@@ -254,9 +254,14 @@ clusters.forEach(cluster => {
     hubHtml = hubHtml.replace(/\[HEADER_PARTIAL\]/g, headerPartial);
     hubHtml = hubHtml.replace(/\[FOOTER_PARTIAL\]/g, footerPartial);
 
-    hubHtml = hubHtml.replace(/FormatForge TextTools Hub/g, cluster.label);
-    let desc = cluster.description || '';
-    hubHtml = hubHtml.replace(/Fast, secure, client-side tools.*/g, desc);
+    // Hub-specific SEO fields
+    const hubSeo = cluster.seo || {};
+    const canonicalUrl = BASE_URL + cleanRoute;
+    hubHtml = hubHtml.replace(/\[HUB_TITLE\]/g, hubSeo.title || `${cluster.label} | FormatForge`);
+    hubHtml = hubHtml.replace(/\[HUB_META_DESCRIPTION\]/g, hubSeo.metaDescription || cluster.description || '');
+    hubHtml = hubHtml.replace(/\[HUB_CANONICAL_URL\]/g, canonicalUrl);
+    hubHtml = hubHtml.replace(/\[HUB_H1\]/g, hubSeo.h1 || cluster.label);
+    hubHtml = hubHtml.replace(/\[HUB_INTRO\]/g, hubSeo.intro || cluster.description || '');
 
     const hubToolsHtml = tools.filter(t => t.clusterId === cluster.id && t.flags.enabled).map(t => `
         <article class="tool-card shadow-card" style="padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 20px;">
@@ -269,7 +274,6 @@ clusters.forEach(cluster => {
 
     fs.writeFileSync(path.join(destDir, 'index.html'), hubHtml, 'utf8');
 
-    const canonicalUrl = BASE_URL + cleanRoute;
     generatedUrls.push(canonicalUrl);
 });
 
@@ -368,6 +372,13 @@ console.log('Generating homepage (index.html)...');
 let homeHtml = homeTemplate;
 homeHtml = homeHtml.replace(/\[HEADER_PARTIAL\]/g, headerPartial);
 homeHtml = homeHtml.replace(/\[FOOTER_PARTIAL\]/g, footerPartial);
+
+// Homepage SEO fields
+homeHtml = homeHtml.replace(/\[HUB_TITLE\]/g, 'FormatForge — Text & Data Tools for Developers | Format, Validate, Convert');
+homeHtml = homeHtml.replace(/\[HUB_META_DESCRIPTION\]/g, 'Free browser-based tools for JSON formatting, text cleaning, encoding, regex testing, and data conversion. Privacy-first — all processing runs locally, no data uploads.');
+homeHtml = homeHtml.replace(/\[HUB_CANONICAL_URL\]/g, BASE_URL + '/');
+homeHtml = homeHtml.replace(/\[HUB_H1\]/g, 'Text & Data Tools for Developers — In Your Browser');
+homeHtml = homeHtml.replace(/\[HUB_INTRO\]/g, 'FormatForge is a privacy-first developer workshop with free online tools for JSON formatting, text cleaning, data conversion, encoding, and regex debugging. Every tool runs entirely in your browser — no logins, no uploads, no tracking.');
 
 const getTagStyle = (cluster) => {
     switch ((cluster || '').toLowerCase()) {
