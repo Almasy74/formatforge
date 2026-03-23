@@ -5,11 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>[HUB_TITLE]</title>
-    <meta name="description"
-        content="[HUB_META_DESCRIPTION]">
+    <meta name="description" content="[HUB_META_DESCRIPTION]">
+    <meta name="robots" content="[META_ROBOTS]">
     <link rel="canonical" href="[HUB_CANONICAL_URL]">
+    <meta property="og:title" content="[OG_TITLE]">
+    <meta property="og:description" content="[OG_DESCRIPTION]">
+    <meta property="og:url" content="[OG_URL]">
+    <meta property="og:type" content="[OG_TYPE]">
+    <meta property="og:image" content="[OG_IMAGE]">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="[OG_TITLE]">
+    <meta name="twitter:description" content="[OG_DESCRIPTION]">
+    <meta name="twitter:image" content="[OG_IMAGE]">
 
     <link rel="stylesheet" href="/css/style.css?v=2">
+    <script type="application/ld+json">
+    [SCHEMA_JSON]
+    </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6293439009227714"
         crossorigin="anonymous"></script>
 </head>
@@ -24,9 +36,13 @@
             <p class="subtitle" style="max-width: 600px; margin: 0 auto; line-height: 1.5;">[HUB_INTRO]</p>
         </header>
 
+        [PRE_GRID_HTML]
+
         <section class="tool-grid">
             [TOOL_LIST_HTML]
         </section>
+
+        [POST_GRID_HTML]
 
     </main>
 

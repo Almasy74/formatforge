@@ -1,0 +1,81 @@
+<h2>Quick Answer</h2>
+<p>Hidden Unicode characters such as zero-width spaces, BOM markers, and combining marks can break matching, inflate counts, corrupt slugs, and make copied text behave strangely. If text looks normal but compares wrong or counts wrong, inspect it for hidden characters first.</p>
+
+<h2>What Counts as a Hidden Character</h2>
+<ul>
+    <li><strong>Zero-width space:</strong> invisible separator that can split tokens</li>
+    <li><strong>Zero-width joiner or non-joiner:</strong> invisible characters that change shaping or add hidden length</li>
+    <li><strong>Byte order mark (BOM):</strong> hidden marker that can appear at the start of text or files</li>
+    <li><strong>Combining marks:</strong> accents stored separately from base characters in decomposed text</li>
+</ul>
+
+<h2>Signs You Have Hidden Unicode Problems</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Symptom</th>
+            <th>Possible cause</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Word count looks too high or too low</td>
+            <td>Invisible separators or zero-width characters</td>
+        </tr>
+        <tr>
+            <td>String equality fails for identical-looking text</td>
+            <td>Mixed normalization forms or hidden marks</td>
+        </tr>
+        <tr>
+            <td>Slug output changes between systems</td>
+            <td>Hidden characters or mixed Unicode forms in the title</td>
+        </tr>
+        <tr>
+            <td>Regex or search misses terms unexpectedly</td>
+            <td>Invisible characters interrupt matching</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>How to Detect Them</h2>
+<ol>
+    <li>Paste the text into the <a href="/text/text-analyzer/">Text Analysis Tool</a> and compare visible length with character counts.</li>
+    <li>If counts seem wrong, normalize the text and inspect suspicious boundaries.</li>
+    <li>Clean copied formatting and line artifacts with <a href="/text/remove-line-breaks/">Remove Line Breaks</a> if the text came from PDFs, emails, or rich editors.</li>
+    <li>Review Unicode normalization if the issue involves accents or visually identical characters.</li>
+</ol>
+
+<h2>When to Normalize and When to Strip</h2>
+<p>Normalize when the problem is inconsistent Unicode representation, such as NFC vs NFD. Strip characters only when they are truly unwanted in your workflow, such as zero-width spaces in copied content or BOM markers in imported text.</p>
+
+<h2>Common Mistakes</h2>
+<ul>
+    <li>Assuming visible text equals stored text</li>
+    <li>Generating slugs before cleaning the title</li>
+    <li>Comparing raw strings without normalization</li>
+    <li>Blaming regex first when the input contains invisible characters</li>
+</ul>
+
+<h2>FAQ</h2>
+<div class="guide-faq">
+    <details>
+        <summary>Can hidden characters affect SEO and slugs?</summary>
+        <p>Yes. They can create unstable slug output, odd token boundaries, and inconsistent matching.</p>
+    </details>
+    <details>
+        <summary>Is a BOM always bad?</summary>
+        <p>No, but it is often unwanted in application text, config payloads, and copy-paste workflows where hidden leading characters can break parsing.</p>
+    </details>
+    <details>
+        <summary>Are combining accents hidden characters?</summary>
+        <p>They are not invisible in the same way as zero-width characters, but they can still create hidden structural differences in text when stored separately.</p>
+    </details>
+</div>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/text/text-analyzer/">Text Analysis Tool</a> to inspect suspicious character counts</li>
+    <li><a href="/guides/unicode-normalization/">Unicode normalization guide</a> for NFC vs NFD issues</li>
+    <li><a href="/dev/slug-generator/">URL Slug Generator</a> to create stable slugs after cleanup</li>
+    <li><a href="/dev/url-encode-decode/">URL Encoder / Decoder</a> to inspect encoded characters in URLs</li>
+</ul>

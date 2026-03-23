@@ -1,60 +1,85 @@
-<h2>Precision Matching: A Field Manual for Debugging Regex</h2>
-<p>In a high-stakes data workshop, a single incorrect Regular Expression can be the difference between a clean migration
-    and a corrupted database. Debugging Regex is about more than just matching strings—it is about anticipating
-    <strong>Edge Case Friction</strong>.</p>
+<h2>Quick Answer</h2>
+<p>Most regex failures come from four sources: greedy matching, the wrong flags, incorrect escaping, or patterns that backtrack too much. Start with the smallest failing example, test the pattern live, then widen the input only after the simple case works.</p>
 
-<section class="usage-scenario">
-    <h3>The "Greedy Match" Debugging Case</h3>
-    <p>A common failure in text cleaning is the "Greedy Trap." When trying to extract content between quotes, a pattern
-        like <code>".*"</code> might match everything from the first quote of the first sentence to the last quote of
-        the file. Our <a href="/tools/regex-tester/">Regex Workshop</a> allows you to test lazy matching
-        (<code>".*?"</code>) in real-time to isolate specific segments without "over-matching" your data.</p>
-</section>
+<h2>Start With the Smallest Failing Example</h2>
+<p>Do not debug a regex on a whole log file first. Reduce the problem to the shortest string that still fails. That makes it easier to see whether the issue is a greedy token, a missing flag, a character class problem, or an escaping mistake.</p>
 
-<h2>Workshop Benchmarks: The Regex Audit</h2>
+<p>Use the <a href="/dev/regex-tester-explainer/">Regex Tester Online</a> to run the pattern against a tiny sample first. Once the simple case works, scale up to multiline input or noisier production text.</p>
+
+<h2>Greedy vs Lazy Matching</h2>
 <table>
     <thead>
         <tr>
-            <th>Common Failure</th>
-            <th>The Symptom</th>
-            <th>The Workshop Fix</th>
+            <th>Pattern</th>
+            <th>Typical problem</th>
+            <th>Fix</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td><strong>Newline Blindness</strong></td>
-            <td>Patterns match within lines but fail across paragraph breaks.</td>
-            <td>Enable <code>/s</code> (dotAll) or <code>/m</code> (multiline) flags.</td>
+            <td><code>\".*\"</code></td>
+            <td>Matches too much between the first and last quote</td>
+            <td>Try <code>\".*?\"</code></td>
         </tr>
         <tr>
-            <td><strong>Escaping Artifacts</strong></td>
-            <td>Regex fails when encountering literal periods or brackets.</td>
-            <td>Use backslash escaping (<code>\.</code>) for literal matches.</td>
+            <td><code>.*</code></td>
+            <td>Consumes more text than expected</td>
+            <td>Add anchors, classes, or a lazy quantifier</td>
         </tr>
         <tr>
-            <td><strong>Lookahead Complexity</strong></td>
-            <td>Regex becomes too slow on large datasets (Catastrophic Backtracking).</td>
-            <td>Simplify patterns or use non-capturing groups <code>(?:...)</code>.</td>
+            <td><code>.+</code></td>
+            <td>Fails when empty matches should be allowed</td>
+            <td>Use <code>*</code> or a more precise group</td>
         </tr>
     </tbody>
 </table>
 
-<h3>Practical Example: The Log-Parsing Fail</h3>
-<pre><code>// Raw Log Line
-"ERROR [2024-05-12] - Database timeout in 'production' cluster"
+<h2>Flags That Change Everything</h2>
+<ul>
+    <li><strong>Multiline:</strong> use it when anchors need to match line starts or ends inside a multi-line block</li>
+    <li><strong>DotAll:</strong> use it when <code>.</code> should cross line breaks</li>
+    <li><strong>Case-insensitive:</strong> use it only when case should truly not matter</li>
+    <li><strong>Global:</strong> use it when you want every match, not just the first one</li>
+</ul>
 
-// Failing Pattern (Too broad)
-/\[.*\]/  // Unexpectedly matches content past the bracket if others exist
+<h2>Escaping and Character Classes</h2>
+<p>Regex often fails because the pattern says one thing and the input contains another. A literal dot needs <code>\\.</code>. A literal bracket needs escaping. A broad class like <code>.+</code> may hide the fact that you really wanted digits, letters, or a specific delimiter. Be explicit when you can.</p>
 
-// Recommended Pattern (Anchored)
-/\[(\d{4}-\d{2}-\d{2})\]/ // Precisely targets the ISO date format</code></pre>
+<h2>Backtracking and Performance</h2>
+<p>If a pattern becomes slow on long input, simplify nested quantifiers and broad wildcard groups. Patterns such as <code>(.*)+</code> or heavily nested optional groups can backtrack excessively. Prefer tighter character classes, anchors, and non-capturing groups when you do not need captured output.</p>
 
-<h2>Bidirectional Strategy: Test → Clean → Validate</h2>
-<p>Successful data transformation follows a three-step pipe. First, use the <a href="/tools/regex-tester/">Regex
-        Tester</a> to verify your logic on a small sample. Second, apply the transformation in bulk. Finally, pass the
-    output through the <a href="/text/analyzer/">Text Analyzer</a> to ensure that the resulting character counts and
-    structures align with your expectations.</p>
+<h2>Debug Workflow</h2>
+<ol>
+    <li>Copy the smallest failing sample into the <a href="/dev/regex-tester-explainer/">Regex Tester Online</a>.</li>
+    <li>Confirm the expected match or non-match.</li>
+    <li>Check whether greedy tokens, flags, or escaping explain the failure.</li>
+    <li>If the text includes copied formatting noise, clean it first with <a href="/text/remove-line-breaks/">Remove Line Breaks</a>.</li>
+    <li>Use the <a href="/text/text-analyzer/">Text Analysis Tool</a> if you need to inspect line or character structure after transformation.</li>
+</ol>
 
-<p><strong>Workshop Pro-Tip:</strong> When dealing with AI-generated regex, always verify the "Lookbehind" support. Many
-    web-based environments (legacy browsers) do not support variable-length lookbeinds, which can lead to silent
-    failures in production code.</p>
+<h2>FAQ</h2>
+<div class="guide-faq">
+    <details>
+        <summary>Why does my regex work on one line but fail on multiple lines?</summary>
+        <p>You are likely missing multiline or dotAll behavior. Check the flags first.</p>
+    </details>
+    <details>
+        <summary>Why is my pattern matching too much?</summary>
+        <p>A greedy quantifier is probably consuming more input than you intended. Test a lazy version or tighten the character class.</p>
+    </details>
+    <details>
+        <summary>How do I debug regex safely?</summary>
+        <p>Use the smallest failing example, test the pattern live, and only then move to larger samples and production input.</p>
+    </details>
+    <details>
+        <summary>Can copied formatting break regex tests?</summary>
+        <p>Yes. Hidden line breaks and pasted formatting can change matching behavior, especially around anchors and the dot operator.</p>
+    </details>
+</div>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/dev/regex-tester-explainer/">Regex Tester Online</a> for live matching and token explanations</li>
+    <li><a href="/text/remove-line-breaks/">Remove Line Breaks</a> to clean pasted text before matching</li>
+    <li><a href="/text/text-analyzer/">Text Analysis Tool</a> to inspect the structure of transformed text</li>
+</ul>

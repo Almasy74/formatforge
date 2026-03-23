@@ -4,10 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[PAGE_TITLE] - FormatForge</title>
+    <title>[TITLE_TAG]</title>
     <meta name="description" content="[PAGE_DESC]">
-    <link rel="canonical" href="https://formatforge.net[PAGE_URL]">
+    <meta name="robots" content="[META_ROBOTS]">
+    <link rel="canonical" href="[CANONICAL_URL]">
+    <meta property="og:title" content="[OG_TITLE]">
+    <meta property="og:description" content="[OG_DESCRIPTION]">
+    <meta property="og:url" content="[OG_URL]">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="[OG_IMAGE]">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="[OG_TITLE]">
+    <meta name="twitter:description" content="[OG_DESCRIPTION]">
+    <meta name="twitter:image" content="[OG_IMAGE]">
     <link rel="stylesheet" href="/css/style.css?v=2">
+    <script type="application/ld+json">
+    [SCHEMA_JSON]
+    </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6293439009227714"
         crossorigin="anonymous"></script>
 </head>
@@ -15,6 +28,7 @@
 <body>
     [HEADER_PARTIAL]
     <main class="container" style="max-width: 800px; margin: 40px auto; padding: 20px;">
+        [BREADCRUMBS_HTML]
         <h1 style="text-align: center; margin-bottom: 30px;">[PAGE_TITLE]</h1>
         <div class="page-content" style="line-height: 1.6; font-size: 16px;">
             [PAGE_CONTENT]

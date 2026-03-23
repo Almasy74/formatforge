@@ -1,66 +1,61 @@
-<h2>The Technical Audit: A Professional Text Cleaning Guide</h2>
-<p>In a technical workshop, "cleaning" isn't about deleting text—it's about <strong>normalizing signals</strong>. Messy
-    data, characterized by hidden encoding artifacts and structural duplicates, is the primary cause of downstream
-    failures in databases, CMS systems, and AI models.</p>
+<h2>What Text Cleaning Actually Means</h2>
+<p>Text cleaning is the process of making text consistent enough to store, search, compare, transform, or publish without hidden errors. In practice, that means fixing whitespace, line breaks, duplicate rows, HTML noise, hidden characters, and inconsistent casing before those issues create downstream bugs.</p>
 
-<section class="usage-scenario">
-    <h3>The "Invisible Poison" Case: BOM and Null bytes</h3>
-    <p>Data scraped from legacy Windows systems often contains the "Byte Order Mark" (BOM) or null bytes that are
-        invisible to the eye but break modern JSON parsers and Python scripts. Our <a href="/text/html-cleaner/">HTML &
-            Text Cleaner</a> acts as a sanitizer, stripping these invisible characters and normalizing your text to a
-        clean UTF-8 standard. This ensures your data floats through your pipeline without triggering unexpected
-        <code>UnicodeDecodeError</code> exceptions.</p>
-</section>
-
-<h2>The 4 Pillars of Workshop Data Hygiene</h2>
+<h2>The Four Most Common Cleaning Problems</h2>
 <table>
     <thead>
         <tr>
-            <th>Pillar</th>
-            <th>The Problem</th>
-            <th>The Workshop Solution</th>
+            <th>Problem</th>
+            <th>What it breaks</th>
+            <th>Recommended fix</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td><strong>Encoding</strong></td>
-            <td>Glitched characters like <code></code> or broken emojis.</td>
-            <td>Normalize to standard UTF-8 instantly.</td>
+            <td>Line-break noise</td>
+            <td>Prompts, CMS text, imports, and copied content</td>
+            <td><a href="/text/remove-line-breaks/">Remove Line Breaks</a></td>
         </tr>
         <tr>
-            <td><strong>Deduplication</strong></td>
-            <td>Skewed metrics from repeated rows in logs or SKU lists.</td>
-            <td>Use <a href="/text/duplicate-lines/">Deduplication Workshop</a> to isolate unique keys.</td>
+            <td>Duplicate rows or lines</td>
+            <td>Lists, exports, and simple datasets</td>
+            <td><a href="/text/remove-duplicate-lines/">Remove Duplicate Lines</a></td>
         </tr>
         <tr>
-            <td><strong>Whitespace</strong></td>
-            <td>Trailing spaces breaking password hashes or search queries.</td>
-            <td>Trim and normalize all whitespace transitions.</td>
+            <td>HTML and formatting junk</td>
+            <td>CMS content, pasted editor output, scraped snippets</td>
+            <td><a href="/text/html-cleaner/">HTML Cleaner</a></td>
         </tr>
         <tr>
-            <td><strong>Structure</strong></td>
-            <td>Legacy hard-wrap formatting breaking reflow in modern apps.</td>
-            <td>Flatten text with the <a href="/text/remove-line-breaks/">Remove Line Breaks</a> tool.</td>
+            <td>Hidden Unicode issues</td>
+            <td>Counts, matching, slugs, equality checks</td>
+            <td><a href="/guides/hidden-unicode-characters/">Inspect hidden Unicode characters</a></td>
         </tr>
     </tbody>
 </table>
 
-<h3>Practical Example: Sanitizing a Raw Log Entry</h3>
-<pre><code>// Dirty Input (Mixed spacing, duplicates, hidden breaks)
-101, Success  
-101, Success
-102, Pending \n
+<h2>When to Clean Before You Analyze</h2>
+<p>Always clean first when copied formatting, duplicate lines, or Unicode noise may distort your metrics. Otherwise a later analysis step can produce misleading counts, broken matches, or unstable slug output.</p>
 
-// Workshop Output (Cleaned, unique, trimmed)
-101, Success
-102, Pending</code></pre>
+<h2>Basic Workflow</h2>
+<ol>
+    <li>Remove obvious formatting noise such as hard line breaks or HTML markup.</li>
+    <li>Normalize structure, whitespace, or casing where needed.</li>
+    <li>Deduplicate repeated values if the text is list-like.</li>
+    <li>Run the result through the <a href="/text/text-analyzer/">Text Analysis Tool</a> if you need to inspect length, density, or pacing.</li>
+</ol>
 
-<h2>Bidirectional Strategy: Clean → Analyze</h2>
-<p>Cleaning is only half the battle. Once your data is normalized, it becomes a "Knowledge Asset" that can be audited
-    for insights. We recommend moving from the cleaning tools directly to the <a href="/text/text-analyzer/">Text
-        Analyzer</a> to verify that your data density and pacing match your requirements. Clean data is silent; it just
-    works.</p>
+<h2>Common Mistakes</h2>
+<ul>
+    <li>Analyzing dirty text before removing obvious artifacts</li>
+    <li>Treating duplicate-looking values as true duplicates without normalization</li>
+    <li>Ignoring hidden Unicode characters in copied content</li>
+    <li>Cleaning too aggressively and removing meaning-bearing structure</li>
+</ul>
 
-<p><strong>Workshop Pro-Tip:</strong> Always run a "Trim Whitespace" pass before performing any structural
-    deduplication. A single trailing space on one line will make it "unique" compared to its identical neighbor, leading
-    to false negatives in your deduplication pass.</p>
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode characters</a></li>
+    <li><a href="/guides/unicode-normalization/">Unicode normalization</a></li>
+    <li><a href="/guides/remove-line-breaks/">Removing line breaks from text</a></li>
+</ul>

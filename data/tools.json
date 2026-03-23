@@ -16,10 +16,10 @@
       "hubPath": "/text/",
       "description": "Clean, transform, and analyze text with fast no-login tools.",
       "seo": {
-        "title": "Text Cleaning & Analysis Tools — Online, Private | FormatForge",
+        "title": "Text Cleaning & Analysis Tools - Online, Private | FormatForge",
         "h1": "Text Cleaning & Analysis Tools",
         "metaDescription": "Free online tools to clean text, remove line breaks, strip HTML, analyze readability, convert case, and deduplicate lines. All processing runs locally in your browser.",
-        "intro": "FormatForge Text Tools help you clean, transform, and analyze text data entirely in your browser. Remove formatting artifacts from PDFs and emails, strip HTML noise, convert between case styles, deduplicate lists, and get instant readability metrics — without uploading a single character."
+        "intro": "FormatForge Text Tools help you clean, transform, and analyze text directly in your browser. Remove formatting artifacts, strip HTML noise, convert case, deduplicate lines, and measure text structure without uploading any content."
       }
     },
     {
@@ -31,7 +31,7 @@
         "title": "Developer Utilities: Encoding, Regex, Slugs & Tokens | FormatForge",
         "h1": "Developer Utilities for Encoding, Regex & Tokens",
         "metaDescription": "Free browser-based developer tools for URL encoding, Base64 conversion, regex testing, slug generation, and JWT inspection. Private, offline-capable, zero-login.",
-        "intro": "FormatForge Dev Tools give developers instant access to encoding, decoding, pattern testing, and token inspection utilities — all running locally in your browser. Encode URLs and Base64 strings, debug regex patterns visually, generate SEO-friendly slugs, and inspect JWT claims without sending data to any server."
+        "intro": "FormatForge Dev Tools give developers instant access to encoding, decoding, pattern testing, and token inspection utilities, all running locally in your browser. Encode URLs and Base64 strings, debug regex patterns visually, generate SEO-friendly slugs, and inspect JWT claims without sending data to any server."
       }
     },
     {
@@ -41,9 +41,9 @@
       "description": "Format, validate, minify, and convert JSON instantly in your browser.",
       "seo": {
         "title": "JSON Tools: Formatter, Validator, Converter & Diff | FormatForge",
-        "h1": "JSON Tools — Format, Validate, Convert & Compare",
-        "metaDescription": "Free online JSON tools to format, validate, minify, diff, and convert JSON to CSV, XML, or TypeScript. Privacy-first — all processing runs locally in your browser.",
-        "intro": "FormatForge JSON Tools cover the full JSON workflow: pretty-print minified payloads, validate syntax with line-level error reporting, compress data for production, convert between CSV/XML/TypeScript, and compare datasets structurally. Every operation runs in your browser sandbox — your API responses and config files never leave your machine."
+        "h1": "JSON Tools - Format, Validate, Convert & Compare",
+        "metaDescription": "Free online JSON tools to format, validate, minify, diff, and convert JSON to CSV, XML, or TypeScript. Privacy-first processing runs locally in your browser.",
+        "intro": "FormatForge JSON Tools cover the full JSON workflow: pretty-print payloads, validate syntax with line-level error reporting, minify for production, convert between CSV, XML, and TypeScript, and compare datasets structurally. Every operation runs in your browser sandbox."
       }
     }
   ],
@@ -180,7 +180,7 @@
           "Bloated HTML snippets riddled with inline styles and proprietary tags often break modern CSS layouts when pasted into a CMS or static site builder.",
           "Example Broken Input: A snippet from Microsoft Word contains tags like `<p class=\\\"MsoNormal\\\" style=\\\"margin:0; font-family:'Calibri'\\\">` which override your site's global styles.",
           "Why it happens: Visual page builders and word processors prioritize layout over semantics, injecting 'poisoned' code that creates inconsistency and makes maintenance impossible.",
-          "Solution (Use Tool): Our HTML Cleaner strips away the noise—classes, inline styles, and proprietary attributes—leaving you with clean, semantic markup. The tool leverages your browser's native DOM parser to safely reflow code locally.",
+          "Solution (Use Tool): Our HTML Cleaner strips away the noise - classes, inline styles, and proprietary attributes - leaving you with clean, semantic markup. The tool leverages your browser's native DOM parser to safely reflow code locally.",
           "Advanced Notes: Use 'Strip All Tags' for high-speed text extraction if you only need the content without any markup for database storage or further analysis."
         ],
         "howTo": {
@@ -269,27 +269,27 @@
         "actions": []
       },
       "seo": {
-        "h1": "Advanced Text Analyzer & Word Counter",
-        "subtitle": "Get instant word counts, reading time, sentence length, and character analysis.",
-        "title": "Free Text Analyzer & Word Counter Online | FormatForge",
-        "metaDescription": "Analyze your text instantly. Beyond a simple word counter, get character lengths, reading and speaking times, and paragraph analysis directly in your browser.",
+        "h1": "Text Analysis Tool Online",
+        "subtitle": "Check word count, character count, reading time, sentence length, and paragraph structure instantly.",
+        "title": "Text Analysis Tool Online: Word Count, Reading Time & More",
+        "metaDescription": "Analyze text online with word count, character count, sentence and paragraph stats, reading time, and speaking time. Private and browser-based.",
         "robots": "index,follow",
         "canonical": "/text/text-analyzer/"
       },
       "content": {
         "intro": [
-          "Writers and SEO specialists often need a comprehensive structural audit of their content to ensure optimal readability and density.",
-          "Example Broken Input: A blog post draft contains 3000 words but has a 'Reading Time' that feels off, or sentences that are consistently too long for mobile users.",
-          "Why it happens: Without real-time metrics, it is easy to create 'walls of text' that increase bounce rates and harm human engagement signals.",
-          "Solution (Use Tool): The Text Analyzer workshop provides a high-speed linguistic audit, calculating word counts, character density, and reading times instantly in your browser.",
-          "Advanced Notes: Use the Speaking Time estimate for script planning and podcast preparation. The analyzer helps maintain a consistent 'pace' across your long-form content."
+          "This text analysis tool gives you more than a simple word counter. Paste any article, prompt, transcript, product description, or draft to measure words, characters, sentences, paragraphs, average sentence length, reading time, and speaking time instantly.",
+          "Use it when you need quick structural feedback before publishing, sending, or reusing text. It is useful for SEO reviews, script timing, UX writing, editing, prompt analysis, and checking whether a draft feels heavier or lighter than intended.",
+          "The value is speed and clarity. Instead of guessing whether a page is too dense or a script is too long, you get live metrics as you type or paste.",
+          "Everything runs locally in your browser, so you can analyze internal drafts, customer text, transcripts, or unpublished content without sending it to a remote service.",
+          "If you also need to clean pasted text before analysis, start with Remove Line Breaks. If counts look strange because of accents or hidden characters, read the Unicode normalization guide for combining-mark edge cases."
         ],
         "howTo": {
           "heading": "How to analyze text",
           "steps": [
-            "Simply paste or type your content into the text area.",
-            "All statistics update dynamically in real-time.",
-            "Review your metrics!"
+            "Paste or type your content into the text area.",
+            "Review the live metrics for words, characters, sentences, paragraphs, reading time, and speaking time.",
+            "Use the numbers to tighten structure, adjust length, or compare versions of the same text."
           ]
         },
         "examples": {
@@ -308,15 +308,15 @@
             "remove-duplicate-lines"
           ],
           "crossCluster": [
-            "url-encoder-decoder"
+            "smart-slug-generator"
           ]
         },
-        "aeoDescription": "This tool performs statistical analysis on text including character, word, and sentence counts.",
+        "aeoDescription": "This tool analyzes text for word count, character count, sentence and paragraph structure, reading time, and speaking time.",
         "capabilities": [
           "Counts total words and characters",
-          "Calculates average sentence length",
+          "Calculates sentence and paragraph statistics",
           "Provides reading and speaking time estimates",
-          "Evaluates text structure metrics",
+          "Highlights structural text metrics instantly",
           "Processes text statistics locally"
         ],
         "ioFormats": {
@@ -326,16 +326,20 @@
       },
       "faq": [
         {
-          "q": "How is the reading time estimated?",
-          "a": "We use a standard rate of 225 words per minute for silent adult reading."
+          "q": "Is this just a word counter?",
+          "a": "No. It also measures characters, sentences, paragraphs, average sentence length, reading time, and speaking time."
         },
         {
           "q": "Does it count spaces as characters?",
-          "a": "We provide two character counts: one that includes all characters (including spaces and punctuation) and one that excludes spaces for specific academic limits."
+          "a": "Yes. Character counts should include spaces and punctuation where relevant so you can compare raw length against words and structure."
         },
         {
-          "q": "Is there a limit on how much text I can analyze?",
-          "a": "Because the tool runs entirely in your web browser, there is no hard limit. You can analyze whole book manuscripts seamlessly."
+          "q": "Can I use this for SEO content?",
+          "a": "Yes. It is useful for checking whether a draft is too thin, too dense, or unevenly structured before publishing."
+        },
+        {
+          "q": "How is reading time estimated?",
+          "a": "Reading time is estimated from total word count using a standard adult reading pace. Treat it as a planning estimate, not an exact promise."
         },
         {
           "q": "Does this tool run locally?",
@@ -344,10 +348,6 @@
         {
           "q": "Is my data uploaded to a server?",
           "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
-        },
-        {
-          "q": "Can I use this tool offline?",
-          "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
         }
       ],
       "schema": {
@@ -582,12 +582,12 @@
       "seo": {
         "title": "CSV to JSON Converter Online | FormatForge",
         "metaDescription": "Instantly convert CSV data to JSON and JSON to CSV. Free, fast, privacy-first conversion that runs completely in your web browser.",
-        "h1": "CSV ↔ JSON Converter",
-        "subtitle": "Instantly convert between Comma-Separated Values and JSON."
+        "h1": "CSV to JSON Converter",
+        "subtitle": "Convert CSV to JSON and JSON arrays back to CSV in one step."
       },
       "content": {
         "intro": [
-          "In modern web development and data analysis, the ability to pivot between different data formats is a core requirement. CSV and JSON represent two different worlds: the tabular world of spreadsheets and databases, and the hierarchical world of web APIs and modern application state. Our CSV ↔ JSON Converter is a specialized workshop utility designed to bridge this gap instantly, allowing you to transform data structures with precision and local-first security.",
+          "In modern web development and data analysis, the ability to pivot between different data formats is a core requirement. CSV and JSON represent two different worlds: the tabular world of spreadsheets and databases, and the hierarchical world of web APIs and modern application state. Our CSV to JSON Converter is a specialized workshop utility designed to bridge this gap instantly, allowing you to transform data structures with precision and local-first security.",
           "Many online converters pose a major security risk, asking you to upload sensitive customer data or internal company logs to their servers for processing. FormatForge takes a different approach. The conversion logic is executed entirely within your browser's local sandbox using high-performance parsing algorithms. This ensures that your data never touches the network, providing 100% privacy for even the most sensitive datasets. Whether you are converting a complex JSON response into an Excel-friendly CSV for a stakeholder, or preparing a CSV export for a frontend application, the results are instantaneous.",
           "The tool features intelligent automatic format detection, meaning you don't even have to click a toggle to start. It recognizes the structural markers of both CSV (headers and delimiters) and JSON (brackets and keys) as you paste. Beyond simple conversion, this utility acts as a data normalizer, ensuring that strings are properly escaped, numbers are recognized, and the resulting structure is valid for its new environment. It is the essential workshop tool for anyone navigating the complexities of modern data integration."
         ],
@@ -676,26 +676,25 @@
         "jsModule": "json-formatter.js"
       },
       "seo": {
-        "title": "JSON Formatter & Validator Online | FormatForge",
-        "metaDescription": "Paste minified JSON and get clean, indented output instantly. Debug API responses, find structural issues, and format JSON for documentation — all privately in your browser.",
-        "h1": "JSON Formatter & Validator",
-        "subtitle": "Pretty-print, indent, and debug JSON data with instant local formatting."
+        "title": "JSON Formatter Online | Pretty Print JSON | FormatForge",
+        "metaDescription": "Pretty print valid JSON instantly. Format minified payloads for debugging, documentation, and code review without uploading data.",
+        "h1": "JSON Formatter Online",
+        "subtitle": "Pretty-print valid JSON so it is easier to read, inspect, and document."
       },
       "content": {
         "intro": [
-          "Broken JSON often brings development to a standstill, especially when API responses are minified or configuration files contain subtle syntax errors. Our JSON Formatter & Validator is a precision workshop utility designed to restore structure and identify corruption without ever sending your data to a remote server.",
-          "Example Broken Input: You copy a response from a browser console that contains unquoted keys or trailing commas—common artifacts that break standard parsers. The workshop handles these by providing instant feedback as you paste.",
-          "Why it happens: Modern web APIs prioritize speed, returning minified blocks of data that are impossible for humans to audit manually. Without a dedicated formatter, spotting a missing type or a mismatched bracket in 100kb of JSON is prone to human error.",
-          "Solution (Use Tool): This utility transforms minified strings into a clean, 2-space indented hierarchy. It acts as both a visualizer for state auditing and a high-speed validator that isolates the exact line responsible for a parsing failure. Everything happens in your browser's local sandbox, ensuring maximum privacy for production logs.",
-          "Advanced Notes: Use the 'Minify' mode to prepare payloads for performance-critical deployments, or use the formatter to prepare clean documentation-ready snippets. For deep structural comparisons, consider pairing this with our CSV/JSON converter to flatten the hierarchy."
+          "Use this JSON formatter when your payload is valid but hard to read. Paste minified or compact JSON and turn it into clean, indented output for debugging, code review, documentation, or inspection.",
+          "A formatter is for readability, not repair. If the JSON is invalid, the right next step is to validate the payload and fix the syntax error before trying to pretty-print it again.",
+          "This is useful for API responses, exported config files, CMS payloads, webhook bodies, and any data structure that is technically valid but unreadable as one long line.",
+          "Everything runs locally in your browser, so internal payloads and production responses stay on your machine.",
+          "If formatting fails, switch to the JSON Validator. If the payload is ready for deployment and you want the smallest possible output, use the JSON Minifier."
         ],
         "howTo": {
           "heading": "How to format JSON",
           "steps": [
-            "Paste your JSON string or minified data into the input box.",
-            "The tool will instantly attempt to parse and format the data.",
-            "Use the 'Minify' button to strip all whitespace for production use.",
-            "Check the Status Bar for real-time validation and size metrics."
+            "Paste valid JSON or a minified JSON payload into the input box.",
+            "Run the formatter to pretty-print the structure with consistent indentation.",
+            "Review the formatted output, copy it, or continue debugging with the validator if parsing fails."
           ]
         },
         "examples": {
@@ -718,12 +717,12 @@
             "text-diff-checker"
           ]
         },
-        "aeoDescription": "This tool formats, beautifies, and validates JSON data strings.",
+        "aeoDescription": "This tool pretty-prints valid JSON so it is easier to read, inspect, and share.",
         "capabilities": [
           "Formats minified JSON into human-readable structure",
-          "Validates JSON syntax and highlights errors",
-          "Minifies JSON by removing whitespace",
-          "Supports tab and space indentation",
+          "Makes nested objects and arrays easier to inspect",
+          "Supports browser-based formatting without uploads",
+          "Helps prepare JSON for documentation and code review",
           "Runs offline in browser"
         ],
         "ioFormats": {
@@ -733,16 +732,16 @@
       },
       "faq": [
         {
-          "q": "What happens if my JSON is invalid?",
-          "a": "The workshop will display a 'System Error' in the status bar and highlight the reason for the parsing failure, such as a missing comma or incorrect quote marks."
+          "q": "Can a formatter fix broken JSON automatically?",
+          "a": "No. If the payload is invalid, you need to correct the syntax first. Use the JSON Validator to find the exact problem."
         },
         {
-          "q": "What is the size limit?",
-          "a": "The tool processes JSON entirely on your device. While it can handle several megabytes of data, extremely large files may be limited by your browser's available memory."
+          "q": "What is the difference between formatting and validation?",
+          "a": "Formatting improves readability. Validation checks whether the payload is syntactically valid JSON."
         },
         {
-          "q": "Why use FormatForge over other online tools?",
-          "a": "Most online tools upload your data to their servers. FormatForge is a privacy-first workshop; your data never leaves your browser, making it safe for sensitive customer data or private API keys."
+          "q": "When should I use the JSON Minifier instead?",
+          "a": "Use the minifier after debugging is complete and you want compact output for production transfer or storage."
         },
         {
           "q": "Does this tool run locally?",
@@ -775,25 +774,26 @@
         "jsModule": "json-formatter.js"
       },
       "seo": {
-        "title": "Free JSON Validator Online | FormatForge",
-        "metaDescription": "Validate JSON syntax online with detailed error reporting. Catch missing commas, unclosed brackets, trailing commas, and type mismatches without uploading data to any server.",
-        "h1": "JSON Validator",
-        "subtitle": "Check JSON syntax, find parsing errors, and pinpoint broken lines instantly.",
+        "title": "JSON Validator Online | Find JSON Syntax Errors | FormatForge",
+        "metaDescription": "Validate JSON syntax and find exact parsing errors. Catch missing commas, trailing commas, unquoted keys, and other invalid JSON quickly.",
+        "h1": "JSON Validator Online",
+        "subtitle": "Find JSON syntax errors fast and see exactly where the payload breaks.",
         "canonical": "/json/json-validator/"
       },
       "content": {
         "intro": [
-          "When a JSON payload breaks your application, the first question is always: where is the syntax error? The JSON Validator is a dedicated diagnostic tool that parses your data strictly against the JSON specification and reports exactly which line and character position caused the failure — without sending your data anywhere.",
-          "Unlike a general-purpose formatter, this tool is optimized for one job: finding what's wrong. It catches missing commas, unclosed brackets, trailing commas (not allowed in strict JSON), unquoted keys, single-quoted strings, and other common mistakes that standard JSON.parse() rejects with unhelpful error messages.",
-          "The validator is especially useful for debugging API responses, CI/CD configuration files (package.json, tsconfig.json), and data exports from legacy systems. Paste your JSON, get a precise error report, and fix the issue — all within your browser's local sandbox."
+          "Use this validator when the payload fails to parse and you need the exact syntax problem. It is designed for error-finding, not pretty-printing.",
+          "Paste any JSON string and the validator checks it against strict JSON rules. If the payload is broken, you should see the line, character, and error type that caused the failure.",
+          "This is especially useful for debugging API responses, config files, exports from legacy systems, and hand-edited payloads where commas, quotes, or brackets often go wrong.",
+          "The validator runs locally in your browser, so internal payloads and sensitive data do not leave your machine.",
+          "Once the JSON is valid, switch to the formatter for readability or the minifier for compact production output."
         ],
         "howTo": {
           "heading": "How to validate JSON syntax",
           "steps": [
-            "Paste your JSON string into the input area.",
-            "The validator instantly parses the data against strict JSON rules.",
-            "If valid, you see a success confirmation with key and depth statistics.",
-            "If invalid, the exact line number, character position, and error type are highlighted."
+            "Paste the JSON payload into the input area.",
+            "Run validation to check the payload against strict JSON syntax.",
+            "Review the reported line, character position, and error message, then correct the payload."
           ]
         },
         "examples": {
@@ -815,12 +815,12 @@
             "text-diff-checker"
           ]
         },
-        "aeoDescription": "This tool parses JSON payloads against strict syntax rules and reports the exact line and character position of parsing errors.",
+        "aeoDescription": "This tool validates JSON syntax and reports the exact line, character position, and parse error when JSON is invalid.",
         "capabilities": [
-          "Formats minified JSON into human-readable structure",
-          "Validates JSON syntax and highlights errors",
-          "Minifies JSON by removing whitespace",
-          "Supports tab and space indentation",
+          "Checks strict JSON syntax",
+          "Reports the exact line and character position of errors",
+          "Highlights common mistakes such as trailing commas and unquoted keys",
+          "Supports browser-based validation without uploads",
           "Runs offline in browser"
         ],
         "ioFormats": {
@@ -831,15 +831,15 @@
       "faq": [
         {
           "q": "What JSON errors does this validator catch?",
-          "a": "It catches missing commas, extra trailing commas, unclosed brackets and braces, unquoted keys, single-quoted strings, undefined values, and any other deviation from the ECMA-404 JSON standard."
+          "a": "It catches missing commas, trailing commas, unclosed brackets and braces, unquoted keys, single-quoted strings, and other strict JSON syntax problems."
         },
         {
           "q": "How is this different from the JSON Formatter?",
-          "a": "The Formatter focuses on pretty-printing and readability. The Validator focuses on strict syntax checking and detailed error diagnostics — it tells you exactly which line and character position is broken."
+          "a": "The formatter is for readability. The validator is for strict syntax checking and precise diagnostics."
         },
         {
           "q": "Can it validate JSON Schema?",
-          "a": "This tool validates JSON syntax (is the structure parseable?), not JSON Schema compliance (does it match a specific data model). For schema validation, you would need a separate schema validator."
+          "a": "No. This tool validates JSON syntax, not whether the payload matches a specific schema or data contract."
         },
         {
           "q": "Does this tool run locally?",
@@ -872,25 +872,26 @@
         "jsModule": "json-formatter.js"
       },
       "seo": {
-        "title": "Free JSON Minifier Online | FormatForge",
-        "metaDescription": "Minify JSON online by removing all whitespace, indentation, and line breaks. Reduce payload size for production APIs and CDN transfers — processed locally in your browser.",
-        "h1": "JSON Minifier & Compressor",
-        "subtitle": "Strip whitespace and compress JSON for smaller API payloads and faster transfers.",
+        "title": "JSON Minifier Online | Compress Valid JSON | FormatForge",
+        "metaDescription": "Minify valid JSON by removing whitespace and line breaks. Create compact JSON for production transfer, storage, and delivery.",
+        "h1": "JSON Minifier Online",
+        "subtitle": "Compress valid JSON into the smallest practical payload for transfer or storage.",
         "canonical": "/json/json-minifier/"
       },
       "content": {
         "intro": [
-          "Pretty-printed JSON is great for debugging, but it wastes bandwidth in production. The JSON Minifier strips all unnecessary whitespace, indentation, and line breaks from your JSON data, producing the smallest possible valid payload for API responses, CDN delivery, and configuration storage.",
-          "Minification typically reduces JSON payload size by 15–40% depending on indentation depth and key length. For high-traffic APIs serving millions of requests, this translates directly into lower bandwidth costs and faster response times for end users.",
-          "The tool also validates your JSON before minifying — if your data contains syntax errors, you'll see them before the minification step. Everything runs locally in your browser, so production API responses and internal configuration files remain private."
+          "Use this JSON minifier when the payload is valid and you want the smallest possible output. It removes unnecessary whitespace, indentation, and line breaks while preserving the data itself.",
+          "Minification is useful for production API responses, config payloads, localStorage blobs, and any case where a smaller payload is easier to transfer or store.",
+          "A minifier is not a debugger. If the JSON is broken, validate and fix it first before trying to compress it.",
+          "This tool runs locally in your browser, so internal payloads and production responses stay private.",
+          "If you need readability instead of compact output, use the JSON Formatter. If you need to find the exact syntax issue, use the JSON Validator."
         ],
         "howTo": {
           "heading": "How to minify JSON",
           "steps": [
-            "Paste your pretty-printed or indented JSON into the input area.",
-            "The tool validates the JSON syntax first.",
-            "Click 'Minify' to strip all whitespace and produce compact output.",
-            "The status bar shows original vs. minified size for comparison."
+            "Paste valid JSON into the input area.",
+            "Run the minifier to remove whitespace and create compact output.",
+            "Copy the minified result for production transfer, embedding, or storage."
           ]
         },
         "examples": {
@@ -912,12 +913,12 @@
             "text-diff-checker"
           ]
         },
-        "aeoDescription": "This tool compresses JSON data by removing all unnecessary whitespace, newlines, and indentation, returning the smallest valid JSON string.",
+        "aeoDescription": "This tool removes whitespace, indentation, and line breaks from valid JSON to produce compact output.",
         "capabilities": [
-          "Formats minified JSON into human-readable structure",
-          "Validates JSON syntax and highlights errors",
-          "Minifies JSON by removing whitespace",
-          "Supports tab and space indentation",
+          "Removes non-essential whitespace from valid JSON",
+          "Creates smaller payloads for production transfer",
+          "Validates before minifying to prevent broken output",
+          "Supports browser-based processing without uploads",
           "Runs offline in browser"
         ],
         "ioFormats": {
@@ -928,19 +929,19 @@
       "faq": [
         {
           "q": "How much smaller will my JSON get?",
-          "a": "Typical reduction is 15–40% depending on indentation depth. Deeply nested structures with long keys see the biggest savings."
+          "a": "Size reduction depends on indentation and structure, but pretty-printed JSON often shrinks meaningfully once whitespace is removed."
         },
         {
           "q": "How is this different from the JSON Formatter?",
-          "a": "The Formatter adds whitespace for readability. The Minifier does the opposite — it removes all non-essential whitespace to produce the smallest valid JSON string for production use."
+          "a": "The formatter adds whitespace for readability. The minifier removes whitespace to produce compact output."
         },
         {
           "q": "Does minification change the data?",
-          "a": "No. Minification only removes whitespace characters (spaces, tabs, newlines) that are insignificant in JSON. All keys, values, and structure remain identical."
+          "a": "No. It only removes whitespace that does not affect JSON meaning."
         },
         {
           "q": "When should I minify JSON?",
-          "a": "Minify JSON for production API responses, CDN-hosted configuration files, localStorage payloads, and any context where smaller file size improves performance."
+          "a": "Minify JSON for production transfer, storage, or embedding after debugging is complete."
         },
         {
           "q": "Does this tool run locally?",
@@ -969,26 +970,26 @@
         "jsModule": "smart-slug-generator.js"
       },
       "seo": {
-        "title": "Smart Slug Generator | Create URL-Friendly Strings | FormatForge",
-        "metaDescription": "Instantly generate clean, SEO-friendly, lowercase URL slugs from any text title. Removes stop words, strips special characters, and transliterates instantly.",
-        "h1": "Smart URL Slug Generator",
-        "subtitle": "Convert titles and text into clean, SEO-friendly URL slugs instantly."
+        "title": "URL Slug Generator Online for SEO-Friendly Slugs | FormatForge",
+        "metaDescription": "Generate clean URL slugs from titles and text. Lowercase, hyphenated, accent-safe slugs for blogs, docs, products, and CMS pages.",
+        "h1": "URL Slug Generator",
+        "subtitle": "Convert titles and text into clean, readable URL slugs for blogs, docs, and product pages."
       },
       "content": {
         "intro": [
-          "Static site generators and modern CMS platforms require clean, URL-friendly slugs for optimal indexing and user readability.",
-          "Example Broken Input: A title like '10 Best SEO Tips for 2026 (Updated!)' contains special characters and uppercase letters that create ugly, fragmented URLs.",
-          "Why it happens: Standard browser encoding replaces spaces with `%20` and characters like `!` with escape codes, leading to 'leaky' SEO signals and hard-to-share links.",
-          "Solution (Use Tool): The Smart Slug Generator instantly normalizes titles into lowercase, hyphenated strings. It handles accented characters and optional stop-word removal locally in your browser.",
-          "Advanced Notes: Use the 'Remove Stop Words' feature to keep URLs concise (e.g., 'best-seo-tips' instead of 'the-10-best-seo-tips-for')."
+          "Convert titles and raw text into clean, readable URL slugs for blog posts, product pages, documentation, and CMS content. The tool lowercases text, removes unsafe characters, handles accents, and helps you create consistent slugs before publishing.",
+          "Use it when a title contains punctuation, mixed casing, spaces, symbols, or accented characters that should not become part of the final URL as-is.",
+          "Good slugs are short, descriptive, and stable. They make links easier to scan, easier to share, and easier to keep consistent across a site.",
+          "This generator runs locally in your browser, so you can clean internal titles, product names, and drafts without sending them anywhere.",
+          "If your titles contain accented characters or imported text from different systems, normalize first. The Unicode normalization guide explains why NFC vs NFD can affect slug consistency."
         ],
         "howTo": {
           "heading": "How to generate a URL slug",
           "steps": [
             "Type or paste your title into the input box.",
-            "The tool will instantly convert it to a lowercase URL-friendly string.",
-            "Use the toggles to optionally remove stop words or change the separator from hyphens to underscores.",
-            "Click 'Copy Slug' to use it in your CMS or code."
+            "The tool converts it into a lowercase, URL-friendly slug.",
+            "Adjust options such as stop-word removal or separator style if needed.",
+            "Copy the result into your CMS, static site generator, or application."
           ]
         },
         "examples": {
@@ -999,7 +1000,7 @@
               "output": "10-best-seo-tips-for-2026-updated"
             },
             {
-              "input": "L'Odyssée de l'Espace",
+              "input": "L'Odyssee de l'Espace",
               "output": "lodyssee-de-lespace"
             }
           ]
@@ -1014,12 +1015,12 @@
             "remove-line-breaks"
           ]
         },
-        "aeoDescription": "This tool generates URL-friendly slug strings from readable text.",
+        "aeoDescription": "This tool converts titles and text into clean, lowercase, URL-safe slugs for websites and applications.",
         "capabilities": [
           "Converts text to lowercase slug format",
-          "Removes special characters and diacritics",
-          "Replaces spaces with hyphens or underscores",
-          "Optionally removes common stop words",
+          "Removes punctuation and unsafe URL characters",
+          "Handles accents and transliteration edge cases",
+          "Supports separator and stop-word options",
           "Generates slugs locally"
         ],
         "ioFormats": {
@@ -1030,15 +1031,19 @@
       "faq": [
         {
           "q": "What makes a good URL slug?",
-          "a": "A good slug is short, descriptive, lowercase, and uses hyphens to separate words. It should be easily readable by both humans and search engine crawlers."
+          "a": "A good slug is short, descriptive, lowercase, and uses hyphens between words. It should still be readable out of context."
         },
         {
-          "q": "Why should I remove stop words from slugs?",
-          "a": "Stop words (like 'a', 'the', 'and', 'for') don't add much SEO value. Removing them keeps the URL concise, which search engines prefer, and makes it easier for users to read and share."
+          "q": "Should slugs use hyphens or underscores?",
+          "a": "Use hyphens in almost all SEO cases. Hyphens are the clearer default for readable public URLs."
         },
         {
-          "q": "Does this tool work offline?",
-          "a": "Yes! Because FormatForge relies on client-side JavaScript, the slug generation happens instantly in your browser without requiring a server connection."
+          "q": "Should I remove stop words?",
+          "a": "Remove them when they add no meaning, but keep them when they clarify intent or make the slug less ambiguous."
+        },
+        {
+          "q": "How should I handle accented characters?",
+          "a": "Normalize and transliterate them consistently before publishing. Mixed Unicode forms can create inconsistent slugs if you skip that step."
         },
         {
           "q": "Does this tool run locally?",
@@ -1047,10 +1052,6 @@
         {
           "q": "Is my data uploaded to a server?",
           "a": "No, your data is never uploaded to any server. All processing is strictly client-side."
-        },
-        {
-          "q": "Can I use this tool offline?",
-          "a": "Yes, once the page is loaded, the tool can function completely offline without an internet connection."
         }
       ],
       "schema": {
@@ -1462,15 +1463,18 @@
         "jsModule": "regex-visual-explainer.js"
       },
       "seo": {
-        "title": "Regex Tester and Visual Explainer Online | FormatForge",
-        "metaDescription": "Test regular expressions live and get plain-language regex explanations. Debug matches, flags, and capture groups directly in your browser with zero data upload.",
-        "h1": "Regex Tester & Visual Explainer",
-        "subtitle": "Run regex live and understand each token step by step."
+        "title": "Regex Tester Online with Visual Explanation | FormatForge",
+        "metaDescription": "Test regex patterns live, inspect matches and flags, and understand tokens with a browser-based regex tester and explainer.",
+        "h1": "Regex Tester Online",
+        "subtitle": "Run regex live, inspect matches, and understand each token step by step."
       },
       "content": {
         "intro": [
-          "Regular expressions are powerful, but they are notoriously difficult to read and debug when patterns become complex. This tool combines live regex matching with a visual explanation layer so you can test expressions and understand what each part does in plain language.",
-          "As you type, the matcher updates results instantly and reports match positions and capture groups. The explainer decomposes common syntax elements such as character classes, quantifiers, anchors, and escapes. Everything runs client-side, so test strings and logs remain private."
+          "Use this regex tester when you need to run a pattern against real text and see exactly what matches. It combines live testing with plain-language token explanations so you can debug patterns faster.",
+          "This is useful for log parsing, text extraction, validation patterns, cleanup rules, and debugging patterns that work in theory but fail on real input.",
+          "As you type, the matcher updates results and shows match positions, capture groups, and flag behavior. The explainer helps you understand what each token is doing.",
+          "Everything runs client-side in the browser, so logs, samples, and internal text stay private.",
+          "If you need a step-by-step debugging method for greedy matches, multiline input, escaping, or backtracking, use the regex debugging guide alongside the tool."
         ],
         "howTo": {
           "heading": "How to test and explain a regex pattern",
@@ -1520,11 +1524,11 @@
           "a": "Yes. The tester uses the browser RegExp engine, so behavior matches JavaScript regex syntax and flags."
         },
         {
-          "q": "Does the visual explanation cover every advanced regex feature?",
-          "a": "The explanation focuses on common and practical regex tokens. Extremely advanced constructs may be simplified in the description layer."
+          "q": "Can I debug greedy and lazy matching with this tool?",
+          "a": "Yes. The live match view makes it easier to see when a greedy quantifier captures too much and whether a lazy version narrows the result."
         },
         {
-          "q": "Can I debug capture groups?",
+          "q": "Can I inspect capture groups?",
           "a": "Yes. The match output includes captured group values when your expression defines capture groups."
         },
         {

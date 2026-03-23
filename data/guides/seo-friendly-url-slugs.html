@@ -1,0 +1,77 @@
+<h2>Quick Answer</h2>
+<p>A good URL slug is short, descriptive, lowercase, and stable. Use hyphens between words, keep only the terms that help identify the page, and normalize accented text before slug generation.</p>
+
+<h2>What a Slug Should Do</h2>
+<p>A slug should make the URL readable to humans while staying easy to manage in your CMS or application. It should communicate the page topic clearly without turning into a full sentence or a dump of every keyword variation.</p>
+
+<h2>Rules for SEO-Friendly Slugs</h2>
+<ul>
+    <li>Use lowercase consistently</li>
+    <li>Use hyphens, not underscores, for public page URLs</li>
+    <li>Keep the slug descriptive but compact</li>
+    <li>Remove punctuation and unstable decorative text</li>
+    <li>Normalize accented characters before transliteration</li>
+    <li>Do not keep dates or update markers unless they matter long term</li>
+</ul>
+
+<h2>Hyphen vs Underscore</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Choice</th>
+            <th>Recommendation</th>
+            <th>Why</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Hyphen</td>
+            <td>Use by default</td>
+            <td>Most readable and standard for public URLs</td>
+        </tr>
+        <tr>
+            <td>Underscore</td>
+            <td>Avoid for public content pages</td>
+            <td>Less readable and less standard for SEO-facing slugs</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>When to Remove Stop Words</h2>
+<p>Remove stop words when they add no meaning, but keep them if dropping them makes the slug awkward or ambiguous. The goal is not maximum compression. The goal is a readable and stable identifier.</p>
+
+<h2>Accents, Unicode, and Imported Titles</h2>
+<p>If your titles contain accented characters or come from mixed systems, normalize the text before slug generation. This reduces inconsistent output and makes transliteration more stable. See the <a href="/guides/unicode-normalization/">Unicode normalization guide</a> if you are dealing with NFC vs NFD problems.</p>
+
+<h2>Common Slug Mistakes</h2>
+<ul>
+    <li>Keeping punctuation and update markers such as <code>(updated)</code> without need</li>
+    <li>Using percent-encoded titles instead of real slugs</li>
+    <li>Changing slugs too often after publishing</li>
+    <li>Removing too many words and losing meaning</li>
+    <li>Skipping cleanup when titles contain hidden Unicode characters</li>
+</ul>
+
+<h2>FAQ</h2>
+<div class="guide-faq">
+    <details>
+        <summary>Should a slug match the title exactly?</summary>
+        <p>No. It should match the topic clearly, but it can be shorter and cleaner than the full title.</p>
+    </details>
+    <details>
+        <summary>Should I include the year in a slug?</summary>
+        <p>Only if the year is genuinely part of the page identity. Otherwise it can make future updates harder.</p>
+    </details>
+    <details>
+        <summary>Can hidden characters affect a slug?</summary>
+        <p>Yes. Hidden or inconsistent Unicode characters can create messy or unstable slug output if you do not normalize first.</p>
+    </details>
+</div>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/dev/slug-generator/">URL Slug Generator</a> to generate clean slugs quickly</li>
+    <li><a href="/guides/unicode-normalization/">Unicode normalization guide</a> for accent and normalization edge cases</li>
+    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode characters guide</a> for invisible-character cleanup</li>
+    <li><a href="/dev/url-encode-decode/">URL Encoder / Decoder</a> for URL escaping, which is a different job than slug creation</li>
+</ul>

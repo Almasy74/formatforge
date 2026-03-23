@@ -14,3 +14,15 @@
   skip_processing = false
 [build.processing.html]
   pretty_urls = true
+
+[[redirects]]
+  from = "/text/word-analyzer/"
+  to = "/text/text-analyzer/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/word-analyzer/"
+  to = "/text/text-analyzer/"
+  status = 301
+  force = true

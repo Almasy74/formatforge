@@ -11,8 +11,8 @@
   },
   {
     "id": "json-formatting",
-    "title": "Mastering JSON Formatting and Minification",
-    "description": "Learn the difference between JSON formatting and minification, when to use each, common JSON syntax errors, and how to debug malformed payloads. Includes code examples and comparison tables.",
+    "title": "How to Format JSON Correctly",
+    "description": "Learn how to format JSON correctly, fix invalid syntax, validate payloads, and minify for production with examples and debugging steps.",
     "path": "/guides/json-formatting/",
     "relatedTools": [
       "json-formatter",
@@ -50,7 +50,7 @@
     "description": "A non-intimidating introduction to the powerful world of pattern matching and how to use it in your daily text work.",
     "path": "/guides/regex-basics/",
     "relatedTools": [
-      "regex-tester",
+      "regex-visual-explainer",
       "html-cleaner",
       "remove-line-breaks",
       "remove-duplicate-lines"
@@ -58,8 +58,8 @@
   },
   {
     "id": "unicode-normalization",
-    "title": "Unicode Normalization: Handling NFC and NFD Forms",
-    "description": "A comprehensive guide to Unicode normalization forms (NFC, NFD, NFKC, NFKD), with comparison tables, code examples in JavaScript and Python, and common failure scenarios in databases, search indexing, and slug generation.",
+    "title": "NFC vs NFD: Unicode Normalization Explained",
+    "description": "Understand NFC vs NFD, when to use each, and how Unicode normalization affects search, databases, APIs, slugs, and string comparison.",
     "path": "/guides/unicode-normalization/",
     "relatedTools": [
       "text-analyzer",
@@ -80,13 +80,58 @@
   },
   {
     "id": "regex-debugging",
-    "title": "Debugging Regular Expression Patterns for Data Transformation",
-    "description": "A field manual for troubleshooting regex patterns that fail on complex edge cases like multiline logs or escaped characters.",
+    "title": "How to Debug Regex: Common Failures and Fixes",
+    "description": "Learn how to debug regular expressions step by step. Fix greedy matches, multiline failures, escaping issues, and slow patterns with concrete examples.",
     "path": "/guides/regex-debugging/",
     "relatedTools": [
-      "regex-tester",
+      "regex-visual-explainer",
       "text-analyzer",
       "remove-line-breaks"
+    ]
+  },
+  {
+    "id": "utf8proc-normalization-nfc",
+    "title": "How to Normalize UTF-8 to NFC with utf8proc",
+    "description": "Use utf8proc to normalize UTF-8 text to NFC in C projects, avoid mixed normalization forms, and handle practical storage and comparison issues.",
+    "path": "/guides/utf8proc-normalization-nfc/",
+    "relatedTools": [
+      "smart-slug-generator",
+      "text-analyzer",
+      "url-encoder-decoder"
+    ]
+  },
+  {
+    "id": "json-parse-errors",
+    "title": "Common JSON Parse Errors and Fixes",
+    "description": "Fix common JSON parse errors such as trailing commas, unquoted keys, bad quotes, and broken brackets with exact examples and repair steps.",
+    "path": "/guides/json-parse-errors/",
+    "relatedTools": [
+      "json-validator",
+      "json-formatter",
+      "json-minifier"
+    ]
+  },
+  {
+    "id": "hidden-unicode-characters",
+    "title": "How to Detect Hidden Unicode Characters in Text",
+    "description": "Find and fix zero-width spaces, BOM characters, combining marks, and other hidden Unicode characters that break matching, counts, and formatting.",
+    "path": "/guides/hidden-unicode-characters/",
+    "relatedTools": [
+      "text-analyzer",
+      "remove-line-breaks",
+      "smart-slug-generator",
+      "url-encoder-decoder"
+    ]
+  },
+  {
+    "id": "seo-friendly-url-slugs",
+    "title": "How to Create SEO-Friendly URL Slugs",
+    "description": "Learn how to create readable, stable, hyphenated URL slugs for blogs, docs, products, and content systems without creating slug chaos.",
+    "path": "/guides/seo-friendly-url-slugs/",
+    "relatedTools": [
+      "smart-slug-generator",
+      "url-encoder-decoder",
+      "case-converter"
     ]
   }
 ]

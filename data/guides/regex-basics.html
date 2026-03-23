@@ -1,58 +1,58 @@
-<h2>Beyond Symbols: The Workshop Guide to Regular Expressions</h2>
-<p>In a technical workshop, Regex (Regular Expressions) isn't a complex math problem—it's a <strong>pattern-matching
-        surgical tool</strong>. While AI can generate regex strings, it often fails at edge cases. This guide focuses on
-    the "Experience" patterns that developers actually use to parse logs, sanitize data, and audit code.</p>
+<h2>Regex Basics for Real Work</h2>
+<p>Regular expressions are not useful because they look clever. They are useful because they help you find, extract, validate, or clean text patterns quickly. The trick is to keep the pattern as small and explicit as possible for the job you actually need to do.</p>
 
-<section class="usage-scenario">
-    <h3>The "AI-Validation" Case: Fixing Hallucinated Patterns</h3>
-    <p>LLMs are notorious for providing regex patterns that are technically valid but practically dangerous (e.g.,
-        patterns that cause catastrophic backtracking). When using the <a href="/text/regex-tester/">Regex Tester
-            Workshop</a>, always test your AI-generated patterns against "edge case" inputs like extremely long strings
-        or strings with unbalanced delimiters to ensure the pattern is high-performance and secure.</p>
-</section>
-
-<h2>Essential Workshop Patterns</h2>
+<h2>Three Core Building Blocks</h2>
 <table>
     <thead>
         <tr>
-            <th>Objective</th>
-            <th>The Pattern</th>
-            <th>Why it Matters</th>
+            <th>Concept</th>
+            <th>Example</th>
+            <th>What it does</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td><strong>Email Sanitization</strong></td>
-            <td><code>[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}</code></td>
-            <td>Prevents broken inputs in form submission logs.</td>
+            <td>Character class</td>
+            <td><code>[a-z]</code></td>
+            <td>Matches one lowercase letter</td>
         </tr>
         <tr>
-            <td><strong>Removing HTML Tags</strong></td>
-            <td><code>&lt;[^&gt;]*&gt;</code></td>
-            <td>Clean structural noise from scraped content.</td>
+            <td>Quantifier</td>
+            <td><code>\d{4}</code></td>
+            <td>Matches exactly four digits</td>
         </tr>
         <tr>
-            <td><strong>Audit API Keys</strong></td>
-            <td><code>(?i)(api_key|secret|token)[\s:=]+['"]([a-z0-9]{32,})['"]</code></td>
-            <td>Identify potential security leaks in log files.</td>
+            <td>Anchor</td>
+            <td><code>^error</code></td>
+            <td>Matches "error" only at the start of the line</td>
         </tr>
     </tbody>
 </table>
 
-<h3>Practical Example: Parsing a Raw Log Entry</h3>
-<pre><code>// Input Log
-2026-02-23 18:05:06 ERROR [json-parser] Missing bracket at L42
+<h2>Useful Beginner Patterns</h2>
+<ul>
+    <li><strong>Email-like match:</strong> <code>[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}</code></li>
+    <li><strong>ISO date:</strong> <code>\d{4}-\d{2}-\d{2}</code></li>
+    <li><strong>Simple HTML tag match:</strong> <code>&lt;[^&gt;]+&gt;</code></li>
+</ul>
 
-// Extraction Pattern
-(?&lt;date&gt;\d{4}-\d{2}-\d{2})\s(?&lt;time&gt;[\d:]{8})\s(?&lt;level&gt;\w+)</code></pre>
+<h2>How to Practice Safely</h2>
+<p>Test the pattern against a tiny sample first, then expand to more realistic input. Use the <a href="/dev/regex-tester-explainer/">Regex Tester Online</a> to see what matches and how the pattern behaves before you run it on full logs, exports, or copied content.</p>
 
-<h2>Bidirectional Strategy: Regex → Clean</h2>
-<p>Regex is often the "Analysis" phase before the "Execution" phase. Once you identify a pattern of errors (like extra
-    whitespace or repeating lines), you should move directly to the specialized workshop tools like the <a
-        href="/text/remove-line-breaks/">Remove Line Breaks</a> or <a href="/text/duplicate-lines/">Deduplication
-        Workshop</a>. Using Regex for the <em>identification</em> and specialized tools for <em>transformation</em> is
-    the most reliable developer workflow.</p>
+<h2>Common Beginner Mistakes</h2>
+<ul>
+    <li>Using <code>.*</code> when a tighter class would be safer</li>
+    <li>Forgetting anchors and matching more than expected</li>
+    <li>Escaping too little or too much</li>
+    <li>Testing only on perfect input instead of real-world messy text</li>
+</ul>
 
-<p><strong>Workshop Pro-Tip:</strong> Use non-capturing groups <code>(?:...)</code> when you need to group part of a
-    pattern for repetition but don't need to extract its value separately. This optimizes performance and reduces memory
-    overhead in high-density data parsing.</p>
+<h2>Next Step</h2>
+<p>Once you understand the basics, move to the <a href="/guides/regex-debugging/">regex debugging guide</a> for greedy matches, multiline input, escaping problems, and performance issues.</p>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/dev/regex-tester-explainer/">Regex Tester Online</a> for live matching and plain-language explanations</li>
+    <li><a href="/text/remove-line-breaks/">Remove Line Breaks</a> to clean copied text before testing patterns</li>
+    <li><a href="/text/remove-duplicate-lines/">Remove Duplicate Lines</a> for post-match cleanup workflows</li>
+</ul>

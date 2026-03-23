@@ -60,7 +60,121 @@ const footerPartial = getFile(path.join(srcDir, 'partials', 'footer.html'));
 const adsPartial = getFile(path.join(srcDir, 'partials', 'ads-placeholder.html'));
 
 const BASE_URL = site.domain;
-const generatedUrls = [];
+const OG_IMAGE_URL = `${BASE_URL}/assets/images/formatforge_logo.png`;
+const sitemapUrls = new Set();
+const clusterMap = new Map(clusters.map(cluster => [cluster.id, cluster]));
+const guideHubSeo = {
+    title: 'Guides for JSON, Unicode, Regex and Text Cleaning | FormatForge',
+    metaDescription: 'Technical guides for JSON formatting, Unicode normalization, regex debugging, text cleaning, and data conversion. Built to support hands-on tool workflows.',
+    h1: 'Technical Guides for Text, JSON and Developer Workflows',
+    intro: 'Use these guides when you need the why and the fix. Each guide explains a specific technical problem, then points you to the right FormatForge tool to solve it.'
+};
+const staticPageMeta = {
+    about: {
+        title: 'About FormatForge | Privacy-First Developer Tools',
+        description: 'FormatForge is an independent, privacy-first workshop for text, JSON, and developer tools that run locally in your browser.',
+        canonical: '/about/',
+        robots: 'index,follow',
+        schemaType: 'AboutPage',
+        heading: 'About FormatForge'
+    },
+    privacy: {
+        title: 'Privacy Policy | FormatForge',
+        description: 'Privacy information for FormatForge, including how browser-based tools handle user data and what is not uploaded to the server.',
+        canonical: '/privacy/',
+        robots: 'noindex,follow',
+        schemaType: 'WebPage',
+        heading: 'Privacy Policy'
+    },
+    terms: {
+        title: 'Terms of Use | FormatForge',
+        description: 'Terms governing the use of FormatForge tools, guides, and website content.',
+        canonical: '/terms/',
+        robots: 'noindex,follow',
+        schemaType: 'WebPage',
+        heading: 'Terms of Use'
+    },
+    contact: {
+        title: 'Contact FormatForge',
+        description: 'Contact FormatForge for feedback, support, and suggestions for new text, JSON, or developer tools.',
+        canonical: '/contact/',
+        robots: 'index,follow',
+        schemaType: 'ContactPage',
+        heading: 'Contact FormatForge'
+    }
+};
+
+function normalizeRoute(route) {
+    if (site.canonicalTrailingSlash && !route.endsWith('/')) {
+        return `${route}/`;
+    }
+    if (!site.canonicalTrailingSlash && route.endsWith('/') && route !== '/') {
+        return route.slice(0, -1);
+    }
+    return route;
+}
+
+function absoluteUrl(route) {
+    return `${BASE_URL}${normalizeRoute(route)}`;
+}
+
+function addSitemapUrl(url, robots = 'index,follow') {
+    if ((robots || 'index,follow').includes('noindex')) {
+        return;
+    }
+    sitemapUrls.add(url);
+}
+
+function buildBreadcrumbItems(items) {
+    return items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.name,
+        item: item.url
+    }));
+}
+
+function buildBreadcrumbHtml(items) {
+    const html = items.map((item, index) => {
+        if (index === items.length - 1) {
+            return `<span style="color: var(--primary-color);">${item.name}</span>`;
+        }
+        return `<a href="${item.path}">${item.name}</a>`;
+    }).join(' / ');
+    return `<nav aria-label="Breadcrumb" style="font-family: var(--mono-font); font-size: 12px; margin-bottom: 20px; opacity: 0.7;">${html}</nav>`;
+}
+
+function buildBaseOrganizationGraph() {
+    return [
+        {
+            '@type': 'Organization',
+            '@id': `${BASE_URL}/#organization`,
+            name: site.name,
+            url: `${BASE_URL}/`,
+            logo: `${BASE_URL}/assets/images/formatforge_logo.png`
+        },
+        {
+            '@type': 'WebSite',
+            '@id': `${BASE_URL}/#website`,
+            url: `${BASE_URL}/`,
+            name: site.name,
+            publisher: {
+                '@id': `${BASE_URL}/#organization`
+            }
+        }
+    ];
+}
+
+function applyMetaPlaceholders(html, meta) {
+    return html
+        .replace(/\[META_ROBOTS\]/g, meta.robots || 'index,follow')
+        .replace(/\[CANONICAL_URL\]/g, meta.canonicalUrl)
+        .replace(/\[OG_TITLE\]/g, meta.ogTitle)
+        .replace(/\[OG_DESCRIPTION\]/g, meta.ogDescription)
+        .replace(/\[OG_URL\]/g, meta.ogUrl)
+        .replace(/\[OG_TYPE\]/g, meta.ogType || 'website')
+        .replace(/\[OG_IMAGE\]/g, OG_IMAGE_URL);
+}
 
 function generateRelatedCluster(currentTool) {
     let relatedHtml = '';
@@ -102,12 +216,7 @@ function generateRelatedGuides(currentTool) {
 console.log(`Building ${tools.filter(t => t.flags.enabled).length} tool pages...`);
 
 tools.filter(t => t.flags.enabled).forEach(tool => {
-    let cleanRoute = tool.path;
-    if (site.canonicalTrailingSlash && !cleanRoute.endsWith('/')) {
-        cleanRoute += '/';
-    } else if (!site.canonicalTrailingSlash && cleanRoute.endsWith('/') && cleanRoute !== '/') {
-        cleanRoute = cleanRoute.slice(0, -1);
-    }
+    const cleanRoute = normalizeRoute(tool.path);
 
     // Path resolution
     const routeParts = cleanRoute.split('/').filter(Boolean);
@@ -128,11 +237,23 @@ tools.filter(t => t.flags.enabled).forEach(tool => {
     html = html.replace(/\[META_DESCRIPTION\]/g, tool.seo.metaDescription);
     html = html.replace(/\[META_ROBOTS\]/g, tool.seo.robots || "index,follow");
 
-    const canonicalUrl = tool.seo.canonical ? (BASE_URL + tool.seo.canonical) : (BASE_URL + cleanRoute);
+    const canonicalUrl = tool.seo.canonical ? absoluteUrl(tool.seo.canonical) : absoluteUrl(cleanRoute);
     html = html.replace(/\[CANONICAL_URL\]/g, canonicalUrl);
+    html = html.replace(/\[OG_TITLE\]/g, tool.seo.title);
+    html = html.replace(/\[OG_DESCRIPTION\]/g, tool.seo.metaDescription);
+    html = html.replace(/\[OG_URL\]/g, canonicalUrl);
+    html = html.replace(/\[OG_IMAGE\]/g, OG_IMAGE_URL);
 
     html = html.replace(/\[H1_TITLE\]/g, tool.seo.h1);
     html = html.replace(/\[SUBTITLE_DESCRIPTION\]/g, tool.seo.subtitle || '');
+
+    const toolCluster = clusterMap.get(tool.clusterId);
+    const toolBreadcrumbs = [
+        { name: 'Home', path: '/', url: `${BASE_URL}/` },
+        { name: toolCluster ? toolCluster.label : 'Tools', path: toolCluster ? normalizeRoute(toolCluster.hubPath) : '/', url: toolCluster ? absoluteUrl(toolCluster.hubPath) : `${BASE_URL}/` },
+        { name: tool.seo.h1, path: cleanRoute, url: canonicalUrl }
+    ];
+    html = html.replace(/\[BREADCRUMBS_HTML\]/g, buildBreadcrumbHtml(toolBreadcrumbs));
 
     // Content Blocks
     const aeoHeaderHtml = `
@@ -193,15 +314,25 @@ tools.filter(t => t.flags.enabled).forEach(tool => {
     // Schema JSON
     const schemaObj = {
         "@context": "https://schema.org",
-        "@graph": []
+        "@graph": [
+            ...buildBaseOrganizationGraph(),
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": buildBreadcrumbItems(toolBreadcrumbs)
+            }
+        ]
     };
     if (tool.schema.webApp) {
         schemaObj["@graph"].push({
             "@type": "SoftwareApplication",
+            "url": canonicalUrl,
             "name": tool.seo.h1,
             "description": tool.content.aeoDescription || tool.seo.metaDescription,
             "operatingSystem": "Web",
             "applicationCategory": "DeveloperApplication",
+            "applicationSubCategory": toolCluster ? toolCluster.label : 'Developer Tools',
+            "isAccessibleForFree": true,
+            "browserRequirements": "Requires a modern JavaScript-enabled browser.",
             "featureList": tool.content.capabilities || []
         });
     }
@@ -233,17 +364,12 @@ tools.filter(t => t.flags.enabled).forEach(tool => {
     const destFile = path.join(destDir, 'index.html');
     fs.writeFileSync(destFile, html, 'utf8');
 
-    generatedUrls.push(canonicalUrl);
+    addSitemapUrl(canonicalUrl, tool.seo.robots || 'index,follow');
 });
 
 // Generated Hub Directories
 clusters.forEach(cluster => {
-    let cleanRoute = cluster.hubPath;
-    if (site.canonicalTrailingSlash && !cleanRoute.endsWith('/')) {
-        cleanRoute += '/';
-    } else if (!site.canonicalTrailingSlash && cleanRoute.endsWith('/') && cleanRoute !== '/') {
-        cleanRoute = cleanRoute.slice(0, -1);
-    }
+    const cleanRoute = normalizeRoute(cluster.hubPath);
     const routeParts = cleanRoute.split('/').filter(Boolean);
     const destDir = path.join(publicDir, ...routeParts);
     if (!fs.existsSync(destDir)) {
@@ -256,25 +382,77 @@ clusters.forEach(cluster => {
 
     // Hub-specific SEO fields
     const hubSeo = cluster.seo || {};
-    const canonicalUrl = BASE_URL + cleanRoute;
+    const canonicalUrl = absoluteUrl(cleanRoute);
     hubHtml = hubHtml.replace(/\[HUB_TITLE\]/g, hubSeo.title || `${cluster.label} | FormatForge`);
     hubHtml = hubHtml.replace(/\[HUB_META_DESCRIPTION\]/g, hubSeo.metaDescription || cluster.description || '');
     hubHtml = hubHtml.replace(/\[HUB_CANONICAL_URL\]/g, canonicalUrl);
     hubHtml = hubHtml.replace(/\[HUB_H1\]/g, hubSeo.h1 || cluster.label);
     hubHtml = hubHtml.replace(/\[HUB_INTRO\]/g, hubSeo.intro || cluster.description || '');
+    hubHtml = hubHtml.replace(/\[META_ROBOTS\]/g, 'index,follow');
+    hubHtml = hubHtml.replace(/\[OG_TITLE\]/g, hubSeo.title || `${cluster.label} | FormatForge`);
+    hubHtml = hubHtml.replace(/\[OG_DESCRIPTION\]/g, hubSeo.metaDescription || cluster.description || '');
+    hubHtml = hubHtml.replace(/\[OG_URL\]/g, canonicalUrl);
+    hubHtml = hubHtml.replace(/\[OG_TYPE\]/g, 'website');
+    hubHtml = hubHtml.replace(/\[OG_IMAGE\]/g, OG_IMAGE_URL);
 
-    const hubToolsHtml = tools.filter(t => t.clusterId === cluster.id && t.flags.enabled).map(t => `
+    const hubBreadcrumbs = [
+        { name: 'Home', path: '/', url: `${BASE_URL}/` },
+        { name: cluster.label, path: cleanRoute, url: canonicalUrl }
+    ];
+    const hubRelatedGuides = guides.filter(guide => (guide.relatedTools || []).some(toolId => {
+        const t = tools.find(tool => tool.id === toolId);
+        return t && t.clusterId === cluster.id;
+    }));
+
+    const hubToolsHtml = `
+        <section style="margin-bottom: 40px;">
+            <h2 style="margin-bottom: 18px;">Popular ${cluster.label}</h2>
+            <div style="display:grid; gap:20px;">
+    ` + tools.filter(t => t.clusterId === cluster.id && t.flags.enabled).map(t => `
         <article class="tool-card shadow-card" style="padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 20px;">
-            <h2><a href="${t.path}" style="text-decoration: none; color: inherit;">${t.seo.h1}</a></h2>
+            <h3 style="margin-top: 0;"><a href="${t.path}" style="text-decoration: none; color: inherit;">${t.seo.h1}</a></h3>
             <p>${t.seo.subtitle}</p>
         </article>
-    `).join('\n');
+    `).join('\n') + `
+            </div>
+        </section>
+    `;
 
     hubHtml = hubHtml.replace(/\[TOOL_LIST_HTML\]/g, hubToolsHtml);
+    hubHtml = hubHtml.replace(/\[PRE_GRID_HTML\]/g, buildBreadcrumbHtml(hubBreadcrumbs));
+    if (hubRelatedGuides.length > 0) {
+        const hubGuideHtml = `
+        <section class="shadow-card" style="margin-top: 40px; padding: 30px;">
+            <h2 style="margin-top: 0;">Guides That Support These Tools</h2>
+            <p style="color:#64748b;">Use a guide when you need context, examples, and failure patterns before jumping into the tool.</p>
+            <div style="display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+                ${hubRelatedGuides.slice(0, 4).map(guide => `<a href="${guide.path}" style="display:block; padding:16px; border:1px solid #e2e8f0; border-radius:8px; text-decoration:none; color:inherit;"><h3 style="margin:0 0 8px 0; font-size:18px; color:#0056b3;">${guide.title}</h3><p style="margin:0; color:#475569; font-size:14px;">${guide.description}</p></a>`).join('')}
+            </div>
+        </section>`;
+        hubHtml = hubHtml.replace(/\[POST_GRID_HTML\]/g, hubGuideHtml);
+    } else {
+        hubHtml = hubHtml.replace(/\[POST_GRID_HTML\]/g, '');
+    }
+    hubHtml = hubHtml.replace(/\[SCHEMA_JSON\]/g, JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+            ...buildBaseOrganizationGraph(),
+            {
+                '@type': 'CollectionPage',
+                'name': hubSeo.h1 || cluster.label,
+                'url': canonicalUrl,
+                'description': hubSeo.metaDescription || cluster.description || ''
+            },
+            {
+                '@type': 'BreadcrumbList',
+                'itemListElement': buildBreadcrumbItems(hubBreadcrumbs)
+            }
+        ]
+    }, null, 2));
 
     fs.writeFileSync(path.join(destDir, 'index.html'), hubHtml, 'utf8');
 
-    generatedUrls.push(canonicalUrl);
+    addSitemapUrl(canonicalUrl);
 });
 
 // Generated Guides Hub
@@ -283,17 +461,46 @@ const guidesHubTemplate = getFile(path.join(srcDir, 'templates', 'guides-hub-tem
 let guidesHubHtml = guidesHubTemplate
     .replace(/\[HEADER_HTML\]/g, headerPartial)
     .replace(/\[FOOTER_HTML\]/g, footerPartial);
+guidesHubHtml = guidesHubHtml.replace(/\[HUB_TITLE\]/g, guideHubSeo.title);
+guidesHubHtml = guidesHubHtml.replace(/\[HUB_META_DESCRIPTION\]/g, guideHubSeo.metaDescription);
+guidesHubHtml = guidesHubHtml.replace(/\[HUB_CANONICAL_URL\]/g, absoluteUrl('/guides/'));
+guidesHubHtml = guidesHubHtml.replace(/\[HUB_H1\]/g, guideHubSeo.h1);
+guidesHubHtml = guidesHubHtml.replace(/\[HUB_INTRO\]/g, guideHubSeo.intro);
+guidesHubHtml = guidesHubHtml.replace(/\[META_ROBOTS\]/g, 'index,follow');
+guidesHubHtml = guidesHubHtml.replace(/\[OG_TITLE\]/g, guideHubSeo.title);
+guidesHubHtml = guidesHubHtml.replace(/\[OG_DESCRIPTION\]/g, guideHubSeo.metaDescription);
+guidesHubHtml = guidesHubHtml.replace(/\[OG_URL\]/g, absoluteUrl('/guides/'));
+guidesHubHtml = guidesHubHtml.replace(/\[OG_IMAGE\]/g, OG_IMAGE_URL);
+guidesHubHtml = guidesHubHtml.replace(/\[SCHEMA_JSON\]/g, JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+        ...buildBaseOrganizationGraph(),
+        {
+            '@type': 'CollectionPage',
+            'name': guideHubSeo.h1,
+            'url': absoluteUrl('/guides/'),
+            'description': guideHubSeo.metaDescription
+        },
+        {
+            '@type': 'BreadcrumbList',
+            'itemListElement': buildBreadcrumbItems([
+                { name: 'Home', url: `${BASE_URL}/` },
+                { name: 'Guides', url: absoluteUrl('/guides/') }
+            ])
+        }
+    ]
+}, null, 2));
 
 const guidesListHtml = guides.map(guide => `
     <a href="${guide.path}" style="text-decoration: none; color: inherit; display: block; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; transition: transform 0.2s ease, box-shadow 0.2s ease; overflow: hidden; height: 100%;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.05)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
         <div style="padding: 24px;">
-            <div style="font-family: var(--mono-font); font-size: 11px; color: var(--primary-color); margin-bottom: 12px; opacity: 0.8;">[REFERENCE_GUIDE]</div>
+            <div style="font-family: var(--mono-font); font-size: 11px; color: var(--primary-color); margin-bottom: 12px; opacity: 0.8;">REFERENCE GUIDE</div>
             <h3 style="margin: 0 0 12px 0; font-family: var(--mono-font); font-size: 18px; line-height: 1.3;">${guide.title}</h3>
             <p style="margin: 0; font-size: 14px; color: #64748b; line-height: 1.6;">${guide.description}</p>
         </div>
         <div style="padding: 12px 24px; background: #f8fafc; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
             <span style="font-family: var(--mono-font); font-size: 10px; color: #94a3b8;">${guide.relatedTools ? (guide.relatedTools.length + ' TOOLS LINKED') : 'MANUAL'}</span>
-            <span style="font-family: var(--mono-font); font-size: 12px; color: var(--primary-color);">READ_GUIDE >></span>
+            <span style="font-family: var(--mono-font); font-size: 12px; color: var(--primary-color);">READ GUIDE &gt;&gt;</span>
         </div>
     </a>
 `).join('\n');
@@ -302,17 +509,12 @@ guidesHubHtml = guidesHubHtml.replace(/\[GUIDE_LIST_HTML\]/g, guidesListHtml);
 const guidesHubDir = path.join(publicDir, 'guides');
 if (!fs.existsSync(guidesHubDir)) fs.mkdirSync(guidesHubDir, { recursive: true });
 fs.writeFileSync(path.join(guidesHubDir, 'index.html'), guidesHubHtml, 'utf8');
-generatedUrls.push(site.domain + '/guides/');
+addSitemapUrl(absoluteUrl('/guides/'));
 
 // Generated Guides
 console.log('Generating knowledge guides...');
 guides.forEach(guide => {
-    let cleanRoute = guide.path;
-    if (site.canonicalTrailingSlash && !cleanRoute.endsWith('/')) {
-        cleanRoute += '/';
-    } else if (!site.canonicalTrailingSlash && cleanRoute.endsWith('/') && cleanRoute !== '/') {
-        cleanRoute = cleanRoute.slice(0, -1);
-    }
+    const cleanRoute = normalizeRoute(guide.path);
     const routeParts = cleanRoute.split('/').filter(Boolean);
     const destDir = path.join(publicDir, ...routeParts);
     if (!fs.existsSync(destDir)) {
@@ -324,10 +526,22 @@ guides.forEach(guide => {
     html = html.replace(/\[FOOTER_PARTIAL\]/g, footerPartial);
     html = html.replace(/\[LANGUAGE\]/g, site.defaultLocale);
 
-    const canonicalUrl = BASE_URL + cleanRoute;
+    const canonicalUrl = absoluteUrl(cleanRoute);
     html = html.replace(/\[CANONICAL_URL\]/g, canonicalUrl);
     html = html.replace(/\[TITLE\]/g, guide.title);
     html = html.replace(/\[META_DESCRIPTION\]/g, guide.description);
+    html = html.replace(/\[META_ROBOTS\]/g, guide.robots || 'index,follow');
+    html = html.replace(/\[OG_TITLE\]/g, `${guide.title} | FormatForge Guides`);
+    html = html.replace(/\[OG_DESCRIPTION\]/g, guide.description);
+    html = html.replace(/\[OG_URL\]/g, canonicalUrl);
+    html = html.replace(/\[OG_IMAGE\]/g, OG_IMAGE_URL);
+
+    const guideBreadcrumbs = [
+        { name: 'Home', path: '/', url: `${BASE_URL}/` },
+        { name: 'Guides', path: '/guides/', url: absoluteUrl('/guides/') },
+        { name: guide.title, path: cleanRoute, url: canonicalUrl }
+    ];
+    html = html.replace(/\[BREADCRUMBS_HTML\]/g, buildBreadcrumbHtml(guideBreadcrumbs));
 
     // Read guide content
     const guideFile = path.join(dataDir, 'guides', guide.id + '.html');
@@ -354,17 +568,31 @@ guides.forEach(guide => {
     // Basic Article Schema
     const schemaObj = {
         "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": guide.title,
-        "description": guide.description,
-        "url": canonicalUrl
+        "@graph": [
+            ...buildBaseOrganizationGraph(),
+            {
+                "@type": "Article",
+                "headline": guide.title,
+                "description": guide.description,
+                "url": canonicalUrl,
+                "mainEntityOfPage": canonicalUrl,
+                "inLanguage": site.defaultLocale,
+                "author": {
+                    "@id": `${BASE_URL}/#organization`
+                }
+            },
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": buildBreadcrumbItems(guideBreadcrumbs)
+            }
+        ]
     };
     html = html.replace(/\[SCHEMA_JSON\]/g, JSON.stringify(schemaObj, null, 2));
 
     const destFile = path.join(destDir, 'index.html');
     fs.writeFileSync(destFile, html, 'utf8');
 
-    generatedUrls.push(canonicalUrl);
+    addSitemapUrl(canonicalUrl, guide.robots || 'index,follow');
 });
 
 // Generate Homepage
@@ -380,6 +608,16 @@ homeHtml = homeHtml.replace(/\[HUB_CANONICAL_URL\]/g, BASE_URL + '/');
 homeHtml = homeHtml.replace(/\[HUB_H1\]/g, 'Text & Data Tools for Developers — In Your Browser');
 homeHtml = homeHtml.replace(/\[HUB_INTRO\]/g, 'FormatForge is a privacy-first developer workshop with free online tools for JSON formatting, text cleaning, data conversion, encoding, and regex debugging. Every tool runs entirely in your browser — no logins, no uploads, no tracking.');
 
+homeHtml = homeHtml.replace('FormatForge — Text & Data Tools for Developers | Format, Validate, Convert', 'Free Online Text, JSON & Developer Tools | FormatForge');
+homeHtml = homeHtml.replace('Free browser-based tools for JSON formatting, text cleaning, encoding, regex testing, and data conversion. Privacy-first — all processing runs locally, no data uploads.', 'Format JSON, validate payloads, analyze text, generate SEO-friendly slugs, debug regex, and convert data locally in your browser. No uploads, no login.');
+homeHtml = homeHtml.replace('Text & Data Tools for Developers — In Your Browser', 'Free Online Text, JSON & Developer Tools');
+homeHtml = homeHtml.replace('FormatForge is a privacy-first developer workshop with free online tools for JSON formatting, text cleaning, data conversion, encoding, and regex debugging. Every tool runs entirely in your browser — no logins, no uploads, no tracking.', 'FormatForge helps you format JSON, validate payloads, analyze text, generate URL slugs, debug regex, and convert structured data directly in the browser. It is built for practical work: fast output, clear structure, and local processing by default.');
+homeHtml = homeHtml.replace(/\[META_ROBOTS\]/g, 'index,follow');
+homeHtml = homeHtml.replace(/\[OG_TITLE\]/g, 'Free Online Text, JSON & Developer Tools | FormatForge');
+homeHtml = homeHtml.replace(/\[OG_DESCRIPTION\]/g, 'Format JSON, validate payloads, analyze text, generate SEO-friendly slugs, debug regex, and convert data locally in your browser. No uploads, no login.');
+homeHtml = homeHtml.replace(/\[OG_URL\]/g, `${BASE_URL}/`);
+homeHtml = homeHtml.replace(/\[OG_TYPE\]/g, 'website');
+homeHtml = homeHtml.replace(/\[OG_IMAGE\]/g, OG_IMAGE_URL);
 const getTagStyle = (cluster) => {
     switch ((cluster || '').toLowerCase()) {
         case 'json': return 'background: #e3f2fd; color: #003c8f;'; // Light blue, dark blue text
@@ -390,19 +628,69 @@ const getTagStyle = (cluster) => {
     }
 };
 
-const allToolsHtml = tools.filter(t => t.flags.enabled).map(t => `
-    <article class="tool-card shadow-card" style="padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 15px;">
-        <h2><a href="${t.path}" style="text-decoration: none; color: #0056b3;">${t.seo.h1}</a></h2>
-        <p>${t.seo.subtitle}</p>
-        <div style="margin-top: 10px; font-size: 0.85em; font-weight: 600;">
-            <span style="${getTagStyle(t.clusterId)} padding: 3px 8px; border-radius: 4px; margin-right: 5px; text-transform: uppercase;">${t.clusterId}</span>
+const allToolsHtml = clusters.map(cluster => {
+    const clusterTools = tools.filter(t => t.flags.enabled && t.clusterId === cluster.id);
+    return `
+    <section style="margin-bottom: 40px;">
+        <h2 style="margin-bottom: 18px;">${cluster.label}</h2>
+        <div style="display:grid; gap:15px;">
+            ${clusterTools.map(t => `
+                <article class="tool-card shadow-card" style="padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 15px;">
+                    <h3 style="margin-top: 0;"><a href="${t.path}" style="text-decoration: none; color: #0056b3;">${t.seo.h1}</a></h3>
+                    <p>${t.seo.subtitle}</p>
+                    <div style="margin-top: 10px; font-size: 0.85em; font-weight: 600;">
+                        <span style="${getTagStyle(t.clusterId)} padding: 3px 8px; border-radius: 4px; margin-right: 5px; text-transform: uppercase;">${t.clusterId}</span>
+                    </div>
+                </article>
+            `).join('\n')}
         </div>
-    </article>
-`).join('\n');
+    </section>`;
+}).join('\n');
 
 homeHtml = homeHtml.replace(/\[TOOL_LIST_HTML\]/g, allToolsHtml);
+homeHtml = homeHtml.replace(/\[PRE_GRID_HTML\]/g, `
+<section class="shadow-card" style="padding: 24px; margin-bottom: 30px;">
+    <h2 style="margin-top: 0;">Start With the Right Task</h2>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="/json/json-formatter/" style="padding:10px 14px; border:1px solid #dbeafe; border-radius:8px; text-decoration:none;">Format JSON</a>
+        <a href="/text/text-analyzer/" style="padding:10px 14px; border:1px solid #dcfce7; border-radius:8px; text-decoration:none;">Analyze Text</a>
+        <a href="/dev/slug-generator/" style="padding:10px 14px; border:1px solid #fde68a; border-radius:8px; text-decoration:none;">Generate a URL Slug</a>
+        <a href="/guides/unicode-normalization/" style="padding:10px 14px; border:1px solid #e2e8f0; border-radius:8px; text-decoration:none;">NFC vs NFD Explained</a>
+        <a href="/guides/json-formatting/" style="padding:10px 14px; border:1px solid #e2e8f0; border-radius:8px; text-decoration:none;">How to Format JSON</a>
+        <a href="/guides/regex-debugging/" style="padding:10px 14px; border:1px solid #e2e8f0; border-radius:8px; text-decoration:none;">How to Debug Regex</a>
+    </div>
+</section>`);
+homeHtml = homeHtml.replace(/\[POST_GRID_HTML\]/g, `
+<section class="shadow-card" style="padding: 30px; margin-top: 30px;">
+    <h2 style="margin-top: 0;">Popular Guides</h2>
+    <p style="color:#64748b;">Start with the guide if you need the why, then jump into the tool for the actual fix.</p>
+    <div style="display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+        ${guides.filter(guide => ['unicode-normalization', 'json-formatting', 'regex-debugging', 'text-cleaning'].includes(guide.id)).map(guide => `<a href="${guide.path}" style="display:block; padding:16px; border:1px solid #e2e8f0; border-radius:8px; text-decoration:none; color:inherit;"><h3 style="margin:0 0 8px 0; font-size:18px; color:#0056b3;">${guide.title}</h3><p style="margin:0; color:#475569; font-size:14px;">${guide.description}</p></a>`).join('')}
+    </div>
+</section>
+<section class="shadow-card" style="padding: 30px; margin-top: 30px;">
+    <h2 style="margin-top: 0;">Why Teams Use FormatForge</h2>
+    <p>FormatForge is built for practical debugging and publishing work. Use it to inspect API payloads, clean copied text, normalize Unicode, generate consistent URL slugs, and test regular expressions without sending sensitive data to a remote service.</p>
+    <h3>FAQ</h3>
+    <details style="margin-bottom:10px;"><summary style="cursor:pointer; font-weight:bold;">Does FormatForge upload my data?</summary><p>No. The core tools are designed to run locally in your browser.</p></details>
+    <details style="margin-bottom:10px;"><summary style="cursor:pointer; font-weight:bold;">Which tools are best for JSON work?</summary><p>Start with JSON Formatter for readability, JSON Validator for syntax errors, and JSON Minifier for compact production payloads.</p></details>
+    <details><summary style="cursor:pointer; font-weight:bold;">Is FormatForge only for developers?</summary><p>No. It is also useful for technical SEOs, content teams, analysts, and support teams who work with structured text.</p></details>
+</section>`);
+homeHtml = homeHtml.replace(/\[SCHEMA_JSON\]/g, JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+        ...buildBaseOrganizationGraph(),
+        {
+            '@type': 'WebPage',
+            name: 'Free Online Text, JSON & Developer Tools',
+            url: `${BASE_URL}/`,
+            description: 'Format JSON, validate payloads, analyze text, generate SEO-friendly slugs, debug regex, and convert data locally in your browser.'
+        }
+    ]
+}, null, 2));
 
 fs.writeFileSync(path.join(publicDir, 'index.html'), homeHtml, 'utf8');
+addSitemapUrl(`${BASE_URL}/`);
 
 // Generate Static Pages (Privacy, Contact, etc.)
 console.log('Generating static pages...');
@@ -417,40 +705,63 @@ if (fs.existsSync(pagesDir)) {
         pageHtml = pageHtml.replace(/\[HEADER_PARTIAL\]/g, headerPartial);
         pageHtml = pageHtml.replace(/\[FOOTER_PARTIAL\]/g, footerPartial);
 
-        // Very simple mapping for title and desc
-        let title = pageId.charAt(0).toUpperCase() + pageId.slice(1);
-        if (pageId === 'privacy') title = 'Privacy Policy';
-        if (pageId === 'contact') title = 'Contact Us';
+        const meta = staticPageMeta[pageId] || {
+            title: `${pageId.charAt(0).toUpperCase() + pageId.slice(1)} | FormatForge`,
+            description: `FormatForge ${pageId} page.`,
+            canonical: `/${pageId}/`,
+            robots: 'index,follow',
+            schemaType: 'WebPage',
+            heading: pageId.charAt(0).toUpperCase() + pageId.slice(1)
+        };
+        const canonicalUrl = absoluteUrl(meta.canonical);
+        const pageBreadcrumbs = [
+            { name: 'Home', path: '/', url: `${BASE_URL}/` },
+            { name: meta.heading, path: meta.canonical, url: canonicalUrl }
+        ];
 
-        pageHtml = pageHtml.replace(/\[PAGE_TITLE\]/g, title);
-        pageHtml = pageHtml.replace(/\[PAGE_DESC\]/g, `FormatForge ${title} page.`);
-        pageHtml = pageHtml.replace(/\[PAGE_URL\]/g, `/${pageId}`);
+        pageHtml = pageHtml.replace(/\[TITLE_TAG\]/g, meta.title);
+        pageHtml = pageHtml.replace(/\[PAGE_TITLE\]/g, meta.heading);
+        pageHtml = pageHtml.replace(/\[PAGE_DESC\]/g, meta.description);
         pageHtml = pageHtml.replace(/\[PAGE_CONTENT\]/g, pageContent);
+        pageHtml = pageHtml.replace(/\[BREADCRUMBS_HTML\]/g, buildBreadcrumbHtml(pageBreadcrumbs));
+        pageHtml = applyMetaPlaceholders(pageHtml, {
+            robots: meta.robots,
+            canonicalUrl,
+            ogTitle: meta.title,
+            ogDescription: meta.description,
+            ogUrl: canonicalUrl,
+            ogType: 'website'
+        });
+        pageHtml = pageHtml.replace(/\[SCHEMA_JSON\]/g, JSON.stringify({
+            '@context': 'https://schema.org',
+            '@graph': [
+                ...buildBaseOrganizationGraph(),
+                {
+                    '@type': meta.schemaType,
+                    name: meta.heading,
+                    url: canonicalUrl,
+                    description: meta.description
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    itemListElement: buildBreadcrumbItems(pageBreadcrumbs)
+                }
+            ]
+        }, null, 2));
 
         const pageDestDir = path.join(publicDir, pageId);
         if (!fs.existsSync(pageDestDir)) fs.mkdirSync(pageDestDir, { recursive: true });
         fs.writeFileSync(path.join(pageDestDir, 'index.html'), pageHtml, 'utf8');
 
-        // Enforce trailing slash for static pages in sitemap
-        let pageUrl = `${BASE_URL}/${pageId}`;
-        if (site.canonicalTrailingSlash && !pageUrl.endsWith('/')) {
-            pageUrl += '/';
-        }
-        generatedUrls.push(pageUrl);
+        addSitemapUrl(canonicalUrl, meta.robots);
     });
 }
 
 // Generate Sitemap
 console.log('Generating sitemap.xml...');
 let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-sitemapXml += `  <url><loc>${BASE_URL}/</loc></url>\n`;
-generatedUrls.forEach(url => {
-    // Double check trailing slashes for all items pushed to sitemap if policy is true
-    let finalUrl = url;
-    if (site.canonicalTrailingSlash && !finalUrl.endsWith('/')) {
-        finalUrl += '/';
-    }
-    sitemapXml += `  <url><loc>${finalUrl}</loc></url>\n`;
+Array.from(sitemapUrls).sort().forEach(url => {
+    sitemapXml += `  <url><loc>${url}</loc></url>\n`;
 });
 sitemapXml += `</urlset>`;
 fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapXml, 'utf8');

@@ -1,60 +1,44 @@
-<h2>Fixing Broken Sentences: The Remove Line Breaks Guide</h2>
-<p>In a technical workshop, removing line breaks isn't just about deleting newlines—it's about <strong>restoring data
-        continuity</strong>. Whether you're cleaning text from a legacy PDF or preparing a prompt for an LLM, hard
-    returns in the wrong places will break your data pipeline.</p>
+<h2>What Removing Line Breaks Solves</h2>
+<p>Unwanted line breaks usually appear when text is copied from PDFs, emails, fixed-width exports, or rich editors. The result is text that looks fragmented, breaks prompts, and creates cleanup work in CMS fields, spreadsheets, and downstream scripts.</p>
 
-<section class="usage-scenario">
-    <h3>The "PDF-to-Prompt" Debugging Case</h3>
-    <p>Large Language Models (LLMs) are sensitive to formatting artifacts. When you copy text from a PDF, it often
-        includes "hard line breaks" at the end of every physical line in the document. These breaks are seen by the
-        model as end-of-sentence markers or structural breaks, which can confuse the attention mechanism and lead to
-        lower-quality reasoning. Using the <a href="/text/remove-line-breaks/">Remove Line Breaks Workshop</a> to
-        flatten this text before prompting can significantly improve model performance and token efficiency.</p>
-</section>
+<h2>When to Use It</h2>
+<ul>
+    <li>Text copied from PDFs where every physical line ends with a newline</li>
+    <li>Email or document text that should become a single clean paragraph</li>
+    <li>Exports where broken wrapping damages readability</li>
+    <li>Prompt preparation when you want a smoother block of text</li>
+</ul>
 
-<h2>Workshop Benchmarks: Manual vs. Automated</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Workflow</th>
-            <th>The Problem</th>
-            <th>The Workshop Solution</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><strong>Scraped Content</strong></td>
-            <td>Variable line lengths and double spacing.</td>
-            <td>Flatten into a single-space sentence flow.</td>
-        </tr>
-        <tr>
-            <td><strong>Database Imports</strong></td>
-            <td>Newlines in CSV fields breaking row alignment.</td>
-            <td>Strip all breaks to ensure 1-to-1 row mapping.</td>
-        </tr>
-        <tr>
-            <td><strong>Fixed-Width Data</strong></td>
-            <td>Terminal outputs with character-limit wrapping.</td>
-            <td>Rejoin wrapped lines while preserving paragraph logic.</td>
-        </tr>
-    </tbody>
-</table>
+<h2>When Not to Remove All Breaks</h2>
+<p>Do not flatten everything if paragraph structure matters. In those cases, keep double line breaks and remove only the accidental single ones. The goal is not to destroy structure. The goal is to remove artificial wrapping.</p>
 
-<h3>Practical Example: Cleaning a Fragged Snippet</h3>
-<pre><code>// Input (Copy-pasted from PDF)
+<h2>Typical Workflow</h2>
+<ol>
+    <li>Paste the copied text into <a href="/text/remove-line-breaks/">Remove Line Breaks</a>.</li>
+    <li>Choose whether to preserve paragraph boundaries.</li>
+    <li>Review the cleaned output for sentence continuity.</li>
+    <li>If the output is structured data, continue with the appropriate formatter such as the <a href="/json/json-formatter/">JSON Formatter</a>.</li>
+</ol>
+
+<h2>Common Mistakes</h2>
+<ul>
+    <li>Removing paragraph breaks that should stay</li>
+    <li>Cleaning only visually and missing hidden whitespace problems</li>
+    <li>Reformatting structured data manually instead of sending it to a dedicated formatter afterward</li>
+</ul>
+
+<h2>Practical Example</h2>
+<pre><code>// Input copied from a PDF
 The architecture of the
 system was designed to
 handle massive payloads.
 
-// Cleaned Output (FormatForge)
+// Cleaned output
 The architecture of the system was designed to handle massive payloads.</code></pre>
 
-<h2>Bidirectional Strategy: Clean → Format</h2>
-<p>Removing breaks is often only phase one. Once your text is flattened, you may need to reorganize it structurally. If
-    your flattened text is actually a JSON string that was fragmented across multiple lines, your next step should be
-    the <a href="/json/json-formatter/">JSON Formatter</a> to restore its hierarchy correctly. This sequence—Flattening
-    followed by Re-structuring—is a standard professional data recovery pattern.</p>
-
-<p><strong>Workshop Pro-Tip:</strong> Use "Preserve Double Line Breaks" when you want to flatten sentences but keep the
-    separation between paragraphs. This keeps the semantic structure human-readable while making the data machine-ready.
-</p>
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/json/json-formatter/">JSON Formatter</a> for structured data that needs to be readable after cleanup</li>
+    <li><a href="/text/text-analyzer/">Text Analysis Tool</a> to inspect the cleaned result</li>
+    <li><a href="/guides/text-cleaning/">Text cleaning guide</a> for the broader cleanup workflow</li>
+</ul>

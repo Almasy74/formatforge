@@ -1,0 +1,84 @@
+<h2>Quick Answer</h2>
+<p>Most JSON parse errors come from trailing commas, missing commas, unquoted keys, single quotes, broken brackets, or comments in strict JSON. Use the <a href="/json/json-validator/">JSON Validator</a> first to find the exact problem, then re-run the payload through the <a href="/json/json-formatter/">JSON Formatter</a> once it is valid.</p>
+
+<h2>The Most Common JSON Parse Errors</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Error type</th>
+            <th>Broken example</th>
+            <th>Fixed example</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Trailing comma</td>
+            <td><code>{"a":1,}</code></td>
+            <td><code>{"a":1}</code></td>
+        </tr>
+        <tr>
+            <td>Missing comma</td>
+            <td><code>{"a":1 "b":2}</code></td>
+            <td><code>{"a":1,"b":2}</code></td>
+        </tr>
+        <tr>
+            <td>Unquoted key</td>
+            <td><code>{name:"Alice"}</code></td>
+            <td><code>{"name":"Alice"}</code></td>
+        </tr>
+        <tr>
+            <td>Single quotes</td>
+            <td><code>{'name':'Alice'}</code></td>
+            <td><code>{"name":"Alice"}</code></td>
+        </tr>
+        <tr>
+            <td>Broken bracket or brace</td>
+            <td><code>{"a":[1,2}</code></td>
+            <td><code>{"a":[1,2]}</code></td>
+        </tr>
+        <tr>
+            <td>Comment inside JSON</td>
+            <td><code>{"a":1 // note}</code></td>
+            <td>Remove comments from strict JSON</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>How to Fix Parse Errors Fast</h2>
+<ol>
+    <li>Paste the payload into the <a href="/json/json-validator/">JSON Validator</a>.</li>
+    <li>Look for the first reported line and character position.</li>
+    <li>Fix the syntax issue nearest that point.</li>
+    <li>Validate again until the payload parses cleanly.</li>
+    <li>Format the valid result with the <a href="/json/json-formatter/">JSON Formatter</a> for readability.</li>
+</ol>
+
+<h2>Why the First Error Matters Most</h2>
+<p>One broken comma or bracket often causes many later parse errors. Fix the first real syntax problem first. Do not chase every downstream error message until the parser can get past the earliest failure.</p>
+
+<h2>When Not to Use a Formatter First</h2>
+<p>If the payload is invalid, a formatter cannot safely pretty-print it. Formatting is for readable valid JSON. Validation is for broken JSON. Keep those jobs separate to avoid confusion.</p>
+
+<h2>FAQ</h2>
+<div class="guide-faq">
+    <details>
+        <summary>Why does valid JavaScript object syntax still fail as JSON?</summary>
+        <p>JSON is stricter than JavaScript object syntax. It requires double-quoted keys and strings, and it does not allow comments, trailing commas, or undefined values.</p>
+    </details>
+    <details>
+        <summary>Can a validator repair JSON automatically?</summary>
+        <p>No. A validator tells you where the problem is. You still need to fix the syntax manually or regenerate the payload correctly.</p>
+    </details>
+    <details>
+        <summary>Should I minify broken JSON?</summary>
+        <p>No. Minify only after the payload is valid and ready for production use.</p>
+    </details>
+</div>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/json/json-validator/">JSON Validator</a> for exact syntax errors</li>
+    <li><a href="/json/json-formatter/">JSON Formatter</a> for readable output after repair</li>
+    <li><a href="/json/json-minifier/">JSON Minifier</a> for compact output once debugging is complete</li>
+    <li><a href="/guides/json-formatting/">How to Format JSON Correctly</a> for the full formatting workflow</li>
+</ul>

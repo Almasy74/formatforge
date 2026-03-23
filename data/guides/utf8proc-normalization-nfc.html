@@ -1,0 +1,91 @@
+<h2>Quick Answer</h2>
+<p>If your C project handles UTF-8 text and you need stable comparisons, storage, or slug generation, normalize to <strong>NFC</strong> with <code>utf8proc</code> before you compare, store, or transform the string. If you are unsure which form to use, choose NFC.</p>
+
+<h2>What utf8proc Is</h2>
+<p><code>utf8proc</code> is a Unicode processing library for UTF-8 text. It is commonly used in systems code to normalize strings, inspect code points, strip compatibility differences, and handle Unicode safely without converting your pipeline into ad hoc byte hacks.</p>
+
+<p>For most web and application workloads, the practical job is simple: take incoming UTF-8 text, normalize it to NFC, then continue with comparison, indexing, storage, or slug generation.</p>
+
+<h2>Why NFC Matters in C Projects</h2>
+<ul>
+    <li><strong>String comparison:</strong> visibly identical text can compare unequal if forms differ</li>
+    <li><strong>Database consistency:</strong> mixed forms create duplicate-looking values</li>
+    <li><strong>Search indexing:</strong> accented queries can miss matches if input is inconsistent</li>
+    <li><strong>Slug generation:</strong> transliteration gets less predictable when normalization is skipped</li>
+</ul>
+
+<h2>When to Normalize</h2>
+<p>Normalize at the point where text enters your system, not only when you notice a bug later. Good boundaries include API ingestion, file parsing, CLI input, database writes, and search indexing pipelines. The earlier you normalize, the fewer mixed-form bugs you carry downstream.</p>
+
+<h2>Example Workflow with utf8proc</h2>
+<pre><code>// Pseudocode shape for an NFC normalization step in a C project
+// 1. Receive UTF-8 input
+// 2. Normalize to NFC with utf8proc
+// 3. Store or compare the normalized value
+
+const char *input = "...";
+// normalized = utf8proc_map(... NFC options ...)
+// if normalization succeeds:
+//   store(normalized);
+//   compare(normalized, other_normalized_value);
+</code></pre>
+
+<h2>What to Watch Out For</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Pitfall</th>
+            <th>Why it happens</th>
+            <th>Fix</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Comparing raw UTF-8 bytes directly</td>
+            <td>Equivalent visible text can have different code-point sequences</td>
+            <td>Normalize both strings to NFC first</td>
+        </tr>
+        <tr>
+            <td>Normalizing some inputs but not others</td>
+            <td>Mixed-form data spreads across the system</td>
+            <td>Normalize at every input boundary</td>
+        </tr>
+        <tr>
+            <td>Generating slugs before normalization</td>
+            <td>Accented characters may decompose differently</td>
+            <td>Normalize first, then generate the slug</td>
+        </tr>
+        <tr>
+            <td>Confusing NFC with NFKC</td>
+            <td>Compatibility normalization can change meaning more aggressively</td>
+            <td>Use NFC unless you specifically need compatibility folding</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>When Not to Use NFC</h2>
+<p>Do not assume NFC is the answer when you specifically need decomposition for analysis. Accent stripping and combining-mark inspection often start with NFD or NFKD. For general storage and comparison, though, NFC remains the safer default.</p>
+
+<h2>FAQ</h2>
+<div class="guide-faq">
+    <details>
+        <summary>Should I normalize all UTF-8 text to NFC in my C project?</summary>
+        <p>For storage, comparison, APIs, and search-oriented text handling, yes. It is the safest default in most application pipelines.</p>
+    </details>
+    <details>
+        <summary>Does utf8proc solve hidden character problems too?</summary>
+        <p>It helps with normalization, but hidden characters such as zero-width spaces or BOM markers may still need explicit inspection and cleanup.</p>
+    </details>
+    <details>
+        <summary>Can normalization affect slugs?</summary>
+        <p>Yes. Skipping normalization can produce inconsistent slugs for accented titles that look identical to users.</p>
+    </details>
+</div>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/guides/unicode-normalization/">NFC vs NFD: Unicode Normalization Explained</a> for the conceptual overview</li>
+    <li><a href="/dev/slug-generator/">URL Slug Generator</a> to create stable slugs after normalization</li>
+    <li><a href="/text/text-analyzer/">Text Analysis Tool</a> to inspect suspicious character-count behavior</li>
+    <li><a href="/dev/url-encode-decode/">URL Encoder / Decoder</a> to inspect encoded Unicode in URLs</li>
+</ul>
