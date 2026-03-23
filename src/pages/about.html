@@ -1,25 +1,43 @@
-<p>FormatForge is an independent workshop for people who need fast, private tools for JSON, text processing, encoding, and data cleanup. The site is built for practical debugging and publishing work: useful tools first, clear technical guides second, and local processing wherever possible.</p>
+<p>FormatForge is an independent workshop for people who work with structured text, JSON, encoding, regex, and content cleanup. The site is built around a simple rule: solve the actual task clearly, with the smallest possible amount of friction.</p>
 
-<h2>Who Builds FormatForge</h2>
-<p>FormatForge is built and maintained by an independent developer in Norway. The project started from a simple need: inspect payloads, clean copied text, debug regex, and normalize messy content without sending internal data to a third-party tool.</p>
+<h2>What FormatForge Is</h2>
+<p>FormatForge is not a generic tool directory and not a content farm. It is a focused set of browser-based utilities and technical guides designed for practical work such as fixing broken JSON, cleaning copied text, generating clean slugs, debugging regex, and handling Unicode edge cases.</p>
 
-<h2>How Data Privacy Works</h2>
-<p>The core FormatForge tools are designed to run locally in the browser. When you paste JSON, text, URLs, tokens, or regex samples into the site, the processing happens client-side by default. That makes FormatForge useful for production debugging, internal documentation work, and day-to-day cleanup tasks where privacy matters.</p>
+<h2>Who Builds It</h2>
+<p>FormatForge is built and maintained by an independent developer in Norway. The project grew out of repeated day-to-day problems in publishing, development, and technical SEO work: payloads that would not parse, slugs that became inconsistent, copied text that broke structure, and regex patterns that failed on real input.</p>
 
-<h2>What the Guides Are For</h2>
-<p>FormatForge publishes technical guides alongside the tools because the real problem is often not the tool itself. It is understanding when to use a formatter instead of a validator, why Unicode normalization breaks equality checks, or how to debug a regex that fails on multiline input. Start in the <a href="/guides/">Knowledge Base</a> when you need context, then jump to the relevant tool when you are ready to fix the issue.</p>
+<h2>Method</h2>
+<p>Each page on FormatForge is intended to own a specific job. A formatter should be about readability, a validator should be about correctness, and a guide should explain when to use one instead of the other. That separation is deliberate. It reduces ambiguity for users, makes the tools easier to choose, and creates cleaner search intent mapping.</p>
 
 <h2>Editorial Standard</h2>
-<p>The site is written to be useful in real workflows. That means practical examples, short debugging paths, and direct answers to common implementation mistakes. The goal is not generic marketing copy. The goal is to help developers, technical SEOs, content teams, analysts, and operations staff solve the underlying problem quickly.</p>
+<p>The guides are written to answer implementation questions directly. That means short paths to a correct decision, explicit failure modes, realistic examples, and terminology that matches how people actually search. The editorial goal is to be precise enough for developers and technical teams while still being readable for content, SEO, and operations users.</p>
+
+<h2>Update Practice</h2>
+<p>FormatForge is maintained as a living workshop. Tool copy is revised when positioning is unclear, guides are expanded when recurring failure patterns show up, and internal links are updated when new hubs or supporting guides improve the route from problem to solution. The aim is not to publish the most pages. The aim is to keep the existing pages more accurate, more differentiated, and easier to trust over time.</p>
+
+<h2>How Data Privacy Works</h2>
+<p>The core tools are designed to run locally in the browser. That matters because many of the inputs people paste into these utilities are internal payloads, draft content, support data, config fragments, or other working material that should not leave the machine just to be formatted or inspected.</p>
+
+<h2>What This Site Covers</h2>
+<ul>
+    <li>JSON workflows such as formatting, validation, minification, conversion, and diffing</li>
+    <li>Text workflows such as cleanup, analysis, case conversion, deduplication, and markup stripping</li>
+    <li>Developer tasks such as regex testing, slug generation, URL encoding, Base64 conversion, and token inspection</li>
+    <li>Guides for Unicode normalization, hidden characters, parse failures, regex debugging, and slug creation</li>
+</ul>
+
+<h2>What This Site Does Not Try to Be</h2>
+<p>FormatForge does not try to replace full developer documentation, runtime libraries, or language-specific references. The purpose is narrower: give you the fastest path to understand the problem, choose the right tool, and complete the task correctly.</p>
 
 <h2>Useful Starting Points</h2>
 <ul>
-    <li><a href="/json/json-formatter/">JSON Formatter</a> for readable payloads and documentation-ready output</li>
-    <li><a href="/json/json-validator/">JSON Validator</a> for strict syntax errors and broken API payloads</li>
-    <li><a href="/text/text-analyzer/">Text Analysis Tool</a> for word count, reading time, and structure checks</li>
-    <li><a href="/dev/slug-generator/">URL Slug Generator</a> for clean, consistent slugs</li>
+    <li><a href="/json/">JSON hub</a> for formatting, validation, minification, conversion, and structured data workflows</li>
+    <li><a href="/text/">Text hub</a> for cleanup, analysis, copied-text repair, and content QA</li>
+    <li><a href="/dev/">Developer hub</a> for regex, slugs, encoding, and browser-side debugging utilities</li>
+    <li><a href="/guides/">Knowledge Base</a> for the supporting technical guides</li>
     <li><a href="/guides/unicode-normalization/">Unicode normalization guide</a> for NFC vs NFD issues</li>
+    <li><a href="/guides/json-parse-errors/">JSON parse errors guide</a> for broken payloads</li>
 </ul>
 
 <h2>Contact</h2>
-<p>If you have suggestions for improvements or new tools, use the <a href="/contact/">contact page</a>. For privacy details, see the <a href="/privacy/">Privacy Policy</a>.</p>
+<p>If you have suggestions for improvements, gaps in coverage, or ideas for new tools and guides, use the <a href="/contact/">contact page</a>. For details about data handling, see the <a href="/privacy/">Privacy Policy</a>.</p>

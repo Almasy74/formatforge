@@ -16,10 +16,10 @@
       "hubPath": "/text/",
       "description": "Clean, transform, and analyze text with fast no-login tools.",
       "seo": {
-        "title": "Text Cleaning & Analysis Tools - Online, Private | FormatForge",
-        "h1": "Text Cleaning & Analysis Tools",
-        "metaDescription": "Free online tools to clean text, remove line breaks, strip HTML, analyze readability, convert case, and deduplicate lines. All processing runs locally in your browser.",
-        "intro": "FormatForge Text Tools help you clean, transform, and analyze text directly in your browser. Remove formatting artifacts, strip HTML noise, convert case, deduplicate lines, and measure text structure without uploading any content."
+        "title": "Text Tools for Cleaning, Analysis & Content QA | FormatForge",
+        "h1": "Text Tools for Cleaning, Analysis & Content QA",
+        "metaDescription": "Clean pasted text, remove line breaks, strip HTML, analyze structure, compare drafts, and normalize lists with browser-based text tools.",
+        "intro": "This hub is for practical text work: fixing copied text, checking word count and reading time, comparing versions, converting case, and cleaning noisy input before publishing, prompting, or importing data."
       }
     },
     {
@@ -28,10 +28,10 @@
       "hubPath": "/dev/",
       "description": "Developer utilities for encoding, conversion, and formatting.",
       "seo": {
-        "title": "Developer Utilities: Encoding, Regex, Slugs & Tokens | FormatForge",
-        "h1": "Developer Utilities for Encoding, Regex & Tokens",
-        "metaDescription": "Free browser-based developer tools for URL encoding, Base64 conversion, regex testing, slug generation, and JWT inspection. Private, offline-capable, zero-login.",
-        "intro": "FormatForge Dev Tools give developers instant access to encoding, decoding, pattern testing, and token inspection utilities, all running locally in your browser. Encode URLs and Base64 strings, debug regex patterns visually, generate SEO-friendly slugs, and inspect JWT claims without sending data to any server."
+        "title": "Developer Tools for Regex, Slugs, Encoding & Tokens | FormatForge",
+        "h1": "Developer Tools for Regex, Slugs, Encoding & Tokens",
+        "metaDescription": "Generate clean URL slugs, test regex, encode URLs and Base64, and inspect JWTs with browser-based developer tools built for debugging and publishing workflows.",
+        "intro": "This hub focuses on developer tasks that sit between content and infrastructure: debugging regex, generating safe slugs, encoding strings, decoding tokens, and checking text behavior before it reaches production."
       }
     },
     {
@@ -40,10 +40,10 @@
       "hubPath": "/json/",
       "description": "Format, validate, minify, and convert JSON instantly in your browser.",
       "seo": {
-        "title": "JSON Tools: Formatter, Validator, Converter & Diff | FormatForge",
-        "h1": "JSON Tools - Format, Validate, Convert & Compare",
-        "metaDescription": "Free online JSON tools to format, validate, minify, diff, and convert JSON to CSV, XML, or TypeScript. Privacy-first processing runs locally in your browser.",
-        "intro": "FormatForge JSON Tools cover the full JSON workflow: pretty-print payloads, validate syntax with line-level error reporting, minify for production, convert between CSV, XML, and TypeScript, and compare datasets structurally. Every operation runs in your browser sandbox."
+        "title": "JSON Tools for Formatting, Validation, Minification & Conversion | FormatForge",
+        "h1": "JSON Tools for Formatting, Validation, Minification & Conversion",
+        "metaDescription": "Choose the right JSON tool for each job: pretty-print valid JSON, validate broken payloads, minify production output, convert CSV and XML, or diff structured data.",
+        "intro": "This hub covers the full JSON workflow, but each tool solves a different problem. Use the formatter for readability, the validator for broken syntax, the minifier for compact output, and the converters when you need to move structured data between formats."
       }
     }
   ],

@@ -104,6 +104,153 @@ const staticPageMeta = {
     }
 };
 
+const clusterLandingContent = {
+    text: {
+        quickAnswer: 'Use these tools when text is messy, structurally uneven, or hard to reuse. The strongest entry points are Remove Line Breaks for copied text, Text Analyzer for structure and timing, and HTML Cleaner for pasted markup.',
+        workflowHeading: 'Common Text Workflows',
+        workflowCards: [
+            {
+                title: 'Fix copied text from PDFs or docs',
+                description: 'Remove hard line breaks, preserve paragraphs when needed, and make pasted text usable again.',
+                toolId: 'remove-line-breaks',
+                guideId: 'remove-line-breaks'
+            },
+            {
+                title: 'Measure draft length and structure',
+                description: 'Check word count, reading time, sentence density, and paragraph balance before publishing.',
+                toolId: 'text-analyzer',
+                guideId: 'text-cleaning'
+            },
+            {
+                title: 'Strip noisy markup before reuse',
+                description: 'Clean HTML, remove inline styles, and extract the content you actually need.',
+                toolId: 'html-cleaner',
+                guideId: 'text-cleaning'
+            }
+        ],
+        chooserHeading: 'Choose the Right Text Tool',
+        chooserRows: [
+            { situation: 'Copied text looks broken or full of hard returns', toolId: 'remove-line-breaks', reason: 'Best when the structure is mostly right but line endings are wrong.' },
+            { situation: 'You need counts, reading time, or structural feedback', toolId: 'text-analyzer', reason: 'Best for content QA, SEO reviews, scripts, prompts, and editorial checks.' },
+            { situation: 'The source contains tags, inline styles, or pasted HTML', toolId: 'html-cleaner', reason: 'Best when the problem is markup noise rather than plain-text formatting.' }
+        ],
+        guideIds: ['text-cleaning', 'remove-line-breaks', 'hidden-unicode-characters']
+    },
+    dev: {
+        quickAnswer: 'Use these tools when the problem is not raw content but the way strings behave in URLs, tokens, regex, or browser-safe encodings. Start with the slug generator for publishing workflows and the regex tester for pattern failures.',
+        workflowHeading: 'Common Developer Workflows',
+        workflowCards: [
+            {
+                title: 'Create clean slugs before publishing',
+                description: 'Turn titles into stable, readable URL slugs and avoid messy punctuation or inconsistent separators.',
+                toolId: 'smart-slug-generator',
+                guideId: 'seo-friendly-url-slugs'
+            },
+            {
+                title: 'Debug a regex that behaves oddly',
+                description: 'Test the pattern live, inspect matches, and check flags before touching production code.',
+                toolId: 'regex-visual-explainer',
+                guideId: 'regex-debugging'
+            },
+            {
+                title: 'Encode or inspect strings safely',
+                description: 'Escape URL components, decode Base64, and inspect JWT payloads without leaving the browser.',
+                toolId: 'url-encoder-decoder',
+                guideId: 'unicode-normalization'
+            }
+        ],
+        chooserHeading: 'Choose the Right Developer Tool',
+        chooserRows: [
+            { situation: 'You need a readable, SEO-safe URL slug', toolId: 'smart-slug-generator', reason: 'Best for titles, category URLs, product pages, and documentation slugs.' },
+            { situation: 'A regex matches the wrong text or fails on real input', toolId: 'regex-visual-explainer', reason: 'Best for visual testing, group inspection, and token-by-token debugging.' },
+            { situation: 'A string must be safely encoded or decoded', toolId: 'url-encoder-decoder', reason: 'Best when the problem is escaping, transport, or browser-safe encoding.' }
+        ],
+        guideIds: ['seo-friendly-url-slugs', 'regex-debugging', 'unicode-normalization']
+    },
+    json: {
+        quickAnswer: 'JSON tools overlap only if the job is unclear. Use the formatter when JSON is valid but unreadable, the validator when JSON is broken, the minifier when the payload is valid and ready for production, and converters when you need to move between formats.',
+        workflowHeading: 'Common JSON Workflows',
+        workflowCards: [
+            {
+                title: 'Fix broken JSON from an API or config file',
+                description: 'Validate the payload, locate the exact syntax error, then repair it before formatting.',
+                toolId: 'json-validator',
+                guideId: 'json-parse-errors'
+            },
+            {
+                title: 'Make valid JSON readable',
+                description: 'Pretty-print payloads for debugging, code review, docs, or handoff to another team.',
+                toolId: 'json-formatter',
+                guideId: 'json-formatting'
+            },
+            {
+                title: 'Ship compact JSON to production',
+                description: 'Remove whitespace only after the payload is already valid and debugged.',
+                toolId: 'json-minifier',
+                guideId: 'json-formatting'
+            }
+        ],
+        chooserHeading: 'Choose the Right JSON Tool',
+        chooserRows: [
+            { situation: 'The payload throws an error and will not parse', toolId: 'json-validator', reason: 'Best for locating syntax failures such as trailing commas, bad quotes, or missing brackets.' },
+            { situation: 'The payload is valid but hard to inspect', toolId: 'json-formatter', reason: 'Best for turning compact JSON into readable, indented output.' },
+            { situation: 'The payload is valid and you want the smallest possible output', toolId: 'json-minifier', reason: 'Best for compact transfer or storage after debugging is complete.' }
+        ],
+        guideIds: ['json-formatting', 'json-parse-errors', 'data-format-conversion']
+    }
+};
+
+const homepageWorkflowCards = [
+    {
+        title: 'Fix broken JSON',
+        description: 'Use the validator to locate syntax errors, then jump to the guide for the most common parse failures.',
+        primaryPath: '/json/json-validator/',
+        primaryLabel: 'Open JSON Validator',
+        secondaryPath: '/guides/json-parse-errors/',
+        secondaryLabel: 'See common parse errors'
+    },
+    {
+        title: 'Format valid JSON',
+        description: 'Pretty-print payloads for debugging, docs, and handoff when the JSON is already valid.',
+        primaryPath: '/json/json-formatter/',
+        primaryLabel: 'Open JSON Formatter',
+        secondaryPath: '/guides/json-formatting/',
+        secondaryLabel: 'Read the JSON formatting guide'
+    },
+    {
+        title: 'Analyze text',
+        description: 'Check word count, characters, reading time, and structure before publishing or reusing text.',
+        primaryPath: '/text/text-analyzer/',
+        primaryLabel: 'Open Text Analyzer',
+        secondaryPath: '/guides/text-cleaning/',
+        secondaryLabel: 'Read the text cleaning guide'
+    },
+    {
+        title: 'Normalize Unicode',
+        description: 'Understand NFC vs NFD, fix hidden character issues, and avoid equality or slug inconsistencies.',
+        primaryPath: '/guides/unicode-normalization/',
+        primaryLabel: 'Read the Unicode guide',
+        secondaryPath: '/guides/hidden-unicode-characters/',
+        secondaryLabel: 'Check hidden character issues'
+    },
+    {
+        title: 'Create clean slugs',
+        description: 'Generate stable URL slugs and handle punctuation, spaces, and accented characters correctly.',
+        primaryPath: '/dev/slug-generator/',
+        primaryLabel: 'Open Slug Generator',
+        secondaryPath: '/guides/seo-friendly-url-slugs/',
+        secondaryLabel: 'Read the slug guide'
+    },
+    {
+        title: 'Debug regex',
+        description: 'Test the pattern live, inspect matches, and fix flags, escaping, or greedy behavior.',
+        primaryPath: '/dev/regex-tester-explainer/',
+        primaryLabel: 'Open Regex Tester',
+        secondaryPath: '/guides/regex-debugging/',
+        secondaryLabel: 'Read the regex debugging guide'
+    }
+];
+
 function normalizeRoute(route) {
     if (site.canonicalTrailingSlash && !route.endsWith('/')) {
         return `${route}/`;
@@ -211,6 +358,47 @@ function generateRelatedGuides(currentTool) {
 
     html += `</div></section>`;
     return html;
+}
+
+function getToolById(id) {
+    return tools.find(tool => tool.id === id && tool.flags.enabled);
+}
+
+function getGuideById(id) {
+    return guides.find(guide => guide.id === id);
+}
+
+function renderWorkflowCards(items) {
+    return items.map((item) => {
+        const tool = item.toolId ? getToolById(item.toolId) : null;
+        const guide = item.guideId ? getGuideById(item.guideId) : null;
+        const toolLink = tool ? `<a href="${tool.path}" style="display:inline-block; margin-right:10px; margin-top:10px; font-weight:600; text-decoration:none; color:#0056b3;">${tool.seo.h1}</a>` : '';
+        const guideLink = guide ? `<a href="${guide.path}" style="display:inline-block; margin-top:10px; color:#475569; text-decoration:none;">${guide.title}</a>` : '';
+        return `<article class="shadow-card" style="padding:20px; border:1px solid #e2e8f0; border-radius:8px;">
+            <h3 style="margin:0 0 10px 0;">${item.title}</h3>
+            <p style="margin:0; color:#475569;">${item.description}</p>
+            <div style="margin-top:8px;">${toolLink}${guideLink}</div>
+        </article>`;
+    }).join('');
+}
+
+function renderChooserRows(items) {
+    return items.map((item) => {
+        const tool = getToolById(item.toolId);
+        if (!tool) return '';
+        return `<div style="padding:18px 0; border-top:1px solid #e2e8f0;">
+            <p style="margin:0 0 6px 0; font-weight:600;">${item.situation}</p>
+            <p style="margin:0 0 6px 0;"><a href="${tool.path}" style="text-decoration:none; color:#0056b3; font-weight:700;">Use ${tool.seo.h1}</a></p>
+            <p style="margin:0; color:#475569;">${item.reason}</p>
+        </div>`;
+    }).join('');
+}
+
+function renderGuideCards(guideIds) {
+    return guideIds.map((guideId) => getGuideById(guideId)).filter(Boolean).map((guide) => `<a href="${guide.path}" style="display:block; padding:16px; border:1px solid #e2e8f0; border-radius:8px; text-decoration:none; color:inherit;">
+        <h3 style="margin:0 0 8px 0; font-size:18px; color:#0056b3;">${guide.title}</h3>
+        <p style="margin:0; color:#475569; font-size:14px;">${guide.description}</p>
+    </a>`).join('');
 }
 
 console.log(`Building ${tools.filter(t => t.flags.enabled).length} tool pages...`);
@@ -399,14 +587,12 @@ clusters.forEach(cluster => {
         { name: 'Home', path: '/', url: `${BASE_URL}/` },
         { name: cluster.label, path: cleanRoute, url: canonicalUrl }
     ];
-    const hubRelatedGuides = guides.filter(guide => (guide.relatedTools || []).some(toolId => {
-        const t = tools.find(tool => tool.id === toolId);
-        return t && t.clusterId === cluster.id;
-    }));
+    const hubContent = clusterLandingContent[cluster.id] || {};
 
     const hubToolsHtml = `
         <section style="margin-bottom: 40px;">
-            <h2 style="margin-bottom: 18px;">Popular ${cluster.label}</h2>
+            <h2 style="margin-bottom: 10px;">All ${cluster.label}</h2>
+            <p style="margin: 0 0 18px 0; color:#64748b;">Each page below owns a different task. Pick the tool that matches the job instead of starting with the wrong workflow.</p>
             <div style="display:grid; gap:20px;">
     ` + tools.filter(t => t.clusterId === cluster.id && t.flags.enabled).map(t => `
         <article class="tool-card shadow-card" style="padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 20px;">
@@ -419,20 +605,33 @@ clusters.forEach(cluster => {
     `;
 
     hubHtml = hubHtml.replace(/\[TOOL_LIST_HTML\]/g, hubToolsHtml);
-    hubHtml = hubHtml.replace(/\[PRE_GRID_HTML\]/g, buildBreadcrumbHtml(hubBreadcrumbs));
-    if (hubRelatedGuides.length > 0) {
-        const hubGuideHtml = `
-        <section class="shadow-card" style="margin-top: 40px; padding: 30px;">
-            <h2 style="margin-top: 0;">Guides That Support These Tools</h2>
-            <p style="color:#64748b;">Use a guide when you need context, examples, and failure patterns before jumping into the tool.</p>
+    const hubPreGridHtml = `
+        ${buildBreadcrumbHtml(hubBreadcrumbs)}
+        <section class="shadow-card" style="padding: 24px; margin-bottom: 30px;">
+            <h2 style="margin-top: 0;">Quick Answer</h2>
+            <p style="margin:0; color:#475569;">${hubContent.quickAnswer || (hubSeo.intro || cluster.description || '')}</p>
+        </section>
+        ${(hubContent.workflowCards || []).length > 0 ? `<section class="shadow-card" style="padding: 30px; margin-bottom: 30px;">
+            <h2 style="margin-top: 0;">${hubContent.workflowHeading}</h2>
             <div style="display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
-                ${hubRelatedGuides.slice(0, 4).map(guide => `<a href="${guide.path}" style="display:block; padding:16px; border:1px solid #e2e8f0; border-radius:8px; text-decoration:none; color:inherit;"><h3 style="margin:0 0 8px 0; font-size:18px; color:#0056b3;">${guide.title}</h3><p style="margin:0; color:#475569; font-size:14px;">${guide.description}</p></a>`).join('')}
+                ${renderWorkflowCards(hubContent.workflowCards)}
             </div>
-        </section>`;
-        hubHtml = hubHtml.replace(/\[POST_GRID_HTML\]/g, hubGuideHtml);
-    } else {
-        hubHtml = hubHtml.replace(/\[POST_GRID_HTML\]/g, '');
-    }
+        </section>` : ''}`;
+    hubHtml = hubHtml.replace(/\[PRE_GRID_HTML\]/g, hubPreGridHtml);
+
+    const hubPostGridHtml = `
+        ${(hubContent.chooserRows || []).length > 0 ? `<section class="shadow-card" style="margin-top: 40px; padding: 30px;">
+            <h2 style="margin-top: 0;">${hubContent.chooserHeading}</h2>
+            <div>${renderChooserRows(hubContent.chooserRows)}</div>
+        </section>` : ''}
+        ${(hubContent.guideIds || []).length > 0 ? `<section class="shadow-card" style="margin-top: 40px; padding: 30px;">
+            <h2 style="margin-top: 0;">Guides That Support This Hub</h2>
+            <p style="color:#64748b;">Use a guide when the real need is context, failure patterns, or implementation detail before you open the tool.</p>
+            <div style="display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+                ${renderGuideCards(hubContent.guideIds)}
+            </div>
+        </section>` : ''}`;
+    hubHtml = hubHtml.replace(/\[POST_GRID_HTML\]/g, hubPostGridHtml);
     hubHtml = hubHtml.replace(/\[SCHEMA_JSON\]/g, JSON.stringify({
         '@context': 'https://schema.org',
         '@graph': [
@@ -650,14 +849,17 @@ const allToolsHtml = clusters.map(cluster => {
 homeHtml = homeHtml.replace(/\[TOOL_LIST_HTML\]/g, allToolsHtml);
 homeHtml = homeHtml.replace(/\[PRE_GRID_HTML\]/g, `
 <section class="shadow-card" style="padding: 24px; margin-bottom: 30px;">
-    <h2 style="margin-top: 0;">Start With the Right Task</h2>
-    <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <a href="/json/json-formatter/" style="padding:10px 14px; border:1px solid #dbeafe; border-radius:8px; text-decoration:none;">Format JSON</a>
-        <a href="/text/text-analyzer/" style="padding:10px 14px; border:1px solid #dcfce7; border-radius:8px; text-decoration:none;">Analyze Text</a>
-        <a href="/dev/slug-generator/" style="padding:10px 14px; border:1px solid #fde68a; border-radius:8px; text-decoration:none;">Generate a URL Slug</a>
-        <a href="/guides/unicode-normalization/" style="padding:10px 14px; border:1px solid #e2e8f0; border-radius:8px; text-decoration:none;">NFC vs NFD Explained</a>
-        <a href="/guides/json-formatting/" style="padding:10px 14px; border:1px solid #e2e8f0; border-radius:8px; text-decoration:none;">How to Format JSON</a>
-        <a href="/guides/regex-debugging/" style="padding:10px 14px; border:1px solid #e2e8f0; border-radius:8px; text-decoration:none;">How to Debug Regex</a>
+    <h2 style="margin-top: 0;">Choose a Workflow</h2>
+    <p style="margin:0 0 18px 0; color:#475569;">Do not start with a random tool. Start with the actual job: fixing broken JSON, analyzing a draft, normalizing Unicode, creating a slug, or debugging a regex.</p>
+    <div style="display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+        ${homepageWorkflowCards.map((card) => `<article class="shadow-card" style="padding:20px; border:1px solid #e2e8f0; border-radius:8px;">
+            <h3 style="margin:0 0 10px 0;">${card.title}</h3>
+            <p style="margin:0; color:#475569;">${card.description}</p>
+            <div style="margin-top:12px;">
+                <a href="${card.primaryPath}" style="display:inline-block; margin-right:10px; font-weight:700; text-decoration:none; color:#0056b3;">${card.primaryLabel}</a>
+                <a href="${card.secondaryPath}" style="display:inline-block; color:#475569; text-decoration:none;">${card.secondaryLabel}</a>
+            </div>
+        </article>`).join('')}
     </div>
 </section>`);
 homeHtml = homeHtml.replace(/\[POST_GRID_HTML\]/g, `
@@ -669,12 +871,25 @@ homeHtml = homeHtml.replace(/\[POST_GRID_HTML\]/g, `
     </div>
 </section>
 <section class="shadow-card" style="padding: 30px; margin-top: 30px;">
-    <h2 style="margin-top: 0;">Why Teams Use FormatForge</h2>
-    <p>FormatForge is built for practical debugging and publishing work. Use it to inspect API payloads, clean copied text, normalize Unicode, generate consistent URL slugs, and test regular expressions without sending sensitive data to a remote service.</p>
-    <h3>FAQ</h3>
-    <details style="margin-bottom:10px;"><summary style="cursor:pointer; font-weight:bold;">Does FormatForge upload my data?</summary><p>No. The core tools are designed to run locally in your browser.</p></details>
-    <details style="margin-bottom:10px;"><summary style="cursor:pointer; font-weight:bold;">Which tools are best for JSON work?</summary><p>Start with JSON Formatter for readability, JSON Validator for syntax errors, and JSON Minifier for compact production payloads.</p></details>
-    <details><summary style="cursor:pointer; font-weight:bold;">Is FormatForge only for developers?</summary><p>No. It is also useful for technical SEOs, content teams, analysts, and support teams who work with structured text.</p></details>
+    <h2 style="margin-top: 0;">Use the Right Path</h2>
+    <div style="display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+        <div style="padding:18px; border:1px solid #e2e8f0; border-radius:8px;">
+            <h3 style="margin:0 0 8px 0;">Broken JSON</h3>
+            <p style="margin:0; color:#475569;">Start with <a href="/json/json-validator/">JSON Validator</a>. If the payload is valid and you only need readability, switch to <a href="/json/json-formatter/">JSON Formatter</a>.</p>
+        </div>
+        <div style="padding:18px; border:1px solid #e2e8f0; border-radius:8px;">
+            <h3 style="margin:0 0 8px 0;">Messy Text</h3>
+            <p style="margin:0; color:#475569;">Start with <a href="/text/remove-line-breaks/">Remove Line Breaks</a> for pasted text or <a href="/text/html-cleaner/">HTML Cleaner</a> if the problem is markup noise.</p>
+        </div>
+        <div style="padding:18px; border:1px solid #e2e8f0; border-radius:8px;">
+            <h3 style="margin:0 0 8px 0;">Unicode or Slug Issues</h3>
+            <p style="margin:0; color:#475569;">Read <a href="/guides/unicode-normalization/">NFC vs NFD</a> first, then use the <a href="/dev/slug-generator/">Slug Generator</a> for consistent URL output.</p>
+        </div>
+        <div style="padding:18px; border:1px solid #e2e8f0; border-radius:8px;">
+            <h3 style="margin:0 0 8px 0;">Regex Problems</h3>
+            <p style="margin:0; color:#475569;">Use the <a href="/dev/regex-tester-explainer/">Regex Tester</a> for live inspection and the <a href="/guides/regex-debugging/">Regex Debugging guide</a> for failure patterns.</p>
+        </div>
+    </div>
 </section>`);
 homeHtml = homeHtml.replace(/\[SCHEMA_JSON\]/g, JSON.stringify({
     '@context': 'https://schema.org',
