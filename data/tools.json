@@ -883,7 +883,7 @@
           "Use this JSON minifier when the payload is valid and you want the smallest possible output. It removes unnecessary whitespace, indentation, and line breaks while preserving the data itself.",
           "Minification is useful for production API responses, config payloads, localStorage blobs, and any case where a smaller payload is easier to transfer or store.",
           "A minifier is not a debugger. If the JSON is broken, validate and fix it first before trying to compress it.",
-          "This tool runs locally in your browser, so internal payloads and production responses stay private.",
+          "It runs locally in your browser, which makes it safe to use on internal payloads and production responses.",
           "If you need readability instead of compact output, use the JSON Formatter. If you need to find the exact syntax issue, use the JSON Validator."
         ],
         "howTo": {
@@ -898,8 +898,8 @@
           "heading": "JSON Transformation",
           "items": [
             {
-              "input": "{\"id\":1,\"name\":\"test\"}",
-              "output": "{\n  \"id\": 1,\n  \"name\": \"test\"\n}"
+              "input": "{\n  \"id\": 1,\n  \"name\": \"test\",\n  \"roles\": [\n    \"admin\",\n    \"editor\"\n  ]\n}",
+              "output": "{\"id\":1,\"name\":\"test\",\"roles\":[\"admin\",\"editor\"]}"
             }
           ]
         },

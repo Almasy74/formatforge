@@ -28,6 +28,7 @@
         </tr>
     </tbody>
 </table>
+<p><strong>Table summary:</strong> Use <a href="/json/json-formatter/">JSON Formatter</a> when the JSON is already valid and you need readability, use <a href="/json/json-validator/">JSON Validator</a> when the payload is broken, and use <a href="/json/json-minifier/">JSON Minifier</a> only after debugging is complete and you want compact output.</p>
 
 <h2>How to Format JSON Correctly</h2>
 <p>Formatting JSON means turning valid JSON into readable, indented text. It does not repair malformed payloads. If the input contains trailing commas, unquoted keys, single quotes, comments, or broken brackets, a strict formatter will fail until the syntax is fixed.</p>
@@ -76,6 +77,7 @@
         </tr>
     </tbody>
 </table>
+<p><strong>Error summary:</strong> The most common formatter failures come from trailing commas, unquoted keys, single quotes, missing commas, and comments in otherwise JSON-like text.</p>
 
 <h2>When to Format and When Not to</h2>
 <p>Format JSON when you need to inspect nested data, review a payload with teammates, write documentation, or compare changes in a diff. Do not minify while you are still debugging. Do not expect a formatter to repair invalid input automatically. If the payload is failing to parse, validation comes first.</p>

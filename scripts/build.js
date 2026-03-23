@@ -153,8 +153,8 @@ const clusterLandingContent = {
                 guideId: 'regex-debugging'
             },
             {
-                title: 'Encode or inspect strings safely',
-                description: 'Escape URL components, decode Base64, and inspect JWT payloads without leaving the browser.',
+                title: 'Handle URL-safe strings and encoded values',
+                description: 'Escape URL components, decode Base64, inspect JWT payloads, and avoid Unicode-related surprises in transport-safe strings.',
                 toolId: 'url-encoder-decoder',
                 guideId: 'unicode-normalization'
             }
@@ -210,28 +210,12 @@ const homepageWorkflowCards = [
         secondaryLabel: 'See common parse errors'
     },
     {
-        title: 'Format valid JSON',
-        description: 'Pretty-print payloads for debugging, docs, and handoff when the JSON is already valid.',
-        primaryPath: '/json/json-formatter/',
-        primaryLabel: 'Open JSON Formatter',
-        secondaryPath: '/guides/json-formatting/',
-        secondaryLabel: 'Read the JSON formatting guide'
-    },
-    {
         title: 'Analyze text',
         description: 'Check word count, characters, reading time, and structure before publishing or reusing text.',
         primaryPath: '/text/text-analyzer/',
         primaryLabel: 'Open Text Analyzer',
         secondaryPath: '/guides/text-cleaning/',
         secondaryLabel: 'Read the text cleaning guide'
-    },
-    {
-        title: 'Normalize Unicode',
-        description: 'Understand NFC vs NFD, fix hidden character issues, and avoid equality or slug inconsistencies.',
-        primaryPath: '/guides/unicode-normalization/',
-        primaryLabel: 'Read the Unicode guide',
-        secondaryPath: '/guides/hidden-unicode-characters/',
-        secondaryLabel: 'Check hidden character issues'
     },
     {
         title: 'Create clean slugs',
@@ -248,6 +232,22 @@ const homepageWorkflowCards = [
         primaryLabel: 'Open Regex Tester',
         secondaryPath: '/guides/regex-debugging/',
         secondaryLabel: 'Read the regex debugging guide'
+    },
+    {
+        title: 'Format valid JSON',
+        description: 'Pretty-print payloads for debugging, docs, and handoff when the JSON is already valid.',
+        primaryPath: '/json/json-formatter/',
+        primaryLabel: 'Open JSON Formatter',
+        secondaryPath: '/guides/json-formatting/',
+        secondaryLabel: 'Read the JSON formatting guide'
+    },
+    {
+        title: 'Normalize Unicode',
+        description: 'Understand NFC vs NFD, fix hidden character issues, and avoid equality or slug inconsistencies.',
+        primaryPath: '/guides/unicode-normalization/',
+        primaryLabel: 'Read the Unicode guide',
+        secondaryPath: '/guides/hidden-unicode-characters/',
+        secondaryLabel: 'Check hidden character issues'
     }
 ];
 
@@ -456,7 +456,7 @@ tools.filter(t => t.flags.enabled).forEach(tool => {
     
     <div class="privacy-badge" style="display: inline-flex; align-items: center; background-color: #dcfce7; color: #14532d; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 0.9em; margin-top: 5px;">
         <svg style="width:18px; height:18px; margin-right:8px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2l6 3v4c0 4.418-2.686 8-6 8s-6-3.582-6-8V5l6-3zm0 2.236L5.5 6.472v2.528c0 3.328 2.016 6.136 4.5 6.136s4.5-2.808 4.5-6.136V6.472L10 4.236z" clip-rule="evenodd"></path></svg>
-        Processing method: All processing happens locally in your browser.
+        Runs locally in your browser.
     </div>
 </div>
 `;
@@ -849,10 +849,10 @@ const allToolsHtml = clusters.map(cluster => {
 homeHtml = homeHtml.replace(/\[TOOL_LIST_HTML\]/g, allToolsHtml);
 homeHtml = homeHtml.replace(/\[PRE_GRID_HTML\]/g, `
 <section class="shadow-card" style="padding: 24px; margin-bottom: 30px;">
-    <h2 style="margin-top: 0;">Choose a Workflow</h2>
-    <p style="margin:0 0 18px 0; color:#475569;">Do not start with a random tool. Start with the actual job: fixing broken JSON, analyzing a draft, normalizing Unicode, creating a slug, or debugging a regex.</p>
+    <h2 style="margin-top: 0;">Best Starting Points</h2>
+    <p style="margin:0 0 18px 0; color:#475569;">If you are new to the site, start here. These are the clearest first paths for the most common jobs.</p>
     <div style="display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
-        ${homepageWorkflowCards.map((card) => `<article class="shadow-card" style="padding:20px; border:1px solid #e2e8f0; border-radius:8px;">
+        ${homepageWorkflowCards.slice(0, 4).map((card) => `<article class="shadow-card" style="padding:20px; border:1px solid #e2e8f0; border-radius:8px;">
             <h3 style="margin:0 0 10px 0;">${card.title}</h3>
             <p style="margin:0; color:#475569;">${card.description}</p>
             <div style="margin-top:12px;">
