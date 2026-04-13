@@ -1,0 +1,319 @@
+<h2>Quick Answer</h2>
+<p><strong>JSON (JavaScript Object Notation) is a lightweight, text-based data interchange format.</strong> It is the dominant format for web APIs, configuration files, and structured data exchange between systems. If you work with web development, APIs, or data pipelines, you will work with JSON daily.</p>
+
+<h2>What JSON Is and Where It Comes From</h2>
+<p>JSON was derived from JavaScript object literal syntax, but it is language-independent. It was specified by Douglas Crockford in the early 2000s and standardized as ECMA-404 and RFC 8259. Despite its JavaScript origins, JSON is supported natively in virtually every modern programming language.</p>
+
+<p>JSON has largely replaced XML as the default data interchange format for web APIs because it is simpler to read, write, and parse. It has fewer rules, less syntactic overhead, and maps directly to native data structures in most languages.</p>
+
+<h2>JSON Syntax Rules</h2>
+<p>JSON is strict. Unlike JavaScript object literals, JSON does not tolerate shortcuts. The complete set of rules is small but non-negotiable:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Rule</th>
+            <th>Valid</th>
+            <th>Invalid</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Keys must be double-quoted strings</td>
+            <td><code>{"name": "Alice"}</code></td>
+            <td><code>{name: "Alice"}</code></td>
+        </tr>
+        <tr>
+            <td>Strings must use double quotes</td>
+            <td><code>"hello"</code></td>
+            <td><code>'hello'</code></td>
+        </tr>
+        <tr>
+            <td>No trailing commas</td>
+            <td><code>{"a": 1}</code></td>
+            <td><code>{"a": 1,}</code></td>
+        </tr>
+        <tr>
+            <td>No comments</td>
+            <td><code>{"a": 1}</code></td>
+            <td><code>{"a": 1 // note}</code></td>
+        </tr>
+        <tr>
+            <td>No undefined or NaN</td>
+            <td><code>{"a": null}</code></td>
+            <td><code>{"a": undefined}</code></td>
+        </tr>
+        <tr>
+            <td>Numbers cannot have leading zeros</td>
+            <td><code>{"id": 42}</code></td>
+            <td><code>{"id": 042}</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>JSON Data Types</h2>
+<p>JSON supports exactly six data types, and nothing else:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Example</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>String</td>
+            <td><code>"hello world"</code></td>
+            <td>Must use double quotes. Supports Unicode escapes.</td>
+        </tr>
+        <tr>
+            <td>Number</td>
+            <td><code>42</code>, <code>3.14</code>, <code>-1</code>, <code>1e10</code></td>
+            <td>No distinction between integer and float. No hex, octal, or Infinity.</td>
+        </tr>
+        <tr>
+            <td>Boolean</td>
+            <td><code>true</code>, <code>false</code></td>
+            <td>Lowercase only. <code>True</code> or <code>TRUE</code> are invalid.</td>
+        </tr>
+        <tr>
+            <td>Null</td>
+            <td><code>null</code></td>
+            <td>Represents absence of value. Lowercase only.</td>
+        </tr>
+        <tr>
+            <td>Object</td>
+            <td><code>{"key": "value"}</code></td>
+            <td>Unordered set of key-value pairs. Keys must be unique strings.</td>
+        </tr>
+        <tr>
+            <td>Array</td>
+            <td><code>[1, "two", null]</code></td>
+            <td>Ordered list. Can contain mixed types.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Parsing JSON in Different Languages</h2>
+
+<h3>JavaScript</h3>
+<pre><code>// Parse a JSON string
+const data = JSON.parse('{"name": "Alice", "age": 30}');
+console.log(data.name); // "Alice"
+
+// Serialize an object to JSON
+const json = JSON.stringify(data, null, 2);
+console.log(json);
+
+// Safe parsing with error handling
+function safeParse(text) {
+  try {
+    return { data: JSON.parse(text), error: null };
+  } catch (e) {
+    return { data: null, error: e.message };
+  }
+}</code></pre>
+
+<h3>Python</h3>
+<pre><code>import json
+
+# Parse a JSON string
+data = json.loads('{"name": "Alice", "age": 30}')
+print(data["name"])  # "Alice"
+
+# Serialize to formatted JSON
+output = json.dumps(data, indent=2, ensure_ascii=False)
+print(output)
+
+# Parse from a file
+with open("data.json", "r") as f:
+    data = json.load(f)</code></pre>
+
+<h3>Go</h3>
+<pre><code>import "encoding/json"
+
+type User struct {
+    Name string `json:"name"`
+    Age  int    `json:"age"`
+}
+
+// Parse JSON into a struct
+var user User
+err := json.Unmarshal([]byte(jsonString), &amp;user)
+
+// Serialize to JSON
+output, err := json.MarshalIndent(user, "", "  ")</code></pre>
+
+<h2>The JSON Workflow: Format, Validate, Minify</h2>
+<p>Working with JSON typically involves three distinct operations, and using the right one at the right time prevents confusion:</p>
+
+<ol>
+    <li><strong>Validate first</strong> if the JSON might be broken. Use the <a href="/json/json-validator/">JSON Validator</a> to find syntax errors and get exact line and character positions.</li>
+    <li><strong>Format for readability</strong> once the JSON is valid. The <a href="/json/json-formatter/">JSON Formatter</a> adds indentation and line breaks so you can inspect nested structures.</li>
+    <li><strong>Minify for production</strong> when you need compact output. The <a href="/json/json-minifier/">JSON Minifier</a> strips all whitespace for smaller payloads.</li>
+</ol>
+
+<h2>Common JSON Errors and How to Fix Them</h2>
+<p>Most JSON parse failures come from a small set of recurring mistakes. The fix is almost always the same: find the first error, fix it, and re-validate.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Error</th>
+            <th>Cause</th>
+            <th>Fix</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Unexpected token</td>
+            <td>Single quotes, unquoted keys, or comments</td>
+            <td>Use double quotes, remove comments</td>
+        </tr>
+        <tr>
+            <td>Unexpected end of input</td>
+            <td>Missing closing bracket or brace</td>
+            <td>Count opening and closing delimiters</td>
+        </tr>
+        <tr>
+            <td>Unexpected comma</td>
+            <td>Trailing comma after last item</td>
+            <td>Remove the trailing comma</td>
+        </tr>
+        <tr>
+            <td>Duplicate key warning</td>
+            <td>Same key used twice in one object</td>
+            <td>Rename or remove the duplicate</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>For a detailed walkthrough of each error type with language-specific error messages, see the <a href="/guides/json-parse-errors/">JSON parse errors guide</a>.</p>
+
+<h2>JSON Schema Validation</h2>
+<p>JSON Schema is a vocabulary that lets you annotate and validate the structure of JSON documents. While basic JSON validation checks syntax, schema validation checks whether the data conforms to an expected structure: required fields, value types, string formats, number ranges, and array lengths.</p>
+
+<p>Schema validation is essential for API contracts. It catches problems like missing required fields, wrong data types, and out-of-range values before they cause downstream failures. Tools like AJV (JavaScript), jsonschema (Python), and everit-org (Java) implement JSON Schema validation.</p>
+
+<h2>JSON Alternatives: JSON5, JSONC, and YAML</h2>
+<p>Strict JSON is sometimes too rigid for configuration files where comments and trailing commas improve maintainability. Several relaxed alternatives exist:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Format</th>
+            <th>Allows comments</th>
+            <th>Allows trailing commas</th>
+            <th>Common use</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>JSON</td>
+            <td>No</td>
+            <td>No</td>
+            <td>APIs, data exchange</td>
+        </tr>
+        <tr>
+            <td>JSON5</td>
+            <td>Yes</td>
+            <td>Yes</td>
+            <td>Config files, developer tools</td>
+        </tr>
+        <tr>
+            <td>JSONC</td>
+            <td>Yes (// and /* */)</td>
+            <td>Yes</td>
+            <td>VS Code settings, TypeScript config</td>
+        </tr>
+        <tr>
+            <td>YAML</td>
+            <td>Yes</td>
+            <td>N/A (no commas)</td>
+            <td>CI/CD configs, Kubernetes manifests</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Remember: these formats are not valid JSON. If an API expects JSON, send strict JSON. Use relaxed formats only where the parser explicitly supports them.</p>
+
+<h2>Working with Large JSON Files</h2>
+<p>Standard JSON parsers load the entire document into memory before processing. For multi-megabyte or multi-gigabyte JSON files, this can cause out-of-memory errors. Streaming parsers solve this by processing the document incrementally:</p>
+
+<ul>
+    <li><strong>JavaScript:</strong> Use libraries like <code>JSONStream</code> or <code>stream-json</code> for Node.js streaming.</li>
+    <li><strong>Python:</strong> Use <code>ijson</code> for iterative parsing of large JSON files without loading them entirely.</li>
+    <li><strong>Command line:</strong> <code>jq</code> handles large files efficiently and supports streaming mode.</li>
+</ul>
+
+<p>For browser-based work with moderately large payloads, the <a href="/json/json-formatter/">JSON Formatter</a> processes data locally without uploading, but extremely large files (100MB+) may exceed browser memory limits.</p>
+
+<h2>JSON in API Debugging</h2>
+<p>When an API returns unexpected results, the debugging workflow typically follows this pattern:</p>
+
+<ol>
+    <li>Capture the raw response (browser DevTools Network tab, curl, or Postman).</li>
+    <li>Validate the response to ensure it is syntactically correct JSON.</li>
+    <li>Format the response for human inspection.</li>
+    <li>Compare against the expected schema or previous known-good responses using the <a href="/json/data-diff-structured/">Structured Data Diff</a>.</li>
+    <li>If the response is a JWT or contains encoded tokens, decode them with the <a href="/dev/jwt-decoder-inspector/">JWT Decoder</a>.</li>
+</ol>
+
+<h2>Converting Between JSON and Other Formats</h2>
+<p>JSON rarely exists in isolation. Data flows between CSV spreadsheets, XML legacy systems, TypeScript interfaces, and other formats:</p>
+
+<ul>
+    <li><strong>CSV to JSON:</strong> Use the <a href="/json/csv-to-json/">CSV JSON Converter</a> when importing spreadsheet data into web applications.</li>
+    <li><strong>XML to JSON:</strong> Use the <a href="/json/xml-json-converter/">XML JSON Converter</a> when integrating with legacy SOAP APIs or XML-based configurations.</li>
+    <li><strong>JSON to TypeScript:</strong> Use the <a href="/json/json-to-typescript/">JSON to TypeScript Generator</a> to create type-safe interfaces from API response samples.</li>
+</ul>
+
+<p>See the <a href="/guides/data-format-conversion/">data format conversion guide</a> for detailed strategies on handling nested data, type coercion, and delimiter edge cases.</p>
+
+<h2>FAQ</h2>
+<div class="guide-faq">
+    <details>
+        <summary>Is JSON the same as a JavaScript object?</summary>
+        <p>No. JSON is stricter: keys must be double-quoted, only double-quoted strings are allowed, and comments, trailing commas, and undefined values are forbidden. A JavaScript object literal is more permissive.</p>
+    </details>
+    <details>
+        <summary>Can JSON contain binary data?</summary>
+        <p>Not directly. Binary data must be encoded as a string, typically using Base64. The <a href="/dev/base64-encode-decode/">Base64 Encoder</a> can help with this conversion.</p>
+    </details>
+    <details>
+        <summary>What is the maximum size of a JSON document?</summary>
+        <p>The JSON specification does not define a size limit. Practical limits depend on the parser, available memory, and transport layer. Most web APIs limit request bodies to a few megabytes.</p>
+    </details>
+    <details>
+        <summary>Should I use JSON or YAML for configuration files?</summary>
+        <p>Use JSON when strict parsing and broad tooling support matter. Use YAML when human editability and comments are important. For VS Code and TypeScript configs, JSONC (JSON with comments) is often the best choice.</p>
+    </details>
+    <details>
+        <summary>How do I handle dates in JSON?</summary>
+        <p>JSON has no native date type. The most common convention is ISO 8601 strings (e.g., "2026-04-13T10:30:00Z"). Unix timestamps as numbers are also widely used. Choose one format and be consistent.</p>
+    </details>
+    <details>
+        <summary>Why does JSON not allow comments?</summary>
+        <p>Douglas Crockford intentionally excluded comments to prevent their misuse as parsing directives, which had caused interoperability problems in other formats. If you need comments, use JSON5 or JSONC where supported.</p>
+    </details>
+</div>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/json/json-formatter/">JSON Formatter</a> for readable output from valid JSON</li>
+    <li><a href="/json/json-validator/">JSON Validator</a> for finding syntax errors</li>
+    <li><a href="/json/json-minifier/">JSON Minifier</a> for compact production output</li>
+    <li><a href="/json/csv-to-json/">CSV JSON Converter</a> for tabular data conversion</li>
+    <li><a href="/json/xml-json-converter/">XML JSON Converter</a> for legacy format integration</li>
+    <li><a href="/json/json-to-typescript/">JSON to TypeScript Generator</a> for type-safe interfaces</li>
+    <li><a href="/json/data-diff-structured/">Structured Data Diff</a> for comparing JSON documents</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/json-formatting/">How to format JSON correctly</a></li>
+    <li><a href="/guides/json-parse-errors/">Common JSON parse errors and fixes</a></li>
+    <li><a href="/guides/data-format-conversion/">Converting between CSV and JSON</a></li>
+</ul>

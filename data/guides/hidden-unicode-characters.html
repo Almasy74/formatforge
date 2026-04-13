@@ -7,7 +7,71 @@
     <li><strong>Zero-width joiner or non-joiner:</strong> invisible characters that change shaping or add hidden length</li>
     <li><strong>Byte order mark (BOM):</strong> hidden marker that can appear at the start of text or files</li>
     <li><strong>Combining marks:</strong> accents stored separately from base characters in decomposed text</li>
+    <li><strong>Soft hyphen:</strong> invisible break hint that some renderers display and others ignore</li>
+    <li><strong>Word joiner:</strong> invisible no-break marker that prevents line breaks without adding visible width</li>
 </ul>
+
+<h2>Common Hidden Characters Reference</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Character</th>
+            <th>Code Point</th>
+            <th>Name</th>
+            <th>Typical Source</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>(invisible)</td>
+            <td><code>U+200B</code></td>
+            <td>Zero-Width Space</td>
+            <td>Web editors, CMS platforms, copy-paste from browsers</td>
+        </tr>
+        <tr>
+            <td>(invisible)</td>
+            <td><code>U+FEFF</code></td>
+            <td>Byte Order Mark (BOM)</td>
+            <td>Windows Notepad, UTF-8 files saved with BOM</td>
+        </tr>
+        <tr>
+            <td>(invisible)</td>
+            <td><code>U+200C</code></td>
+            <td>Zero-Width Non-Joiner (ZWNJ)</td>
+            <td>Persian/Arabic text, web content</td>
+        </tr>
+        <tr>
+            <td>(invisible)</td>
+            <td><code>U+200D</code></td>
+            <td>Zero-Width Joiner (ZWJ)</td>
+            <td>Emoji sequences, Indic scripts, web editors</td>
+        </tr>
+        <tr>
+            <td>(invisible)</td>
+            <td><code>U+00AD</code></td>
+            <td>Soft Hyphen</td>
+            <td>Word processors, HTML entities, CMS auto-hyphenation</td>
+        </tr>
+        <tr>
+            <td>(invisible)</td>
+            <td><code>U+2060</code></td>
+            <td>Word Joiner</td>
+            <td>Typesetting software, rich text editors</td>
+        </tr>
+        <tr>
+            <td>(invisible)</td>
+            <td><code>U+200E</code></td>
+            <td>Left-to-Right Mark</td>
+            <td>Bidirectional text, mixed-language documents</td>
+        </tr>
+        <tr>
+            <td>(invisible)</td>
+            <td><code>U+200F</code></td>
+            <td>Right-to-Left Mark</td>
+            <td>Arabic/Hebrew text processing</td>
+        </tr>
+    </tbody>
+</table>
 
 <h2>Signs You Have Hidden Unicode Problems</h2>
 <table>
@@ -34,6 +98,14 @@
             <td>Regex or search misses terms unexpectedly</td>
             <td>Invisible characters interrupt matching</td>
         </tr>
+        <tr>
+            <td>JSON or XML parsing fails on clean-looking input</td>
+            <td>BOM at file start or zero-width chars inside keys</td>
+        </tr>
+        <tr>
+            <td>Cursor jumps oddly when arrowing through text</td>
+            <td>Zero-width characters occupy cursor positions without rendering</td>
+        </tr>
     </tbody>
 </table>
 
@@ -45,6 +117,92 @@
     <li>Review Unicode normalization if the issue involves accents or visually identical characters.</li>
 </ol>
 
+<h3>Detection with a Hex Dump</h3>
+<p>The fastest way to confirm hidden characters is a hex dump. On Linux or macOS, pipe your text through <code>xxd</code> or <code>od</code> and look for byte sequences that correspond to zero-width code points. For example, <code>U+200B</code> encodes as <code>E2 80 8B</code> in UTF-8, and <code>U+FEFF</code> encodes as <code>EF BB BF</code>.</p>
+<pre><code># Show hex bytes of a file
+xxd suspicious.txt | head -20
+
+# Search for zero-width space (E2 80 8B) in a file
+grep -P '\xe2\x80\x8b' suspicious.txt</code></pre>
+
+<h3>Programmatic Detection in JavaScript</h3>
+<pre><code>// Detect common hidden Unicode characters
+function findHiddenChars(str) {
+  const hidden = /[\u200B\u200C\u200D\u200E\u200F\uFEFF\u00AD\u2060\u2028\u2029]/g;
+  const matches = [];
+  let match;
+  while ((match = hidden.exec(str)) !== null) {
+    matches.push({
+      char: match[0],
+      codePoint: 'U+' + match[0].charCodeAt(0).toString(16).toUpperCase().padStart(4, '0'),
+      position: match.index
+    });
+  }
+  return matches;
+}
+
+// Example usage
+const text = "hello\u200Bworld";
+console.log(findHiddenChars(text));
+// [{char: '', codePoint: 'U+200B', position: 5}]</code></pre>
+
+<h3>Programmatic Detection in Python</h3>
+<pre><code>import re
+
+HIDDEN_PATTERN = re.compile(
+    '[\u200b\u200c\u200d\u200e\u200f\ufeff\u00ad\u2060\u2028\u2029]'
+)
+
+def find_hidden_chars(text):
+    results = []
+    for match in HIDDEN_PATTERN.finditer(text):
+        results.append({
+            'codepoint': f'U+{ord(match.group()):04X}',
+            'position': match.start(),
+        })
+    return results
+
+# Example
+text = "hello\u200bworld"
+print(find_hidden_chars(text))
+# [{'codepoint': 'U+200B', 'position': 5}]</code></pre>
+
+<h2>Automated Stripping Patterns</h2>
+<p>Once you have confirmed which hidden characters are present, you can strip them. The safest approach is to target specific code points rather than broad Unicode categories, since some zero-width characters are intentional in certain scripts.</p>
+
+<h3>JavaScript</h3>
+<pre><code>// Remove common zero-width and invisible characters
+function stripHiddenChars(str) {
+  return str.replace(/[\u200B\u200C\u200D\uFEFF\u00AD\u2060]/g, '');
+}
+
+// Remove BOM from start of string only
+function stripBOM(str) {
+  return str.replace(/^\uFEFF/, '');
+}</code></pre>
+
+<h3>Python</h3>
+<pre><code>import re
+
+def strip_hidden_chars(text):
+    return re.sub('[\u200b\u200c\u200d\ufeff\u00ad\u2060]', '', text)
+
+def strip_bom(text):
+    return text.lstrip('\ufeff')</code></pre>
+
+<h2>Homoglyph Attacks and Security Implications</h2>
+<p>Hidden and look-alike characters create real security risks. Homoglyphs are visually identical characters from different Unicode blocks. An attacker can register a domain using Cyrillic <code>a</code> (<code>U+0430</code>) instead of Latin <code>a</code> (<code>U+0061</code>), creating a domain that looks legitimate but points elsewhere. The same technique works in usernames, email addresses, and file names.</p>
+<p>Zero-width characters add another attack surface. A username containing a zero-width space looks identical to one without, but they are distinct strings in a database. This can enable impersonation or bypass uniqueness constraints. Always normalize and strip invisible characters from identity-sensitive fields before storage and comparison.</p>
+
+<h2>Real-World Scenarios Where Hidden Characters Cause Bugs</h2>
+<ul>
+    <li><strong>Copy from Microsoft Word:</strong> Word inserts soft hyphens, non-breaking spaces (<code>U+00A0</code>), and sometimes zero-width characters. Pasting into code editors or CMS fields carries these along invisibly.</li>
+    <li><strong>Web scraping:</strong> HTML source may contain <code>&amp;shy;</code>, <code>&amp;zwj;</code>, or BOM markers. If your scraper does not strip these, downstream text processing breaks.</li>
+    <li><strong>API responses:</strong> JSON payloads from third-party APIs sometimes include a BOM at the start of the response body. JSON parsers that do not tolerate a leading BOM will fail with a parse error on otherwise valid JSON.</li>
+    <li><strong>CSV imports:</strong> Files saved as "UTF-8 with BOM" in Excel add three invisible bytes at the start. The first column header gains an invisible prefix, causing header-based lookups to fail.</li>
+    <li><strong>Git diffs and CI:</strong> Hidden characters in source code can pass code review undetected. They may cause string comparisons to fail only on certain platforms or produce inconsistent test results.</li>
+</ul>
+
 <h2>When to Normalize and When to Strip</h2>
 <p>Normalize when the problem is inconsistent Unicode representation, such as NFC vs NFD. Strip characters only when they are truly unwanted in your workflow, such as zero-width spaces in copied content or BOM markers in imported text.</p>
 
@@ -54,28 +212,52 @@
     <li>Generating slugs before cleaning the title</li>
     <li>Comparing raw strings without normalization</li>
     <li>Blaming regex first when the input contains invisible characters</li>
+    <li>Stripping all zero-width characters globally without considering scripts that require them (Persian, Indic languages)</li>
 </ul>
 
 <h2>FAQ</h2>
 <div class="guide-faq">
     <details>
         <summary>Can hidden characters affect SEO and slugs?</summary>
-        <p>Yes. They can create unstable slug output, odd token boundaries, and inconsistent matching.</p>
+        <p>Yes. They can create unstable slug output, odd token boundaries, and inconsistent matching. A zero-width space in a page title can produce a slug with an invisible segment that breaks URL resolution on some servers.</p>
     </details>
     <details>
         <summary>Is a BOM always bad?</summary>
-        <p>No, but it is often unwanted in application text, config payloads, and copy-paste workflows where hidden leading characters can break parsing.</p>
+        <p>No, but it is often unwanted in application text, config payloads, and copy-paste workflows where hidden leading characters can break parsing. Some Windows tools expect a BOM in UTF-8 files, but most modern software does not require it.</p>
     </details>
     <details>
         <summary>Are combining accents hidden characters?</summary>
         <p>They are not invisible in the same way as zero-width characters, but they can still create hidden structural differences in text when stored separately.</p>
+    </details>
+    <details>
+        <summary>How do zero-width characters get into my text?</summary>
+        <p>The most common sources are copy-paste from web pages, word processors, CMS editors, and PDF extraction. Some rich text editors insert zero-width spaces to manage cursor positioning or word breaking internally.</p>
+    </details>
+    <details>
+        <summary>Can I safely strip all hidden characters?</summary>
+        <p>Not always. Zero-width joiners and non-joiners are meaningful in Persian, Arabic, and Indic scripts where they control ligature behavior. Stripping them in multilingual text can break correct rendering. Target only the specific characters that are problematic in your context.</p>
+    </details>
+    <details>
+        <summary>Why does my JSON parsing fail on valid-looking data?</summary>
+        <p>A common cause is a BOM (<code>U+FEFF</code>) at the start of the response body. JSON parsers expect the first character to be <code>{</code> or <code>[</code>, and the invisible BOM byte sequence causes a parse error. Strip the BOM before parsing.</p>
+    </details>
+    <details>
+        <summary>Do hidden characters affect password or username validation?</summary>
+        <p>Yes. A username with a zero-width space can pass visual inspection but fail exact-match lookups, or worse, allow two accounts that look identical. Always normalize and strip invisible characters from authentication-related fields.</p>
     </details>
 </div>
 
 <h2>Related Tools</h2>
 <ul>
     <li><a href="/text/text-analyzer/">Text Analysis Tool</a> to inspect suspicious character counts</li>
-    <li><a href="/guides/unicode-normalization/">Unicode normalization guide</a> for NFC vs NFD issues</li>
     <li><a href="/dev/slug-generator/">URL Slug Generator</a> to create stable slugs after cleanup</li>
     <li><a href="/dev/url-encode-decode/">URL Encoder / Decoder</a> to inspect encoded characters in URLs</li>
+    <li><a href="/dev/regex-tester-explainer/">Regex Tester Online</a> to test patterns for detecting hidden characters</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/unicode-normalization/">NFC vs NFD: Unicode Normalization Explained</a> for understanding composed vs decomposed forms</li>
+    <li><a href="/guides/utf8proc-normalization-nfc/">utf8proc NFC Normalization in C</a> for normalizing text in C projects</li>
+    <li><a href="/guides/regex-debugging/">Regex Debugging Guide</a> for troubleshooting patterns that fail on hidden characters</li>
 </ul>

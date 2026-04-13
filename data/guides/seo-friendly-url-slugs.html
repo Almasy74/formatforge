@@ -12,6 +12,7 @@
     <li>Remove punctuation and unstable decorative text</li>
     <li>Normalize accented characters before transliteration</li>
     <li>Do not keep dates or update markers unless they matter long term</li>
+    <li>Aim for 3-5 words that capture the page topic</li>
 </ul>
 
 <h2>Hyphen vs Underscore</h2>
@@ -37,11 +38,124 @@
     </tbody>
 </table>
 
+<h2>Maximum Slug Length</h2>
+<p>There is no strict character limit, but practical guidelines exist. Keep slugs under 60-70 characters. Longer slugs get truncated in search results and are harder to share. More importantly, every word in the slug should earn its place. If removing a word does not change the meaning, remove it.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Length</th>
+            <th>Assessment</th>
+            <th>Example</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>3-5 words</td>
+            <td>Ideal</td>
+            <td><code>/guides/seo-friendly-slugs</code></td>
+        </tr>
+        <tr>
+            <td>6-8 words</td>
+            <td>Acceptable if needed for clarity</td>
+            <td><code>/guides/how-to-create-seo-friendly-url-slugs</code></td>
+        </tr>
+        <tr>
+            <td>9+ words</td>
+            <td>Too long, trim stop words and redundancy</td>
+            <td><code>/guides/the-complete-guide-to-creating-seo-friendly-url-slugs-for-your-website</code></td>
+        </tr>
+    </tbody>
+</table>
+
 <h2>When to Remove Stop Words</h2>
 <p>Remove stop words when they add no meaning, but keep them if dropping them makes the slug awkward or ambiguous. The goal is not maximum compression. The goal is a readable and stable identifier.</p>
 
+<h2>Internationalization and Transliteration</h2>
+<p>Slugs must work in URLs, which means they should contain only ASCII letters, digits, and hyphens. Non-ASCII text requires transliteration: converting characters from other scripts into ASCII equivalents.</p>
+
+<h3>Accented Latin Characters</h3>
+<p>Normalize to NFD (decomposed form) first, then strip the combining diacritical marks. This converts characters like <code>cafe</code> to <code>cafe</code> reliably.</p>
+
+<h3>CJK Characters (Chinese, Japanese, Korean)</h3>
+<p>CJK characters do not transliterate to ASCII in a meaningful way without a romanization library. Options include:</p>
+<ul>
+    <li>Use <strong>pinyin</strong> for Chinese (e.g., a library like <code>pinyin</code> in Python or <code>pinyin-pro</code> in JavaScript)</li>
+    <li>Use <strong>romaji</strong> for Japanese (Hepburn romanization)</li>
+    <li>Use <strong>revised romanization</strong> for Korean</li>
+    <li>Alternatively, use a numeric ID or hash as the slug and rely on the page title for readability</li>
+</ul>
+
+<h3>Arabic and Cyrillic</h3>
+<p>Both scripts have established transliteration tables. Use a library like <code>transliterate</code> (JavaScript) or <code>text-unidecode</code> (Python) that maps each character to its closest ASCII equivalent. Always test the output: automated transliteration can produce awkward or misleading results for some words.</p>
+
 <h2>Accents, Unicode, and Imported Titles</h2>
 <p>If your titles contain accented characters or come from mixed systems, normalize the text before slug generation. This reduces inconsistent output and makes transliteration more stable. See the <a href="/guides/unicode-normalization/">Unicode normalization guide</a> if you are dealing with NFC vs NFD problems.</p>
+
+<h2>CMS-Specific Advice</h2>
+
+<h3>WordPress</h3>
+<p>WordPress auto-generates slugs from post titles but does not handle CJK text well by default. Install a transliteration plugin for non-Latin scripts. To edit a slug, use the "Permalink" field in the post editor. Avoid changing slugs after publication unless you set up redirects.</p>
+
+<h3>Next.js and File-Based Routing</h3>
+<p>In Next.js, the slug is the filename or folder name in the <code>app/</code> or <code>pages/</code> directory. Use kebab-case for folder and file names. For dynamic slugs from a database, sanitize at the data layer before passing to <code>generateStaticParams()</code> or <code>getStaticPaths()</code>.</p>
+
+<h3>Custom CMS Systems</h3>
+<p>Build slug generation into your content creation API. Validate that every slug is unique within its URL path, enforce lowercase and hyphen-only rules at the database level, and store the slug as a separate indexed column rather than deriving it at render time.</p>
+
+<h2>Redirect Strategy When Slugs Change</h2>
+<p>Changing a published slug breaks existing links, bookmarks, and search engine rankings. If you must change a slug, always set up a 301 (permanent) redirect from the old URL to the new one.</p>
+
+<ul>
+    <li><strong>301 redirect:</strong> Tells search engines the page has permanently moved. Link equity transfers to the new URL over time.</li>
+    <li><strong>Never use 302:</strong> A 302 (temporary) redirect tells search engines the old URL might come back, so they may not transfer ranking signals.</li>
+    <li><strong>Keep a redirect map:</strong> Maintain a table of old-slug to new-slug mappings. In a CMS, store the history of previous slugs for each page and auto-redirect any old slug to the current one.</li>
+    <li><strong>Batch changes:</strong> If you are changing slug conventions across many pages, do it in one deployment with all redirects in place simultaneously.</li>
+</ul>
+
+<h2>Slug Stability and Versioning</h2>
+<p>A stable slug is one that does not need to change when the content is updated. Design slugs for longevity:</p>
+
+<ul>
+    <li>Do not include the year unless the content is genuinely time-specific (e.g., annual reports).</li>
+    <li>Do not include version numbers in the slug. Use <code>/api-authentication</code> not <code>/api-authentication-v2</code>.</li>
+    <li>Avoid including the author name, category hierarchy, or other metadata that might change.</li>
+    <li>If you need versioned content, use a separate URL parameter or path segment (<code>/docs/v2/authentication</code>) rather than embedding versions in the slug itself.</li>
+</ul>
+
+<h2>Programmatic Slug Generation</h2>
+
+<h3>JavaScript</h3>
+<pre><code>function slugify(text) {
+  return text
+    .normalize("NFD")                   // decompose accents
+    .replace(/[\u0300-\u036f]/g, "")    // strip diacritical marks
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")      // remove non-alphanumeric chars
+    .replace(/[\s_]+/g, "-")            // spaces and underscores to hyphens
+    .replace(/-+/g, "-")               // collapse multiple hyphens
+    .replace(/^-|-$/g, "");            // trim leading/trailing hyphens
+}
+
+// slugify("Cafe Expose: A Developer's Guide!")
+// => "cafe-expose-a-developers-guide"</code></pre>
+
+<h3>Python</h3>
+<pre><code>import re
+import unicodedata
+
+def slugify(text):
+    text = unicodedata.normalize("NFD", text)
+    text = text.encode("ascii", "ignore").decode("ascii")
+    text = text.lower().strip()
+    text = re.sub(r"[^a-z0-9\s-]", "", text)
+    text = re.sub(r"[\s_]+", "-", text)
+    text = re.sub(r"-+", "-", text)
+    return text.strip("-")
+
+# slugify("Cafe Expose: A Developer's Guide!")
+# => "cafe-expose-a-developers-guide"</code></pre>
 
 <h2>Common Slug Mistakes</h2>
 <ul>
@@ -50,28 +164,49 @@
     <li>Changing slugs too often after publishing</li>
     <li>Removing too many words and losing meaning</li>
     <li>Skipping cleanup when titles contain hidden Unicode characters</li>
+    <li>Including query parameters or fragments in what should be a path-only slug</li>
 </ul>
 
 <h2>FAQ</h2>
 <div class="guide-faq">
     <details>
         <summary>Should a slug match the title exactly?</summary>
-        <p>No. It should match the topic clearly, but it can be shorter and cleaner than the full title.</p>
+        <p>No. It should match the topic clearly, but it can be shorter and cleaner than the full title. Remove stop words, punctuation, and decorative text that does not help identify the page.</p>
     </details>
     <details>
         <summary>Should I include the year in a slug?</summary>
-        <p>Only if the year is genuinely part of the page identity. Otherwise it can make future updates harder.</p>
+        <p>Only if the year is genuinely part of the page identity (e.g., annual reports or event pages). Otherwise it makes future updates harder and forces a slug change when the content is refreshed.</p>
     </details>
     <details>
         <summary>Can hidden characters affect a slug?</summary>
-        <p>Yes. Hidden or inconsistent Unicode characters can create messy or unstable slug output if you do not normalize first.</p>
+        <p>Yes. Hidden or inconsistent Unicode characters (zero-width spaces, right-to-left marks, soft hyphens) can create messy or unstable slug output if you do not normalize first.</p>
+    </details>
+    <details>
+        <summary>How do I handle CJK characters in slugs?</summary>
+        <p>Use a romanization library specific to the language: pinyin for Chinese, romaji for Japanese, revised romanization for Korean. If the romanized output is too long or awkward, use a numeric or hash-based slug instead and rely on the page title for human readability.</p>
+    </details>
+    <details>
+        <summary>What happens to SEO if I change an existing slug?</summary>
+        <p>Changing a slug without a 301 redirect breaks all existing links and causes the page to lose its accumulated search ranking. Always set up a permanent redirect from the old URL to the new one before deploying the change.</p>
+    </details>
+    <details>
+        <summary>Should I use trailing slashes in slugs?</summary>
+        <p>Pick one convention (trailing slash or no trailing slash) and enforce it site-wide. Inconsistency creates duplicate content issues. If your framework adds trailing slashes by default, redirect the non-trailing-slash version to the canonical form.</p>
+    </details>
+    <details>
+        <summary>Is it better to use IDs or words in slugs?</summary>
+        <p>Use words for content pages where readability and SEO matter. Use IDs or hashes for app routes, user-generated content, or pages where the title may change frequently. A hybrid approach like <code>/products/42-wireless-keyboard</code> combines uniqueness with readability.</p>
     </details>
 </div>
 
 <h2>Related Tools</h2>
 <ul>
     <li><a href="/dev/slug-generator/">URL Slug Generator</a> to generate clean slugs quickly</li>
-    <li><a href="/guides/unicode-normalization/">Unicode normalization guide</a> for accent and normalization edge cases</li>
-    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode characters guide</a> for invisible-character cleanup</li>
     <li><a href="/dev/url-encode-decode/">URL Encoder / Decoder</a> for URL escaping, which is a different job than slug creation</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/unicode-normalization/">Unicode Normalization</a> for accent and normalization edge cases</li>
+    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode Characters</a> for invisible-character cleanup</li>
 </ul>

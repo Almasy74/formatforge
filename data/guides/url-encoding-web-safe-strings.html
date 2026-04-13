@@ -1,0 +1,306 @@
+<h2>Quick Answer</h2>
+<p><strong>URL encoding (percent encoding) converts unsafe characters into a format that can be transmitted in URLs.</strong> Spaces become <code>%20</code>, special characters become percent-encoded hex values, and the URL remains valid across all systems. Understanding encoding rules prevents broken links, double-encoding bugs, and security issues in web applications.</p>
+
+<h2>Why URLs Need Encoding</h2>
+<p>URLs can only contain a limited set of characters defined by RFC 3986. Characters outside this set, including spaces, accented letters, and most punctuation, must be percent-encoded before they can appear in a URL. Without encoding, browsers, servers, and proxies may interpret these characters as structural delimiters rather than data.</p>
+
+<p>For example, a space in a URL path could be misinterpreted as the end of the URL. An ampersand in a query value could be misinterpreted as a parameter separator. Percent encoding ensures that every character is unambiguous.</p>
+
+<h2>RFC 3986: The URL Standard</h2>
+<p>RFC 3986 defines which characters are allowed in URLs without encoding:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Characters</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Unreserved (always safe)</td>
+            <td><code>A-Z a-z 0-9 - _ . ~</code></td>
+            <td>Never need encoding</td>
+        </tr>
+        <tr>
+            <td>Reserved (structural meaning)</td>
+            <td><code>: / ? # [ ] @ ! $ & ' ( ) * + , ; =</code></td>
+            <td>Encode only when used as data, not as delimiters</td>
+        </tr>
+        <tr>
+            <td>Everything else</td>
+            <td>Spaces, accented characters, CJK, emoji</td>
+            <td>Must always be percent-encoded</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>How Percent Encoding Works</h3>
+<p>Each byte of the character's UTF-8 representation is written as a percent sign followed by two hex digits. A space (byte 0x20) becomes <code>%20</code>. The letter "é" (UTF-8 bytes 0xC3 0xA9) becomes <code>%C3%A9</code>. Emoji and CJK characters produce longer sequences because they use 3 or 4 UTF-8 bytes.</p>
+
+<pre><code>// Encoding examples
+Space       → %20
+é (U+00E9)  → %C3%A9
+€ (U+20AC)  → %E2%82%AC
+日 (U+65E5) → %E6%97%A5</code></pre>
+
+<h2>Spaces in URLs: %20 vs +</h2>
+<p>One of the most common sources of confusion is how spaces are encoded. The answer depends on where in the URL the space appears:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Context</th>
+            <th>Space encoding</th>
+            <th>Standard</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>URL path</td>
+            <td><code>%20</code></td>
+            <td>RFC 3986</td>
+        </tr>
+        <tr>
+            <td>Query string (form data)</td>
+            <td><code>+</code></td>
+            <td>application/x-www-form-urlencoded (HTML forms)</td>
+        </tr>
+        <tr>
+            <td>Query string (general)</td>
+            <td><code>%20</code></td>
+            <td>RFC 3986</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>The <code>+</code> convention comes from HTML form encoding, not from the URL standard itself. When building URLs programmatically, <code>%20</code> is the safer choice because it works everywhere. Use the <a href="/dev/url-encode-decode/">URL Encoder / Decoder</a> to see how your specific input gets encoded.</p>
+
+<h2>JavaScript Encoding Functions</h2>
+<p>JavaScript provides three different encoding functions, each with a different scope:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Function</th>
+            <th>Encodes</th>
+            <th>Does NOT encode</th>
+            <th>Use for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>encodeURIComponent()</code></td>
+            <td>Everything except <code>A-Z a-z 0-9 - _ . ~ ! ' ( ) *</code></td>
+            <td>Unreserved characters</td>
+            <td>Query parameter values, path segments</td>
+        </tr>
+        <tr>
+            <td><code>encodeURI()</code></td>
+            <td>Spaces and non-ASCII characters</td>
+            <td>Reserved characters like <code>: / ? # &</code></td>
+            <td>Encoding a complete URL while preserving structure</td>
+        </tr>
+        <tr>
+            <td><code>escape()</code> (deprecated)</td>
+            <td>Most non-alphanumeric</td>
+            <td>Various exceptions</td>
+            <td>Do not use. Deprecated and inconsistent.</td>
+        </tr>
+    </tbody>
+</table>
+
+<pre><code>// encodeURIComponent - use for parameter values
+const query = encodeURIComponent("hello world & goodbye");
+// "hello%20world%20%26%20goodbye"
+
+// encodeURI - use for complete URLs
+const url = encodeURI("https://example.com/path with spaces/page");
+// "https://example.com/path%20with%20spaces/page"
+
+// Common mistake: using encodeURI for a parameter value
+// This does NOT encode & and = which breaks the query string
+encodeURI("key=value&other");  // WRONG for parameter values</code></pre>
+
+<h3>Python Encoding</h3>
+<pre><code>from urllib.parse import quote, quote_plus, unquote
+
+# Encode a path segment
+quote("hello world")           # "hello%20world"
+
+# Encode a query parameter (+ for spaces)
+quote_plus("hello world")      # "hello+world"
+
+# Decode
+unquote("hello%20world")       # "hello world"</code></pre>
+
+<h2>Double Encoding: The Most Common URL Bug</h2>
+<p>Double encoding happens when an already-encoded string gets encoded again. The <code>%</code> character itself gets encoded to <code>%25</code>, turning <code>%20</code> into <code>%2520</code>. This is one of the most common and hardest-to-debug URL bugs.</p>
+
+<h3>How It Happens</h3>
+<pre><code>// Step 1: Original value
+"hello world"
+
+// Step 2: First encoding (correct)
+"hello%20world"
+
+// Step 3: Second encoding (bug!)
+"hello%2520world"
+
+// The server receives %2520 and decodes once to %20
+// The actual value becomes "hello%20world" instead of "hello world"</code></pre>
+
+<h3>How to Detect Double Encoding</h3>
+<ul>
+    <li>Look for <code>%25</code> in URLs — this is the percent sign itself encoded, which usually indicates double encoding</li>
+    <li>Check server logs for URLs containing <code>%2520</code> (double-encoded space) or <code>%253D</code> (double-encoded equals)</li>
+    <li>If a URL works when you paste it in the browser but fails in your application, double encoding is likely the cause</li>
+</ul>
+
+<h3>How to Prevent Double Encoding</h3>
+<p>Encode exactly once, at the point where the URL is constructed. Never encode a value that might already be encoded without checking first. If you are unsure whether input is already encoded, decode it first and then re-encode.</p>
+
+<h2>URL Slugs vs URL Encoding</h2>
+<p>URL slugs and URL encoding solve different problems. Encoding makes any string safe for URLs by converting unsafe characters to percent sequences. Slugs transform human-readable titles into clean, permanent URL paths using only lowercase letters, digits, and hyphens.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Approach</th>
+            <th>Input</th>
+            <th>Output</th>
+            <th>Use case</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>URL encoding</td>
+            <td>"Héllo Wörld!"</td>
+            <td>"H%C3%A9llo%20W%C3%B6rld!"</td>
+            <td>Query parameters, API values</td>
+        </tr>
+        <tr>
+            <td>Slug generation</td>
+            <td>"Héllo Wörld!"</td>
+            <td>"hello-world"</td>
+            <td>Page URLs, blog posts, product pages</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Use the <a href="/dev/slug-generator/">URL Slug Generator</a> for clean page URLs. Use the <a href="/dev/url-encode-decode/">URL Encoder / Decoder</a> for encoding arbitrary values in query strings and API parameters. See the <a href="/guides/seo-friendly-url-slugs/">SEO-friendly URL slugs guide</a> for slug best practices.</p>
+
+<h2>Base64 Encoding</h2>
+<p>Base64 is a different encoding scheme that converts binary data into ASCII text. Unlike URL encoding, Base64 is not designed for URLs specifically — it is a general-purpose binary-to-text encoding used for embedding data in text-based formats.</p>
+
+<h3>Base64 Variants</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Variant</th>
+            <th>Alphabet</th>
+            <th>Padding</th>
+            <th>Use case</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Standard (RFC 4648)</td>
+            <td><code>A-Z a-z 0-9 + /</code></td>
+            <td><code>=</code></td>
+            <td>Email attachments (MIME), data storage</td>
+        </tr>
+        <tr>
+            <td>URL-safe (RFC 4648 §5)</td>
+            <td><code>A-Z a-z 0-9 - _</code></td>
+            <td>Optional</td>
+            <td>URLs, filenames, JWT tokens</td>
+        </tr>
+        <tr>
+            <td>MIME</td>
+            <td>Standard + line breaks every 76 chars</td>
+            <td><code>=</code></td>
+            <td>Email encoding</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Standard Base64 uses <code>+</code> and <code>/</code> which are not URL-safe. URL-safe Base64 replaces these with <code>-</code> and <code>_</code>. JWT tokens use URL-safe Base64 without padding. The <a href="/dev/base64-encode-decode/">Base64 Encoder / Decoder</a> handles both variants.</p>
+
+<h3>Data URIs</h3>
+<p>Base64 enables embedding binary data directly in HTML and CSS using data URIs:</p>
+<pre><code>// Embedding a small image in HTML
+&lt;img src="data:image/png;base64,iVBORw0KGgo..." /&gt;
+
+// Embedding a font in CSS
+@font-face {
+  src: url("data:font/woff2;base64,d09GMg...");
+}</code></pre>
+
+<p>Data URIs are useful for small resources (icons, small images) where eliminating an HTTP request improves performance. For larger resources, separate files with proper caching are more efficient.</p>
+
+<h2>JWT Tokens: Base64URL in Practice</h2>
+<p>JSON Web Tokens (JWT) are a practical example of URL-safe Base64 encoding. A JWT consists of three Base64URL-encoded segments separated by dots:</p>
+
+<pre><code>// JWT structure
+header.payload.signature
+
+// Each part is Base64URL encoded (no padding)
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0In0.signature</code></pre>
+
+<p>The header specifies the signing algorithm. The payload contains claims (user data, expiration time, issuer). The signature ensures integrity. Use the <a href="/dev/jwt-decoder-inspector/">JWT Decoder</a> to inspect tokens without needing to write code.</p>
+
+<p>Important: decoding a JWT does not verify it. The payload is only Base64-encoded, not encrypted. Anyone can read it. Verification requires checking the signature against the secret or public key.</p>
+
+<h2>Common Encoding Mistakes</h2>
+<ul>
+    <li><strong>Double encoding:</strong> Encoding an already-encoded string, turning <code>%20</code> into <code>%2520</code></li>
+    <li><strong>Using encodeURI for parameter values:</strong> This does not encode <code>&</code> and <code>=</code>, breaking query string structure</li>
+    <li><strong>Mixing standard and URL-safe Base64:</strong> Using <code>+</code> and <code>/</code> in URLs without URL-safe encoding</li>
+    <li><strong>Forgetting to encode non-ASCII characters:</strong> Accented characters and emoji in URLs work in modern browsers but must be encoded for API calls and older systems</li>
+    <li><strong>Confusing encoding with encryption:</strong> Base64 and URL encoding are reversible transformations, not security measures</li>
+</ul>
+
+<h2>FAQ</h2>
+<div class="guide-faq">
+    <details>
+        <summary>Should I use encodeURI or encodeURIComponent?</summary>
+        <p>Use <code>encodeURIComponent</code> for encoding individual values (query parameters, path segments). Use <code>encodeURI</code> only when you need to encode a complete URL while preserving its structure. In most cases, <code>encodeURIComponent</code> is what you want.</p>
+    </details>
+    <details>
+        <summary>Is Base64 encoding the same as encryption?</summary>
+        <p>No. Base64 is a reversible encoding, not encryption. Anyone can decode Base64 data. It provides no security, only format conversion. Never use Base64 to protect sensitive data.</p>
+    </details>
+    <details>
+        <summary>Why do some URLs use + for spaces and others use %20?</summary>
+        <p>The <code>+</code> convention comes from HTML form encoding (application/x-www-form-urlencoded). The <code>%20</code> convention comes from RFC 3986 (the URL standard). Both are valid in query strings, but <code>%20</code> is correct in URL paths.</p>
+    </details>
+    <details>
+        <summary>How do I know if a URL is double-encoded?</summary>
+        <p>Look for <code>%25</code> sequences. If you see <code>%2520</code> (which decodes to <code>%20</code>), the URL was encoded twice. Decode once and check if the result is a valid encoded URL.</p>
+    </details>
+    <details>
+        <summary>Can I put emoji in URLs?</summary>
+        <p>Yes, but they must be percent-encoded for reliable transmission. Modern browsers display the decoded form in the address bar, but the actual HTTP request uses the encoded form. A single emoji can produce 12+ characters of percent encoding.</p>
+    </details>
+    <details>
+        <summary>What is the difference between URL encoding and slug generation?</summary>
+        <p>URL encoding preserves the original characters by converting them to percent sequences. Slug generation transforms text into a clean, readable format using only safe characters. They solve different problems and are used in different parts of a URL.</p>
+    </details>
+</div>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/dev/url-encode-decode/">URL Encoder / Decoder</a> for percent encoding and decoding</li>
+    <li><a href="/dev/base64-encode-decode/">Base64 Encoder / Decoder</a> for binary-to-text encoding</li>
+    <li><a href="/dev/slug-generator/">URL Slug Generator</a> for clean page URLs</li>
+    <li><a href="/dev/jwt-decoder-inspector/">JWT Decoder</a> for inspecting token contents</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/seo-friendly-url-slugs/">How to create SEO-friendly URL slugs</a></li>
+    <li><a href="/guides/unicode-normalization/">Unicode normalization explained</a></li>
+    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode characters guide</a></li>
+</ul>

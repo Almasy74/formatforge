@@ -29,15 +29,215 @@
     </tbody>
 </table>
 
+<h2>Character Classes in Detail</h2>
+<p>Character classes define which characters are allowed at a given position. Regex engines provide predefined shorthand classes for the most common sets, and you can build custom ranges for anything else.</p>
+
+<h3>Predefined Character Classes</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Shorthand</th>
+            <th>Equivalent</th>
+            <th>Matches</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>\d</code></td>
+            <td><code>[0-9]</code></td>
+            <td>Any digit</td>
+        </tr>
+        <tr>
+            <td><code>\D</code></td>
+            <td><code>[^0-9]</code></td>
+            <td>Any non-digit</td>
+        </tr>
+        <tr>
+            <td><code>\w</code></td>
+            <td><code>[a-zA-Z0-9_]</code></td>
+            <td>Word character (letter, digit, underscore)</td>
+        </tr>
+        <tr>
+            <td><code>\W</code></td>
+            <td><code>[^a-zA-Z0-9_]</code></td>
+            <td>Non-word character</td>
+        </tr>
+        <tr>
+            <td><code>\s</code></td>
+            <td><code>[ \t\n\r\f\v]</code></td>
+            <td>Any whitespace character</td>
+        </tr>
+        <tr>
+            <td><code>\S</code></td>
+            <td><code>[^ \t\n\r\f\v]</code></td>
+            <td>Any non-whitespace character</td>
+        </tr>
+        <tr>
+            <td><code>.</code></td>
+            <td>Almost everything</td>
+            <td>Any character except newline (unless dotall mode is on)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Custom Ranges</h3>
+<p>Square brackets let you define exactly which characters to allow. A caret inside the brackets negates the set.</p>
+<ul>
+    <li><code>[aeiou]</code> &mdash; matches any lowercase vowel</li>
+    <li><code>[A-Fa-f0-9]</code> &mdash; matches a hexadecimal digit</li>
+    <li><code>[^0-9]</code> &mdash; matches anything that is not a digit</li>
+    <li><code>[a-zA-Z]</code> &mdash; matches any ASCII letter regardless of case</li>
+</ul>
+
+<h2>Quantifier Cheat Sheet</h2>
+<p>Quantifiers control how many times the preceding element must appear. By default they are greedy, meaning they match as much text as possible. Append <code>?</code> to make any quantifier lazy (match as little as possible).</p>
+<table>
+    <thead>
+        <tr>
+            <th>Quantifier</th>
+            <th>Meaning</th>
+            <th>Example</th>
+            <th>Matches</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>*</code></td>
+            <td>Zero or more</td>
+            <td><code>go*d</code></td>
+            <td>"gd", "god", "good", "goood"</td>
+        </tr>
+        <tr>
+            <td><code>+</code></td>
+            <td>One or more</td>
+            <td><code>go+d</code></td>
+            <td>"god", "good", "goood" (not "gd")</td>
+        </tr>
+        <tr>
+            <td><code>?</code></td>
+            <td>Zero or one</td>
+            <td><code>colou?r</code></td>
+            <td>"color", "colour"</td>
+        </tr>
+        <tr>
+            <td><code>{n}</code></td>
+            <td>Exactly n</td>
+            <td><code>\d{4}</code></td>
+            <td>Exactly four digits like "2024"</td>
+        </tr>
+        <tr>
+            <td><code>{n,}</code></td>
+            <td>n or more</td>
+            <td><code>\w{3,}</code></td>
+            <td>Words with three or more characters</td>
+        </tr>
+        <tr>
+            <td><code>{n,m}</code></td>
+            <td>Between n and m</td>
+            <td><code>[a-z]{2,5}</code></td>
+            <td>Two to five lowercase letters</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Grouping and Capturing</h2>
+<p>Parentheses serve two purposes: they group elements for quantifiers, and they capture the matched text so you can reference it later (in replacements or in code).</p>
+
+<h3>Capturing Groups</h3>
+<pre><code>// Pattern: (\d{4})-(\d{2})-(\d{2})
+// Input:   2024-03-15
+// Group 1: 2024
+// Group 2: 03
+// Group 3: 15</code></pre>
+<p>Each pair of parentheses creates a numbered group. Group 0 is always the entire match. In a replacement string, you reference groups with <code>$1</code>, <code>$2</code>, etc. (or <code>\1</code>, <code>\2</code> depending on the engine).</p>
+
+<h3>Non-Capturing Groups</h3>
+<p>When you need grouping for alternation or quantifiers but do not need the captured value, use <code>(?:...)</code>. This avoids polluting your group numbering and is slightly faster.</p>
+<pre><code>// Capturing:     (https?|ftp)://
+// Non-capturing:  (?:https?|ftp)://</code></pre>
+
+<h2>Lookahead and Lookbehind</h2>
+<p>Lookarounds assert that something exists before or after the current position without including it in the match. They are zero-width: they check a condition but consume no characters.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Syntax</th>
+            <th>Meaning</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Positive lookahead</td>
+            <td><code>X(?=Y)</code></td>
+            <td>Match X only if followed by Y</td>
+        </tr>
+        <tr>
+            <td>Negative lookahead</td>
+            <td><code>X(?!Y)</code></td>
+            <td>Match X only if NOT followed by Y</td>
+        </tr>
+        <tr>
+            <td>Positive lookbehind</td>
+            <td><code>(?&lt;=Y)X</code></td>
+            <td>Match X only if preceded by Y</td>
+        </tr>
+        <tr>
+            <td>Negative lookbehind</td>
+            <td><code>(?&lt;!Y)X</code></td>
+            <td>Match X only if NOT preceded by Y</td>
+        </tr>
+    </tbody>
+</table>
+<p>A practical example: <code>\d+(?= USD)</code> matches a number only when it appears before " USD", so in "Price: 150 USD" it matches "150" but not in "150 items".</p>
+
 <h2>Useful Beginner Patterns</h2>
 <ul>
     <li><strong>Email-like match:</strong> <code>[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}</code></li>
     <li><strong>ISO date:</strong> <code>\d{4}-\d{2}-\d{2}</code></li>
     <li><strong>Simple HTML tag match:</strong> <code>&lt;[^&gt;]+&gt;</code></li>
+    <li><strong>US phone number:</strong> <code>\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}</code></li>
+    <li><strong>IPv4 address:</strong> <code>\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b</code></li>
 </ul>
 
 <h2>How to Practice Safely</h2>
 <p>Test the pattern against a tiny sample first, then expand to more realistic input. Use the <a href="/dev/regex-tester-explainer/">Regex Tester Online</a> to see what matches and how the pattern behaves before you run it on full logs, exports, or copied content.</p>
+
+<h2>Practical Exercises</h2>
+<p>Try these challenges in the <a href="/dev/regex-tester-explainer/">Regex Tester</a>. Solutions are hidden below each one.</p>
+
+<h3>Challenge 1: Extract Prices</h3>
+<p>Given the text <code>"Items cost $12.99, $3.50, and $149.00"</code>, write a pattern that captures all dollar amounts including the decimal portion.</p>
+<details>
+    <summary>Solution</summary>
+    <pre><code>\$\d+\.\d{2}</code></pre>
+    <p>The escaped <code>\$</code> matches a literal dollar sign. <code>\d+</code> matches one or more digits before the decimal, and <code>\.\d{2}</code> matches the period plus exactly two decimal digits.</p>
+</details>
+
+<h3>Challenge 2: Validate a Username</h3>
+<p>Match usernames that are 3 to 16 characters long and contain only letters, digits, and underscores. The first character must be a letter.</p>
+<details>
+    <summary>Solution</summary>
+    <pre><code>^[a-zA-Z]\w{2,15}$</code></pre>
+    <p>The anchor <code>^</code> ensures we start at the beginning. <code>[a-zA-Z]</code> forces a letter first. <code>\w{2,15}</code> allows 2 to 15 more word characters, giving a total length of 3 to 16. The <code>$</code> anchor prevents trailing characters.</p>
+</details>
+
+<h3>Challenge 3: Find Lines Without a Keyword</h3>
+<p>Match entire lines that do NOT contain the word "error" (case-insensitive).</p>
+<details>
+    <summary>Solution</summary>
+    <pre><code>^(?!.*error).*$</code></pre>
+    <p>The negative lookahead <code>(?!.*error)</code> at the start of the line asserts that "error" does not appear anywhere on the line. If the assertion passes, <code>.*$</code> matches the full line. Use the <code>i</code> flag for case insensitivity.</p>
+</details>
+
+<h3>Challenge 4: Swap First and Last Name</h3>
+<p>Given "Doe, Jane", rearrange to "Jane Doe" using a replacement pattern.</p>
+<details>
+    <summary>Solution</summary>
+    <pre><code>// Pattern: (\w+),\s*(\w+)
+// Replacement: $2 $1</code></pre>
+    <p>Group 1 captures the last name, group 2 captures the first name. The replacement reverses the order and drops the comma.</p>
+</details>
 
 <h2>Common Beginner Mistakes</h2>
 <ul>
@@ -45,14 +245,52 @@
     <li>Forgetting anchors and matching more than expected</li>
     <li>Escaping too little or too much</li>
     <li>Testing only on perfect input instead of real-world messy text</li>
+    <li>Using greedy quantifiers when lazy ones would prevent over-matching</li>
+    <li>Forgetting that <code>.</code> does not match newlines by default</li>
 </ul>
 
+<h2>Frequently Asked Questions</h2>
+
+<details>
+    <summary>What is the difference between greedy and lazy matching?</summary>
+    <p>A greedy quantifier like <code>.*</code> consumes as much text as possible while still allowing the overall pattern to match. A lazy quantifier like <code>.*?</code> consumes as little as possible. For example, given <code>&lt;b&gt;one&lt;/b&gt; and &lt;b&gt;two&lt;/b&gt;</code>, the greedy pattern <code>&lt;b&gt;.*&lt;/b&gt;</code> matches everything from the first <code>&lt;b&gt;</code> to the last <code>&lt;/b&gt;</code>, while the lazy <code>&lt;b&gt;.*?&lt;/b&gt;</code> matches each tag pair individually.</p>
+</details>
+
+<details>
+    <summary>When should I use non-capturing groups?</summary>
+    <p>Use <code>(?:...)</code> when you need to group for alternation or repetition but do not need the matched text for back-references or replacements. This keeps your group numbering clean and avoids a minor performance cost in engines that store captured content.</p>
+</details>
+
+<details>
+    <summary>Are lookaheads supported in all regex engines?</summary>
+    <p>Positive and negative lookaheads are widely supported in JavaScript, Python, Java, .NET, and most modern engines. Lookbehinds have broader support now but some engines (older JavaScript versions before ES2018) do not support them. Always test in your target environment.</p>
+</details>
+
+<details>
+    <summary>How do I match a literal special character like a dot or bracket?</summary>
+    <p>Precede the character with a backslash: <code>\.</code> matches a literal period, <code>\[</code> matches a literal bracket. Inside a character class, most special characters lose their meaning, so <code>[.]</code> also matches a literal dot.</p>
+</details>
+
+<details>
+    <summary>Can I use regex to parse full HTML or XML documents?</summary>
+    <p>No. Regex cannot handle nested, recursive structures reliably. For quick extraction of a single tag or attribute in known-clean markup, a simple pattern works. For anything more complex, use a proper parser. The <a href="/text/html-cleaner/">HTML Cleaner</a> handles stripping and sanitization without regex.</p>
+</details>
+
 <h2>Next Step</h2>
-<p>Once you understand the basics, move to the <a href="/guides/regex-debugging/">regex debugging guide</a> for greedy matches, multiline input, escaping problems, and performance issues.</p>
+<p>Once you understand the basics, move to the <a href="/guides/regex-debugging/">regex debugging guide</a> for greedy matches, multiline input, escaping problems, and performance issues. For a broader theory overview, see the <a href="/guides/regular-expressions-explained/">regular expressions explained</a> guide.</p>
 
 <h2>Related Tools</h2>
 <ul>
     <li><a href="/dev/regex-tester-explainer/">Regex Tester Online</a> for live matching and plain-language explanations</li>
     <li><a href="/text/remove-line-breaks/">Remove Line Breaks</a> to clean copied text before testing patterns</li>
     <li><a href="/text/remove-duplicate-lines/">Remove Duplicate Lines</a> for post-match cleanup workflows</li>
+    <li><a href="/text/html-cleaner/">HTML Cleaner</a> when regex is overkill for tag stripping</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/regex-debugging/">Regex Debugging</a> &mdash; fixing greedy matches, escaping, and performance</li>
+    <li><a href="/guides/regular-expressions-explained/">Regular Expressions Explained</a> &mdash; deeper theory and advanced features</li>
+    <li><a href="/guides/text-cleaning/">Text Cleaning</a> &mdash; the broader workflow where regex plays a key role</li>
+    <li><a href="/guides/data-cleaning-best-practices/">Data Cleaning Best Practices</a> &mdash; applying regex in data pipelines</li>
 </ul>

@@ -17,9 +17,9 @@
     </thead>
     <tbody>
         <tr>
-            <td><code>\".*\"</code></td>
+            <td><code>".*"</code></td>
             <td>Matches too much between the first and last quote</td>
-            <td>Try <code>\".*?\"</code></td>
+            <td>Try <code>".*?"</code></td>
         </tr>
         <tr>
             <td><code>.*</code></td>
@@ -43,16 +43,170 @@
 </ul>
 
 <h2>Escaping and Character Classes</h2>
-<p>Regex often fails because the pattern says one thing and the input contains another. A literal dot needs <code>\\.</code>. A literal bracket needs escaping. A broad class like <code>.+</code> may hide the fact that you really wanted digits, letters, or a specific delimiter. Be explicit when you can.</p>
+<p>Regex often fails because the pattern says one thing and the input contains another. A literal dot needs <code>\.</code>. A literal bracket needs escaping. A broad class like <code>.+</code> may hide the fact that you really wanted digits, letters, or a specific delimiter. Be explicit when you can.</p>
 
-<h2>Backtracking and Performance</h2>
-<p>If a pattern becomes slow on long input, simplify nested quantifiers and broad wildcard groups. Patterns such as <code>(.*)+</code> or heavily nested optional groups can backtrack excessively. Prefer tighter character classes, anchors, and non-capturing groups when you do not need captured output.</p>
+<h2>Catastrophic Backtracking in Depth</h2>
+<p>Catastrophic backtracking happens when a regex engine explores an exponential number of paths through the input. It is caused by nested quantifiers applied to overlapping character classes. The engine tries every possible way to divide the input between the inner and outer quantifier before it can conclude that no match exists.</p>
+
+<h3>How It Happens</h3>
+<p>Consider the pattern <code>(a+)+$</code> matched against the string <code>aaaaX</code>. The engine tries: all four <code>a</code>s in one group, then three plus one, then two plus two, then two plus one plus one, and so on. For <em>n</em> characters, the engine may explore 2^n paths. At 25 characters, this takes seconds. At 30, it can hang a process.</p>
+
+<h3>Visual Backtracking Example</h3>
+<pre><code>Pattern: (a+)+$
+Input:   aaaX
+
+Attempt 1: (aaa)  - fails at X
+Attempt 2: (aa)(a) - fails at X
+Attempt 3: (a)(aa) - fails at X
+Attempt 4: (a)(a)(a) - fails at X
+... engine exhausts all 2^3 = 8 combinations before reporting no match</code></pre>
+
+<h3>Common Vulnerable Patterns</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Pattern</th>
+            <th>Why it backtracks</th>
+            <th>Safe alternative</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>(a+)+</code></td>
+            <td>Nested quantifiers on same class</td>
+            <td><code>a+</code></td>
+        </tr>
+        <tr>
+            <td><code>(.*a){10}</code></td>
+            <td>Wildcard with repeated group</td>
+            <td>Use specific character classes</td>
+        </tr>
+        <tr>
+            <td><code>(\w+\s*)+</code></td>
+            <td>Optional separator between repeated groups</td>
+            <td><code>[\w\s]+</code> or anchor the pattern</td>
+        </tr>
+        <tr>
+            <td><code>(a|a)+</code></td>
+            <td>Alternation with overlap</td>
+            <td><code>a+</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>ReDoS: Regular Expression Denial of Service</h2>
+<p>ReDoS is a denial-of-service attack that exploits catastrophic backtracking. An attacker sends crafted input to a vulnerable regex in a web application, causing the server thread to hang. This is a real security concern in any application that runs user-supplied input against regex patterns, especially in validation layers, search features, and URL routing.</p>
+<p>Prevention strategies:</p>
+<ul>
+    <li><strong>Limit input length:</strong> reject inputs beyond a reasonable maximum before they reach the regex engine.</li>
+    <li><strong>Use linear-time engines:</strong> RE2 (Google), rust/regex, and Go's regexp package guarantee linear-time matching by disallowing backreferences.</li>
+    <li><strong>Audit patterns:</strong> any pattern with nested quantifiers on overlapping classes is a candidate for ReDoS. Test with long non-matching inputs.</li>
+    <li><strong>Set timeouts:</strong> in JavaScript, run regex in a worker with a timeout. In Python, use the <code>regex</code> module with timeout support or wrap calls with signal-based timeouts.</li>
+</ul>
+
+<h2>Atomic Groups and Possessive Quantifiers</h2>
+<p>Atomic groups and possessive quantifiers prevent backtracking by locking in what the engine has already matched. Once an atomic group matches, the engine will not backtrack into it to try a different split.</p>
+<pre><code># Possessive quantifier (Java, PCRE, not JavaScript)
+a++b     # a++ matches all 'a' characters and never gives them back
+
+# Atomic group (PCRE, .NET, Java)
+(?>a+)b  # same effect as possessive: locks the 'a' match
+
+# Both prevent catastrophic backtracking on input like "aaaaX"
+# because the engine does not retry shorter 'a' sequences</code></pre>
+<p>JavaScript does not support possessive quantifiers or atomic groups natively. In JavaScript, the safest defense is to rewrite the pattern to avoid nested quantifiers or use a linear-time engine like RE2 via a WebAssembly binding.</p>
+
+<h2>Performance Profiling Tips</h2>
+<ul>
+    <li><strong>Benchmark with non-matching input:</strong> worst-case backtracking only manifests when the pattern fails to match. Always test with inputs that almost match but do not.</li>
+    <li><strong>Measure with increasing lengths:</strong> run the pattern against 10, 20, 30, and 50 characters of near-miss input. If time grows exponentially, you have a backtracking problem.</li>
+    <li><strong>Use engine-specific profiling:</strong> PCRE has <code>pcretest</code> with a match-limit option. Python's <code>re</code> module does not expose step counts, but the third-party <code>regex</code> module does. JavaScript engines have no built-in profiler, so measure wall-clock time.</li>
+    <li><strong>Count steps, not just time:</strong> if your engine exposes match step counts, a pattern that takes more than 10x the input length in steps is likely vulnerable.</li>
+</ul>
+
+<h2>Common Regex Differences by Language</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Feature</th>
+            <th>JavaScript</th>
+            <th>Python</th>
+            <th>Java</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Lookbehind</td>
+            <td>Variable-length (ES2018+)</td>
+            <td>Fixed-length only</td>
+            <td>Fixed-length only (some implementations allow bounded)</td>
+        </tr>
+        <tr>
+            <td>Named groups</td>
+            <td><code>(?&lt;name&gt;...)</code></td>
+            <td><code>(?P&lt;name&gt;...)</code></td>
+            <td><code>(?&lt;name&gt;...)</code></td>
+        </tr>
+        <tr>
+            <td><code>\b</code> Unicode-aware</td>
+            <td>No (ASCII word boundary by default)</td>
+            <td>No (ASCII by default, use <code>regex</code> module for Unicode)</td>
+            <td>Yes with <code>UNICODE_CHARACTER_CLASS</code> flag</td>
+        </tr>
+        <tr>
+            <td>Possessive quantifiers</td>
+            <td>No</td>
+            <td>No (available in <code>regex</code> module)</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>DotAll flag</td>
+            <td><code>s</code> flag (ES2018+)</td>
+            <td><code>re.DOTALL</code></td>
+            <td><code>Pattern.DOTALL</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Debugging Case Studies</h2>
+
+<h3>Case 1: Email Validation That Hangs</h3>
+<pre><code># Vulnerable pattern
+^([a-zA-Z0-9._-]+)*@([a-zA-Z0-9.-]+)$
+
+# Input that triggers backtracking:
+# "aaaaaaaaaaaaaaaaaaaaaaaa" (no @ sign, long local part)
+
+# Fix: remove the outer * on the group, and ensure
+# groups do not overlap with their quantifiers
+^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$</code></pre>
+
+<h3>Case 2: Log Line Parser Matching Too Much</h3>
+<pre><code># Problem: pattern grabs everything between first and last bracket
+\[.*\]
+
+# Input: [INFO] server started [port=8080]
+# Matches: [INFO] server started [port=8080]  (too much)
+
+# Fix: use lazy quantifier or negated class
+\[[^\]]*\]
+# Now matches: [INFO] and then [port=8080] separately</code></pre>
+
+<h3>Case 3: Multiline HTML Tag Extraction</h3>
+<pre><code># Problem: pattern fails to match tags spanning multiple lines
+&lt;div class="content"&gt;(.*)&lt;/div&gt;
+
+# The dot does not match newlines by default.
+# Fix: enable DotAll flag
+# JavaScript: /&lt;div class="content"&gt;(.*?)&lt;\/div&gt;/s
+# Python: re.compile(r'&lt;div class="content"&gt;(.*?)&lt;/div&gt;', re.DOTALL)</code></pre>
 
 <h2>Debug Workflow</h2>
 <ol>
     <li>Copy the smallest failing sample into the <a href="/dev/regex-tester-explainer/">Regex Tester Online</a>.</li>
     <li>Confirm the expected match or non-match.</li>
     <li>Check whether greedy tokens, flags, or escaping explain the failure.</li>
+    <li>If the pattern is slow, test with increasing-length non-matching input to check for backtracking.</li>
     <li>If the text includes copied formatting noise, clean it first with <a href="/text/remove-line-breaks/">Remove Line Breaks</a>.</li>
     <li>Use the <a href="/text/text-analyzer/">Text Analysis Tool</a> if you need to inspect line or character structure after transformation.</li>
 </ol>
@@ -61,11 +215,11 @@
 <div class="guide-faq">
     <details>
         <summary>Why does my regex work on one line but fail on multiple lines?</summary>
-        <p>You are likely missing multiline or dotAll behavior. Check the flags first.</p>
+        <p>You are likely missing multiline or dotAll behavior. Check the flags first. Multiline makes <code>^</code> and <code>$</code> match at line boundaries. DotAll makes <code>.</code> match newlines.</p>
     </details>
     <details>
         <summary>Why is my pattern matching too much?</summary>
-        <p>A greedy quantifier is probably consuming more input than you intended. Test a lazy version or tighten the character class.</p>
+        <p>A greedy quantifier is probably consuming more input than you intended. Test a lazy version or tighten the character class. Using a negated character class like <code>[^"]*</code> instead of <code>.*</code> between delimiters is often the correct fix.</p>
     </details>
     <details>
         <summary>How do I debug regex safely?</summary>
@@ -73,7 +227,19 @@
     </details>
     <details>
         <summary>Can copied formatting break regex tests?</summary>
-        <p>Yes. Hidden line breaks and pasted formatting can change matching behavior, especially around anchors and the dot operator.</p>
+        <p>Yes. Hidden line breaks and pasted formatting can change matching behavior, especially around anchors and the dot operator. See the <a href="/guides/hidden-unicode-characters/">hidden Unicode characters guide</a> for detection techniques.</p>
+    </details>
+    <details>
+        <summary>How can I tell if my regex is vulnerable to ReDoS?</summary>
+        <p>Look for nested quantifiers applied to overlapping character classes, such as <code>(a+)+</code>, <code>(\w+\s*)+</code>, or <code>(.*a){n}</code>. Test with a long string that almost matches but does not. If execution time grows exponentially with input length, the pattern is vulnerable.</p>
+    </details>
+    <details>
+        <summary>What is the difference between a possessive quantifier and a lazy quantifier?</summary>
+        <p>A lazy quantifier (<code>*?</code>, <code>+?</code>) matches as little as possible but still allows backtracking. A possessive quantifier (<code>*+</code>, <code>++</code>) matches as much as possible and never backtracks. Lazy controls match direction; possessive prevents backtracking entirely.</p>
+    </details>
+    <details>
+        <summary>Why does my regex behave differently in JavaScript and Python?</summary>
+        <p>The two languages have different regex engines with different feature sets. Python uses a fixed-length lookbehind and <code>(?P&lt;name&gt;)</code> syntax for named groups. JavaScript supports variable-length lookbehind (since ES2018) and uses <code>(?&lt;name&gt;)</code>. Always check the language-specific docs when porting a regex.</p>
     </details>
 </div>
 
@@ -82,4 +248,10 @@
     <li><a href="/dev/regex-tester-explainer/">Regex Tester Online</a> for live matching and token explanations</li>
     <li><a href="/text/remove-line-breaks/">Remove Line Breaks</a> to clean pasted text before matching</li>
     <li><a href="/text/text-analyzer/">Text Analysis Tool</a> to inspect the structure of transformed text</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode Characters Guide</a> for invisible characters that break regex matching</li>
+    <li><a href="/guides/unicode-normalization/">Unicode Normalization Guide</a> for understanding why accented text can cause regex to behave strangely</li>
 </ul>

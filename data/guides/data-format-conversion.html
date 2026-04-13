@@ -3,14 +3,147 @@
         translation</strong>. Moving data between tabular (CSV) and hierarchical (JSON) formats often reveals schema
     mismatches that can break downstream APIs if not handled with precision.</p>
 
+<h2>Tabular vs Hierarchical: Structural Differences</h2>
+<p>CSV and JSON represent fundamentally different data models. Understanding these differences is the first step toward reliable conversion.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Characteristic</th>
+            <th>CSV (Tabular)</th>
+            <th>JSON (Hierarchical)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Structure</td>
+            <td>Flat rows and columns</td>
+            <td>Nested objects and arrays</td>
+        </tr>
+        <tr>
+            <td>Data types</td>
+            <td>Everything is a string (types inferred by consumer)</td>
+            <td>Strings, numbers, booleans, null, objects, arrays</td>
+        </tr>
+        <tr>
+            <td>Relationships</td>
+            <td>Implicit (foreign keys across files)</td>
+            <td>Explicit (nested objects represent relationships)</td>
+        </tr>
+        <tr>
+            <td>Repeating groups</td>
+            <td>Requires multiple rows or delimited subfields</td>
+            <td>Native arrays within a single record</td>
+        </tr>
+        <tr>
+            <td>Schema</td>
+            <td>Defined by header row only</td>
+            <td>Self-describing at every level</td>
+        </tr>
+        <tr>
+            <td>Null handling</td>
+            <td>Empty field (ambiguous: null or empty string?)</td>
+            <td>Explicit <code>null</code> keyword</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>This structural gap means conversion is never a 1:1 mapping. A single JSON record with nested arrays might expand into multiple CSV rows, or nested fields must be flattened into dot-notated column headers.</p>
+
 <section class="usage-scenario">
     <h3>The "Nested Array" Debugging Case</h3>
     <p>A common failure point in data pipelines occurs when converting JSON with nested arrays into CSV. Since CSV is a
         "flat" format, nested structures must be "flattened" using dot-notation (e.g., <code>user.address.zip</code>) or
-        stringified. Our <a href="/json/csv-to-json/">CSV ↔ JSON Workshop</a> handles these translations in real-time
+        stringified. Our <a href="/json/csv-to-json/">CSV to JSON Converter</a> handles these translations in real-time
         within your browser, ensuring that your data schema remains consistent even when switching between flat and
         nested environments.</p>
 </section>
+
+<h2>Nested JSON Flattening Strategies</h2>
+<p>When JSON contains nested objects or arrays, you have three main approaches for CSV conversion:</p>
+
+<h3>1. Dot-Notation Flattening</h3>
+<p>Expand nested keys into column names separated by dots. This preserves the full path to each value.</p>
+<pre><code>// Input JSON
+{ "user": { "name": "Alice", "address": { "city": "Oslo", "zip": "0150" } } }
+
+// Flattened CSV headers
+user.name, user.address.city, user.address.zip
+Alice, Oslo, 0150</code></pre>
+
+<h3>2. Stringify Nested Values</h3>
+<p>Keep the nested object as a JSON string inside a single CSV cell. Useful when the consumer can parse JSON from a field.</p>
+<pre><code>// CSV output
+name, address
+Alice, "{""city"":""Oslo"",""zip"":""0150""}"</code></pre>
+
+<h3>3. Array Expansion (One Row Per Element)</h3>
+<p>When a record contains an array, duplicate the parent fields across multiple rows, one per array element. This is the correct approach for arrays of primitive values or homogeneous objects.</p>
+<pre><code>// Input
+{ "user": "Alice", "roles": ["admin", "editor"] }
+
+// CSV output
+user, role
+Alice, admin
+Alice, editor</code></pre>
+
+<h2>CSV Edge Cases</h2>
+<p>CSV looks simple, but RFC 4180 compliance requires careful handling of several edge cases that frequently cause pipeline failures.</p>
+
+<ul>
+    <li><strong>Commas inside values:</strong> The field must be enclosed in double quotes. <code>"San Francisco, CA"</code> is one field, not two.</li>
+    <li><strong>Quotes inside quoted fields:</strong> Escape a double quote by doubling it. <code>"She said ""hello"""</code> becomes <code>She said "hello"</code>.</li>
+    <li><strong>Multiline cell values:</strong> A quoted field can contain line breaks. The line break is part of the value, not a row separator.</li>
+    <li><strong>Leading/trailing whitespace:</strong> Some parsers trim it, some preserve it. Be explicit about your parser's behavior.</li>
+    <li><strong>Empty vs missing fields:</strong> An empty field between commas (<code>a,,c</code>) is not the same as a missing column. Map it to <code>null</code> or an empty string deliberately.</li>
+</ul>
+
+<h2>Delimiter Detection</h2>
+<p>Not all "CSV" files use commas. Regional conventions, legacy systems, and Excel exports produce files with different delimiters. Your conversion tool must detect or accept configuration for these variants.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Delimiter</th>
+            <th>Common Source</th>
+            <th>Detection Hint</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Comma (<code>,</code>)</td>
+            <td>Default CSV, US/UK systems</td>
+            <td>Most frequent non-quoted character in header</td>
+        </tr>
+        <tr>
+            <td>Semicolon (<code>;</code>)</td>
+            <td>European Excel exports (where comma is the decimal separator)</td>
+            <td>High frequency of <code>;</code> with numbers using commas as decimals</td>
+        </tr>
+        <tr>
+            <td>Tab (<code>\t</code>)</td>
+            <td>TSV files, database exports</td>
+            <td>Consistent tab characters, often no quoting</td>
+        </tr>
+        <tr>
+            <td>Pipe (<code>|</code>)</td>
+            <td>Legacy mainframe systems, HL7 data</td>
+            <td>High frequency of <code>|</code> with no surrounding whitespace</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Heuristic detection works by counting candidate delimiters per line and choosing the character that produces the most consistent column count across the first several rows.</p>
+
+<h2>Schema Mapping Patterns</h2>
+<p>Converting between formats often requires type coercion and null handling decisions.</p>
+
+<ul>
+    <li><strong>Type coercion:</strong> CSV stores everything as text. When converting to JSON, decide whether <code>"42"</code> becomes the number <code>42</code> or stays as the string <code>"42"</code>. Leading zeros (like <code>"0042"</code>) usually indicate the value is an identifier, not a number.</li>
+    <li><strong>Boolean mapping:</strong> Map <code>"true"</code>, <code>"yes"</code>, <code>"1"</code> to JSON <code>true</code> and their counterparts to <code>false</code>, but only when the column consistently contains boolean-like values.</li>
+    <li><strong>Null handling:</strong> Empty CSV fields can map to JSON <code>null</code>, an empty string <code>""</code>, or be omitted from the object entirely. Choose one convention and apply it consistently.</li>
+    <li><strong>Date formats:</strong> CSV dates are strings. When converting to JSON for an API, normalize to ISO 8601 (<code>2024-01-15T00:00:00Z</code>) to avoid ambiguity between <code>MM/DD/YYYY</code> and <code>DD/MM/YYYY</code>.</li>
+</ul>
 
 <h2>Workshop Benchmarks: The Translation Audit</h2>
 <table>
@@ -23,12 +156,12 @@
     </thead>
     <tbody>
         <tr>
-            <td><strong>CSV → JSON</strong></td>
+            <td><strong>CSV to JSON</strong></td>
             <td>Type inference (deciding if "0042" is a string or number).</td>
             <td>Auto-detects numeric strings to prevent leading-zero loss.</td>
         </tr>
         <tr>
-            <td><strong>JSON → CSV</strong></td>
+            <td><strong>JSON to CSV</strong></td>
             <td>Handling complex objects in tabular cells.</td>
             <td>Flatten objects into multiple columns for spreadsheet compatibility.</td>
         </tr>
@@ -39,6 +172,53 @@
         </tr>
     </tbody>
 </table>
+
+<h2>Code Examples</h2>
+
+<h3>JavaScript: CSV to JSON</h3>
+<pre><code>function csvToJson(csv, delimiter = ",") {
+  const lines = csv.trim().split("\n");
+  const headers = lines[0].split(delimiter).map(h => h.trim());
+  return lines.slice(1).map(line => {
+    const values = line.split(delimiter);
+    return headers.reduce((obj, header, i) => {
+      const val = (values[i] || "").trim();
+      // Basic type coercion
+      if (val === "") obj[header] = null;
+      else if (val === "true") obj[header] = true;
+      else if (val === "false") obj[header] = false;
+      else if (!isNaN(val) && !val.startsWith("0")) obj[header] = Number(val);
+      else obj[header] = val;
+      return obj;
+    }, {});
+  });
+}</code></pre>
+
+<h3>Python: JSON to CSV</h3>
+<pre><code>import csv
+import json
+from io import StringIO
+
+def json_to_csv(data):
+    """Flatten a list of dicts to CSV, handling nested keys with dot notation."""
+    def flatten(obj, prefix=""):
+        items = {}
+        for k, v in obj.items():
+            key = f"{prefix}.{k}" if prefix else k
+            if isinstance(v, dict):
+                items.update(flatten(v, key))
+            else:
+                items[key] = v
+        return items
+
+    flat_rows = [flatten(row) for row in data]
+    all_keys = list(dict.fromkeys(k for row in flat_rows for k in row))
+
+    output = StringIO()
+    writer = csv.DictWriter(output, fieldnames=all_keys)
+    writer.writeheader()
+    writer.writerows(flat_rows)
+    return output.getvalue()</code></pre>
 
 <h3>Practical Example: Translating a Product Schema</h3>
 <pre><code>// Input (CSV)
@@ -54,12 +234,56 @@ id,name,price
   }
 ]</code></pre>
 
-<h2>Bidirectional Strategy: Convert → Validate</h2>
+<h2>Bidirectional Strategy: Convert then Validate</h2>
 <p>Conversion is rarely the final step. Once you've translated your CSV data into JSON for an API, the next logical
-    phase is <strong>State Auditing</strong>. We recommend passing your converted output directly into the <a
+    phase is <strong>validation</strong>. Pass your converted output directly into the <a
         href="/json/json-formatter/">JSON Formatter & Validator</a> to ensure that the structural integrity survived the
     conversion and is ready for production deployment.</p>
 
-<p><strong>Workshop Pro-Tip:</strong> When converting from JSON to CSV for Excel, always verify that your keys don't
-    contain commas. A raw comma inside a JSON value can "break" the CSV structure unless it is properly quoted. Our
-    workshop tools automatically handle RFC 4180-compliant quoting to prevent row fragmentation.</p>
+<p><strong>Pro Tip:</strong> When converting from JSON to CSV for Excel, always verify that your keys don't
+    contain commas. A raw comma inside a JSON value can break the CSV structure unless it is properly quoted. Our
+    tools automatically handle RFC 4180-compliant quoting to prevent row fragmentation.</p>
+
+<h2>FAQ</h2>
+<div class="guide-faq">
+    <details>
+        <summary>How do I handle nested arrays when converting JSON to CSV?</summary>
+        <p>You have three options: flatten using dot-notation for nested objects, stringify the nested value as a JSON string inside the cell, or expand arrays into multiple rows (one row per array element). The right choice depends on whether your downstream consumer can handle JSON strings in cells.</p>
+    </details>
+    <details>
+        <summary>Why does my European CSV use semicolons instead of commas?</summary>
+        <p>In locales where the comma is the decimal separator (e.g., 3,14 instead of 3.14), Excel and other tools export CSV with semicolons to avoid ambiguity. Always check the delimiter before parsing.</p>
+    </details>
+    <details>
+        <summary>Should I keep leading zeros when converting CSV to JSON?</summary>
+        <p>Yes, if the value is an identifier (zip codes, product codes, phone numbers). Treating "0042" as the number 42 loses information. Preserve leading zeros by keeping the value as a string in JSON.</p>
+    </details>
+    <details>
+        <summary>How do I represent null values in CSV?</summary>
+        <p>CSV has no native null type. An empty field between delimiters is the closest equivalent. When converting to JSON, map empty fields to <code>null</code> explicitly rather than omitting the key or using an empty string, unless your schema specifies otherwise.</p>
+    </details>
+    <details>
+        <summary>What happens to multiline values during CSV-to-JSON conversion?</summary>
+        <p>If the CSV is RFC 4180 compliant, multiline values are enclosed in double quotes and the line breaks are part of the field value. A correct parser will preserve the line breaks as <code>\n</code> characters in the resulting JSON string.</p>
+    </details>
+    <details>
+        <summary>Can I convert JSON with mixed-type arrays to CSV?</summary>
+        <p>Mixed-type arrays (e.g., <code>[1, "two", true]</code>) are difficult to represent in CSV columns. The safest approach is to stringify the entire array as a JSON string in a single cell, since CSV columns expect uniform types.</p>
+    </details>
+</div>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/json/csv-to-json/">CSV to JSON Converter</a> for browser-based tabular-to-hierarchical conversion</li>
+    <li><a href="/json/json-formatter/">JSON Formatter</a> to validate and pretty-print converted output</li>
+    <li><a href="/json/json-validator/">JSON Validator</a> to check structural integrity after conversion</li>
+    <li><a href="/json/json-minifier/">JSON Minifier</a> to compress validated JSON for production</li>
+    <li><a href="/json/xml-json-converter/">XML JSON Converter</a> for legacy integration workflows</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/json-formatting/">How to Format JSON Correctly</a> for post-conversion formatting</li>
+    <li><a href="/guides/json-parse-errors/">Common JSON Parse Errors</a> when converted output fails to parse</li>
+    <li><a href="/guides/unicode-normalization/">Unicode Normalization</a> for handling encoding issues in source data</li>
+</ul>

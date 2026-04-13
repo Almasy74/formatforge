@@ -6,6 +6,34 @@
 
 <p>The most common comparison is <strong>NFC vs NFD</strong>. NFC keeps characters in composed form where possible. NFD decomposes them into base characters plus combining marks. Both are valid Unicode. They are not interchangeable unless you normalize them first.</p>
 
+<h2>Composed vs Decomposed: Visual Code Point Comparison</h2>
+<p>The character "e with acute accent" can be stored two ways in Unicode. Both render identically on screen, but they are different byte sequences.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Form</th>
+            <th>Display</th>
+            <th>Code Points</th>
+            <th>Bytes (UTF-8)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>NFC (composed)</td>
+            <td>&eacute;</td>
+            <td><code>U+00E9</code> (1 code point)</td>
+            <td><code>C3 A9</code> (2 bytes)</td>
+        </tr>
+        <tr>
+            <td>NFD (decomposed)</td>
+            <td>&eacute;</td>
+            <td><code>U+0065 U+0301</code> (2 code points)</td>
+            <td><code>65 CC 81</code> (3 bytes)</td>
+        </tr>
+    </tbody>
+</table>
+<p>More complex characters have larger differences. The Korean syllable "ga" in NFC is a single code point (<code>U+AC00</code>), while in NFD it decomposes to three code points (<code>U+1100 U+1161</code>). Characters with multiple combining marks, like "o with diaeresis and macron," can decompose to three or more code points.</p>
+
 <h2>NFC vs NFD Side by Side</h2>
 <table>
     <thead>
@@ -44,6 +72,53 @@
 </table>
 <p><strong>Comparison summary:</strong> NFC is the default form for storage, indexing, APIs, and most web application text. NFD is mainly useful when you intentionally need decomposed characters for analysis or accent stripping.</p>
 
+<h2>NFKC and NFKD: Compatibility Normalization</h2>
+<p>Beyond NFC and NFD, Unicode defines two compatibility forms: NFKC and NFKD. These replace compatibility characters with their canonical equivalents in addition to composing or decomposing.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Form</th>
+            <th>Composition</th>
+            <th>Compatibility Mapping</th>
+            <th>Use Case</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>NFC</td>
+            <td>Composed</td>
+            <td>No</td>
+            <td>General storage, APIs, web content</td>
+        </tr>
+        <tr>
+            <td>NFD</td>
+            <td>Decomposed</td>
+            <td>No</td>
+            <td>Accent stripping, character analysis</td>
+        </tr>
+        <tr>
+            <td>NFKC</td>
+            <td>Composed</td>
+            <td>Yes</td>
+            <td>Search indexing, username comparison, identifier matching</td>
+        </tr>
+        <tr>
+            <td>NFKD</td>
+            <td>Decomposed</td>
+            <td>Yes</td>
+            <td>Full decomposition for analysis</td>
+        </tr>
+    </tbody>
+</table>
+<p>Compatibility normalization folds characters that are semantically equivalent but visually distinct. Examples include:</p>
+<ul>
+    <li>Fullwidth digits: <code>&#xFF11;</code> (U+FF11) becomes <code>1</code> (U+0031)</li>
+    <li>Ligatures: <code>&#xFB01;</code> (U+FB01, fi ligature) becomes <code>fi</code> (two characters)</li>
+    <li>Superscripts: <code>&#x00B2;</code> (U+00B2) becomes <code>2</code> (U+0032)</li>
+    <li>Circled letters: <code>&#x24B6;</code> (U+24B6) becomes <code>A</code> (U+0041)</li>
+</ul>
+<p>Use NFKC when you need maximum folding for search or identity comparison. Do not use it for display or storage where the visual distinction matters, because the normalization is lossy and cannot be reversed.</p>
+
 <h2>When to Use NFC</h2>
 <ul>
     <li><strong>Database storage:</strong> normalize user input before insert and comparison</li>
@@ -58,6 +133,73 @@
     <li><strong>Accent stripping:</strong> decompose first, then remove combining marks</li>
     <li><strong>Character-level analysis:</strong> inspect combining marks directly</li>
     <li><strong>Special compatibility cases:</strong> work with systems that already store decomposed text</li>
+</ul>
+
+<h2>Normalization in Databases</h2>
+<p>Most databases store Unicode text as raw bytes and do not normalize on write. This means your application is responsible for normalization.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Database</th>
+            <th>Behavior</th>
+            <th>Collation Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>PostgreSQL</td>
+            <td>Stores bytes as-is. ICU-based collations (available since v10) can perform normalization-aware comparison, but stored data is not normalized.</td>
+            <td>Use <code>CREATE COLLATION</code> with ICU for accent-insensitive searches. Normalize to NFC in your application before writes.</td>
+        </tr>
+        <tr>
+            <td>MySQL</td>
+            <td>Stores raw bytes with <code>utf8mb4</code>. Collations handle comparison but not storage normalization.</td>
+            <td><code>utf8mb4_unicode_ci</code> treats NFC and NFD equivalents as equal in comparisons, but <code>UNIQUE</code> constraints operate on stored bytes.</td>
+        </tr>
+        <tr>
+            <td>SQLite</td>
+            <td>No built-in normalization. Binary comparison by default.</td>
+            <td>Load the ICU extension for Unicode-aware collation, or normalize in your application.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Cross-Platform Normalization Differences</h2>
+<p>Operating systems handle filename normalization differently, which causes bugs in cross-platform applications and file-syncing tools.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Platform</th>
+            <th>Filesystem Behavior</th>
+            <th>Impact</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>macOS (HFS+/APFS)</td>
+            <td>Converts filenames to a variant of NFD on disk. Filenames that are NFC-equivalent map to the same file.</td>
+            <td>A file created as <code>caf\u00e9.txt</code> and one created as <code>cafe\u0301.txt</code> refer to the same file. Directory listings return the decomposed form.</td>
+        </tr>
+        <tr>
+            <td>Windows (NTFS)</td>
+            <td>Preserves the original byte sequence. No normalization is applied.</td>
+            <td>NFC and NFD filenames can coexist as separate files. Most Windows applications produce NFC text, so this rarely causes issues on Windows alone.</td>
+        </tr>
+        <tr>
+            <td>Linux (ext4, XFS, Btrfs)</td>
+            <td>Filenames are opaque byte sequences. No normalization, no case folding.</td>
+            <td>Two filenames that look identical but differ in normalization form are treated as entirely separate files. This causes sync conflicts with macOS.</td>
+        </tr>
+    </tbody>
+</table>
+<p>If your application handles files across platforms, normalize filenames to NFC before storing paths in a database or performing lookups.</p>
+
+<h2>W3C and WHATWG Recommendations</h2>
+<p>The W3C Character Model specification recommends NFC for all web content. WHATWG specifications for HTML and the URL standard also assume NFC. Specifically:</p>
+<ul>
+    <li>HTML documents should use NFC for text content. The HTML spec does not enforce this, but mixed forms cause interoperability issues with search, indexing, and comparison.</li>
+    <li>URLs use percent-encoding for non-ASCII characters. The URL standard expects the text to be NFC before percent-encoding. Encoding NFD text produces longer URLs with different byte sequences for the same visible characters.</li>
+    <li>Form submissions send text as-is. If a user's browser submits NFD text (common on macOS), the server receives NFD unless it normalizes on ingestion.</li>
 </ul>
 
 <h2>When Not to Mix Forms</h2>
@@ -99,10 +241,44 @@
 
 <h2>Code Examples</h2>
 <h3>JavaScript</h3>
-<pre><code>const composed = \"\\u00E9\";\nconst decomposed = \"e\\u0301\";\n\nconsole.log(composed === decomposed); // false\nconsole.log(decomposed.normalize(\"NFC\") === composed); // true\n\nfunction normalizeForStorage(value) {\n  return value.normalize(\"NFC\").trim();\n}</code></pre>
+<pre><code>const composed = "\u00E9";
+const decomposed = "e\u0301";
+
+console.log(composed === decomposed); // false
+console.log(decomposed.normalize("NFC") === composed); // true
+
+function normalizeForStorage(value) {
+  return value.normalize("NFC").trim();
+}
+
+// NFKC for search indexing (folds ligatures, fullwidth, etc.)
+function normalizeForSearch(value) {
+  return value.normalize("NFKC").toLowerCase().trim();
+}</code></pre>
 
 <h3>Python</h3>
-<pre><code>import unicodedata\n\ncomposed = \"\\u00E9\"\ndecomposed = \"e\\u0301\"\n\nprint(composed == decomposed)  # False\nprint(unicodedata.normalize(\"NFC\", decomposed) == composed)  # True\n\n\ndef normalize_for_storage(value):\n    return unicodedata.normalize(\"NFC\", value).strip()</code></pre>
+<pre><code>import unicodedata
+
+composed = "\u00E9"
+decomposed = "e\u0301"
+
+print(composed == decomposed)  # False
+print(unicodedata.normalize("NFC", decomposed) == composed)  # True
+
+
+def normalize_for_storage(value):
+    return unicodedata.normalize("NFC", value).strip()
+
+
+# NFKC for search indexing
+def normalize_for_search(value):
+    return unicodedata.normalize("NFKC", value).casefold().strip()
+
+
+# Accent stripping via NFD
+def strip_accents(value):
+    nfd = unicodedata.normalize("NFD", value)
+    return ''.join(c for c in nfd if unicodedata.category(c) != 'Mn')</code></pre>
 
 <h2>FAQ</h2>
 <div class="guide-faq">
@@ -112,7 +288,7 @@
     </details>
     <details>
         <summary>Does JavaScript normalize strings automatically?</summary>
-        <p>No. You must call <code>.normalize(\"NFC\")</code> or another normalization form explicitly.</p>
+        <p>No. You must call <code>.normalize("NFC")</code> or another normalization form explicitly.</p>
     </details>
     <details>
         <summary>When is NFD useful?</summary>
@@ -122,6 +298,14 @@
         <summary>Can this affect slugs and search?</summary>
         <p>Yes. Mixed normalization forms can produce inconsistent slugs and reduce matching consistency in search and indexes.</p>
     </details>
+    <details>
+        <summary>What is the difference between NFC and NFKC?</summary>
+        <p>NFC composes characters but preserves compatibility distinctions (ligatures, fullwidth forms, superscripts). NFKC applies compatibility decomposition first, folding those distinctions away. Use NFC for storage, NFKC for search indexing or identifier comparison.</p>
+    </details>
+    <details>
+        <summary>Why do files from macOS cause normalization issues on Linux?</summary>
+        <p>macOS stores filenames in a variant of NFD, while Linux treats filenames as raw byte sequences. A file created on macOS with an accented name arrives on Linux in NFD form. If your Linux code expects NFC, the filename will not match. Normalize filenames to NFC when reading from cross-platform sources.</p>
+    </details>
 </div>
 
 <h2>Related Tools</h2>
@@ -130,4 +314,12 @@
     <li><a href="/dev/slug-generator/">URL Slug Generator</a> to create clean slugs after normalization</li>
     <li><a href="/dev/url-encode-decode/">URL Encoder / Decoder</a> to inspect encoded Unicode in URLs and query strings</li>
     <li><a href="/text/remove-line-breaks/">Remove Line Breaks</a> to clean copied text before further normalization work</li>
+    <li><a href="/dev/regex-tester-explainer/">Regex Tester Online</a> to test regex patterns on normalized text</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/utf8proc-normalization-nfc/">utf8proc NFC Normalization in C</a> for implementing normalization in C projects</li>
+    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode Characters Guide</a> for detecting and removing invisible characters</li>
+    <li><a href="/guides/regex-debugging/">Regex Debugging Guide</a> for troubleshooting patterns that interact with Unicode text</li>
 </ul>

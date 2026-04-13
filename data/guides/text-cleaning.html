@@ -34,8 +34,137 @@
     </tbody>
 </table>
 
-<h2>When to Clean Before You Analyze</h2>
-<p>Always clean first when copied formatting, duplicate lines, or Unicode noise may distort your metrics. Otherwise a later analysis step can produce misleading counts, broken matches, or unstable slug output.</p>
+<h2>Pipeline Architecture: Order of Operations</h2>
+<p>Cleaning steps interact with each other. Running them in the wrong order can introduce new problems or mask existing ones. A reliable pipeline follows this sequence:</p>
+<ol>
+    <li><strong>Encoding normalization</strong> &mdash; fix UTF-8 BOM markers, replace mixed encodings, and strip null bytes. Everything downstream assumes clean UTF-8.</li>
+    <li><strong>Structural cleanup</strong> &mdash; strip HTML tags, remove line-break noise, and collapse whitespace. This gives you a flat, readable text layer.</li>
+    <li><strong>Content normalization</strong> &mdash; apply case conversion, Unicode normalization (NFC or NFKC), and accent folding if your use case requires it.</li>
+    <li><strong>Deduplication</strong> &mdash; remove duplicate lines or records after normalization so that near-duplicates that differ only in casing or whitespace are correctly merged.</li>
+    <li><strong>Validation and inspection</strong> &mdash; run the <a href="/text/text-analyzer/">Text Analysis Tool</a> to verify length, character distribution, and remaining anomalies.</li>
+</ol>
+<p>Running deduplication before normalization misses near-duplicates. Stripping HTML after Unicode normalization can corrupt entity references. Order matters.</p>
+
+<h2>Decision Tree: Clean Before or After Analysis?</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Scenario</th>
+            <th>Clean first?</th>
+            <th>Reason</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Word count or character metrics</td>
+            <td>Yes</td>
+            <td>Hidden characters and HTML entities inflate counts</td>
+        </tr>
+        <tr>
+            <td>Sentiment analysis</td>
+            <td>Yes</td>
+            <td>Formatting noise confuses tokenizers</td>
+        </tr>
+        <tr>
+            <td>Log forensics (preserving evidence)</td>
+            <td>No</td>
+            <td>Cleaning may destroy context; analyze raw, then clean a copy</td>
+        </tr>
+        <tr>
+            <td>Regex pattern extraction</td>
+            <td>Depends</td>
+            <td>Clean line breaks and whitespace first; preserve casing if the pattern is case-sensitive</td>
+        </tr>
+        <tr>
+            <td>CMS import or publishing</td>
+            <td>Yes</td>
+            <td>Dirty text creates rendering bugs visible to end users</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>NLP Preprocessing Context</h2>
+<p>If your text is heading into a natural language processing pipeline, cleaning decisions affect model quality directly.</p>
+<ul>
+    <li><strong>Tokenization</strong> &mdash; extra whitespace and broken line wraps create spurious tokens. Clean whitespace before tokenizing.</li>
+    <li><strong>Stemming and lemmatization</strong> &mdash; mixed casing rarely affects stemmers, but hidden Unicode look-alikes (like a Cyrillic "a" instead of a Latin "a") will create separate stems for what should be the same word.</li>
+    <li><strong>Stop word removal</strong> &mdash; works on normalized text. If you have HTML entities like <code>&amp;amp;</code> still present, "amp" may survive stop word filtering as a false token.</li>
+    <li><strong>Embeddings</strong> &mdash; most modern embedding models handle minor noise, but duplicate content inflates corpus size and skews similarity scores. Deduplicate before embedding.</li>
+</ul>
+
+<h2>Real Data Pipeline Examples</h2>
+
+<h3>Web Scraping Output</h3>
+<p>Scraped HTML typically arrives with navigation menus, script tags, and broken whitespace. A practical pipeline: strip all tags with the <a href="/text/html-cleaner/">HTML Cleaner</a>, collapse consecutive whitespace and line breaks, then run <a href="/guides/unicode-normalization/">Unicode normalization</a> to unify fancy quotes and dashes before storing the text.</p>
+
+<h3>CRM Export Cleanup</h3>
+<p>CRM exports frequently contain leading and trailing whitespace in name fields, inconsistent phone number formatting, and duplicate records from merged accounts. Trim whitespace, normalize phone formats with regex, then deduplicate by email address using the <a href="/text/remove-duplicate-lines/">Remove Duplicate Lines</a> tool after sorting by the key field.</p>
+
+<h3>API Response Cleanup</h3>
+<p>JSON API responses sometimes embed HTML in string fields, use inconsistent null representations ("null", "N/A", empty string), and contain escaped Unicode. Parse the JSON first with the <a href="/json/json-formatter/">JSON Formatter</a>, then clean individual text fields. Never clean raw JSON as a flat string &mdash; you risk breaking the structure.</p>
+
+<h2>Encoding Issues</h2>
+<p>Encoding problems are invisible until they cause failures. The most common issues:</p>
+<ul>
+    <li><strong>UTF-8 BOM (Byte Order Mark)</strong> &mdash; a three-byte prefix (<code>EF BB BF</code>) that some Windows editors add. It causes comparison failures, breaks shebang lines in scripts, and shows as <code>&iuml;&raquo;&iquest;</code> in tools that do not expect it. Strip it as the first cleaning step.</li>
+    <li><strong>Mixed encodings</strong> &mdash; a file that is mostly UTF-8 but has a few Latin-1 characters from a copy-paste. These appear as <code>&Atilde;&copy;</code> instead of <code>&eacute;</code>. Detect with the <a href="/text/text-analyzer/">Text Analysis Tool</a> and re-encode the affected segments.</li>
+    <li><strong>Double encoding</strong> &mdash; text that was UTF-8 encoded, then incorrectly encoded again as if it were Latin-1. The fix is to decode as Latin-1, then re-encode as UTF-8.</li>
+    <li><strong>Null bytes</strong> &mdash; common in data extracted from binary formats or databases. A single <code>\x00</code> can truncate strings in C-based tools. Strip them early.</li>
+</ul>
+
+<h2>Common Regex Patterns for Text Cleaning</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Pattern</th>
+            <th>Replacement</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Collapse multiple spaces</td>
+            <td><code> {2,}</code></td>
+            <td>Single space</td>
+        </tr>
+        <tr>
+            <td>Strip leading/trailing whitespace per line</td>
+            <td><code>^\s+|\s+$</code> (multiline)</td>
+            <td>Empty string</td>
+        </tr>
+        <tr>
+            <td>Remove blank lines</td>
+            <td><code>^\s*\n</code> (multiline)</td>
+            <td>Empty string</td>
+        </tr>
+        <tr>
+            <td>Normalize line endings to LF</td>
+            <td><code>\r\n|\r</code></td>
+            <td><code>\n</code></td>
+        </tr>
+        <tr>
+            <td>Strip HTML tags</td>
+            <td><code>&lt;[^&gt;]+&gt;</code></td>
+            <td>Empty string</td>
+        </tr>
+        <tr>
+            <td>Remove non-printable characters</td>
+            <td><code>[\x00-\x08\x0B\x0C\x0E-\x1F]</code></td>
+            <td>Empty string</td>
+        </tr>
+    </tbody>
+</table>
+<p>Test these patterns in the <a href="/dev/regex-tester-explainer/">Regex Tester</a> before applying them to production data. For regex fundamentals, see the <a href="/guides/regex-basics/">Regex Basics</a> guide.</p>
+
+<h2>Common Mistakes</h2>
+<ul>
+    <li>Analyzing dirty text before removing obvious artifacts</li>
+    <li>Treating duplicate-looking values as true duplicates without normalization</li>
+    <li>Ignoring hidden Unicode characters in copied content</li>
+    <li>Cleaning too aggressively and removing meaning-bearing structure</li>
+    <li>Cleaning JSON or XML as flat text instead of parsing first</li>
+    <li>Skipping encoding normalization and getting corrupted characters downstream</li>
+</ul>
 
 <h2>Basic Workflow</h2>
 <ol>
@@ -45,17 +174,54 @@
     <li>Run the result through the <a href="/text/text-analyzer/">Text Analysis Tool</a> if you need to inspect length, density, or pacing.</li>
 </ol>
 
-<h2>Common Mistakes</h2>
+<h2>Frequently Asked Questions</h2>
+
+<details>
+    <summary>Should I always clean text before storing it in a database?</summary>
+    <p>Store the original alongside a cleaned version when possible. The original preserves evidence and context. The cleaned version serves search, comparison, and display. If storage is constrained, clean on ingest but log what transformations were applied.</p>
+</details>
+
+<details>
+    <summary>How do I detect encoding issues in my text?</summary>
+    <p>Look for sequences of accented Latin characters where you expect simple text (a sign of double encoding), question-mark diamonds or replacement characters (a sign of wrong encoding), or invisible BOM bytes at the start of files. The <a href="/text/text-analyzer/">Text Analysis Tool</a> can flag non-ASCII anomalies.</p>
+</details>
+
+<details>
+    <summary>Is it safe to strip all HTML tags from scraped content?</summary>
+    <p>For plain text extraction, yes. But if you need to preserve structure (lists, headers, links), use the <a href="/text/html-cleaner/">HTML Cleaner</a> in selective mode rather than stripping everything. Blind stripping destroys semantic information that may be needed downstream.</p>
+</details>
+
+<details>
+    <summary>What is the difference between NFC and NFKC normalization for text cleaning?</summary>
+    <p>NFC composes characters into their canonical form (e.g., combining a base letter and an accent into a single code point). NFKC goes further and also normalizes compatibility characters (e.g., converting a fullwidth "A" to a standard "A"). Use NFC for general storage and NFKC when you need maximum compatibility for search and comparison. See the <a href="/guides/unicode-normalization/">Unicode Normalization</a> guide for details.</p>
+</details>
+
+<details>
+    <summary>How do I handle text with mixed languages?</summary>
+    <p>Avoid aggressive ASCII-only cleaning. Use Unicode-aware tools that preserve multi-script content. Apply <a href="/guides/unicode-normalization/">Unicode normalization</a> to unify equivalent representations, but do not strip diacritics or non-Latin characters unless your specific use case requires ASCII output.</p>
+</details>
+
+<details>
+    <summary>Can I automate a text cleaning pipeline?</summary>
+    <p>Yes. Chain the tools in sequence: encoding fix, HTML strip, whitespace normalization, deduplication. Each FormatForge tool accepts text input and produces cleaned output, so you can script the pipeline. For programmatic use, apply the same regex patterns from the table above in your language of choice.</p>
+</details>
+
+<h2>Related Tools</h2>
 <ul>
-    <li>Analyzing dirty text before removing obvious artifacts</li>
-    <li>Treating duplicate-looking values as true duplicates without normalization</li>
-    <li>Ignoring hidden Unicode characters in copied content</li>
-    <li>Cleaning too aggressively and removing meaning-bearing structure</li>
+    <li><a href="/text/remove-line-breaks/">Remove Line Breaks</a> for line-break noise</li>
+    <li><a href="/text/remove-duplicate-lines/">Remove Duplicate Lines</a> for deduplication</li>
+    <li><a href="/text/html-cleaner/">HTML Cleaner</a> for stripping formatting junk</li>
+    <li><a href="/text/text-analyzer/">Text Analysis Tool</a> for post-cleaning inspection</li>
+    <li><a href="/dev/regex-tester-explainer/">Regex Tester</a> for testing cleaning patterns</li>
+    <li><a href="/json/json-formatter/">JSON Formatter</a> for structured data cleaning</li>
 </ul>
 
 <h2>Related Guides</h2>
 <ul>
-    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode characters</a></li>
-    <li><a href="/guides/unicode-normalization/">Unicode normalization</a></li>
-    <li><a href="/guides/remove-line-breaks/">Removing line breaks from text</a></li>
+    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode Characters</a></li>
+    <li><a href="/guides/unicode-normalization/">Unicode Normalization</a></li>
+    <li><a href="/guides/remove-line-breaks/">Removing Line Breaks from Text</a></li>
+    <li><a href="/guides/regex-basics/">Regex Basics</a> &mdash; patterns used in cleaning workflows</li>
+    <li><a href="/guides/data-deduplication/">Data Deduplication</a> &mdash; advanced dedup strategies</li>
+    <li><a href="/guides/data-cleaning-best-practices/">Data Cleaning Best Practices</a></li>
 </ul>

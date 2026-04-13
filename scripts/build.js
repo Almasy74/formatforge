@@ -32,8 +32,11 @@ tools.forEach(tool => {
     if (!tool.content.intro || tool.content.intro.length < 2) {
         throw new Error(`Build failed: Thin content in ${tool.id} - intro < 2 paragraphs`);
     }
-    if (!tool.faq || tool.faq.length < 3) {
-        throw new Error(`Build failed: Thin content in ${tool.id} - faq < 3 questions`);
+    if (!tool.faq || tool.faq.length < 5) {
+        throw new Error(`Build failed: Thin content in ${tool.id} - faq < 5 questions`);
+    }
+    if (!tool.content.deepDive || tool.content.deepDive.length < 2) {
+        throw new Error(`Build failed: Thin content in ${tool.id} - deepDive < 2 sections`);
     }
     if (!tool.seo.metaDescription || tool.seo.metaDescription.length < 120) {
         throw new Error(`Build failed: Thin content in ${tool.id} - metaDesc < 120 chars`);
@@ -106,6 +109,11 @@ const staticPageMeta = {
 
 const clusterLandingContent = {
     text: {
+        editorialIntro: [
+            'Text is the most common data format in web workflows, and it is almost never clean when it arrives. Content copied from PDFs carries artificial line breaks. Scraped web pages include HTML tags and inline styles. CRM exports mix casing, duplicate rows, and hidden whitespace. Even text entered manually by users can contain invisible Unicode characters that break comparisons and inflate word counts.',
+            'The text tools on this hub solve these problems at the source. They run entirely in your browser, process data locally without uploads, and give you clean, consistent output that is ready for publishing, importing, prompting, or further analysis. Each tool handles a specific category of text problem so you can apply the right fix without over-processing your data.',
+            'If you are new to text cleaning, start with the <a href="/guides/text-processing-fundamentals/">Text Processing Fundamentals</a> guide for a complete overview of encoding, Unicode normalization, and cleaning pipeline architecture. For specific problems, the workflow cards below point you to the right tool and guide combination.'
+        ],
         quickAnswer: 'Use these tools when text is messy, structurally uneven, or hard to reuse. The strongest entry points are Remove Line Breaks for copied text, Text Analyzer for structure and timing, and HTML Cleaner for pasted markup.',
         workflowHeading: 'Common Text Workflows',
         workflowCards: [
@@ -137,6 +145,11 @@ const clusterLandingContent = {
         guideIds: ['text-cleaning', 'remove-line-breaks', 'hidden-unicode-characters']
     },
     dev: {
+        editorialIntro: [
+            'Developer tools sit at the boundary between content and infrastructure. They handle the encoding, formatting, and validation problems that appear when text needs to travel safely through URLs, tokens, regular expressions, and API payloads. A single misencoded character in a URL can break a redirect chain. A greedy regex can take down a production server. An uninspected JWT can hide an expired session.',
+            'The tools on this hub focus on these precise, high-impact problems. They decode what you cannot read, encode what is not yet safe, generate what needs to be clean, and explain what looks confusing. Every tool runs locally in your browser so you can safely inspect production tokens, test regex against real data, and debug encoding issues without exposing sensitive values to external servers.',
+            'For a deep dive into URL encoding, Base64, and JWT structure, see the <a href="/guides/url-encoding-web-safe-strings/">URL Encoding and Web-Safe Strings</a> guide. For regex fundamentals and debugging, start with the <a href="/guides/regex-basics/">Regex Basics</a> guide and move to <a href="/guides/regex-debugging/">Regex Debugging</a> when you hit complex patterns.'
+        ],
         quickAnswer: 'Use these tools when the problem is not raw content but the way strings behave in URLs, tokens, regex, or browser-safe encodings. Start with the slug generator for publishing workflows and the regex tester for pattern failures.',
         workflowHeading: 'Common Developer Workflows',
         workflowCards: [
@@ -168,6 +181,11 @@ const clusterLandingContent = {
         guideIds: ['seo-friendly-url-slugs', 'regex-debugging', 'unicode-normalization']
     },
     json: {
+        editorialIntro: [
+            'JSON is the dominant data format for web APIs, configuration files, and structured data exchange. Working with JSON means formatting payloads for readability, validating syntax when something breaks, minifying for production transfer, and converting between formats when data moves between systems. Each of these jobs requires a different tool, and using the wrong one wastes time.',
+            'The JSON tools on this hub cover the complete JSON workflow from broken input to production-ready output. They process data locally in your browser, which means you can safely paste API responses containing tokens, user data, or internal configuration without exposing anything to external servers. The tools handle standard JSON strictly according to RFC 8259, so the behavior you see here matches what your production parsers will do.',
+            'If you are new to JSON or want a comprehensive reference, start with <a href="/guides/complete-guide-to-json/">The Complete Guide to JSON</a> which covers syntax rules, data types, parsing across languages, and schema validation. For specific debugging help, the <a href="/guides/json-parse-errors/">JSON Parse Errors</a> guide walks through every common error type with exact examples and fixes.'
+        ],
         quickAnswer: 'JSON tools overlap only if the job is unclear. Use the formatter when JSON is valid but unreadable, the validator when JSON is broken, the minifier when the payload is valid and ready for production, and converters when you need to move between formats.',
         workflowHeading: 'Common JSON Workflows',
         workflowCards: [
@@ -483,6 +501,21 @@ tools.filter(t => t.flags.enabled).forEach(tool => {
         html = html.replace(/\[EXAMPLES_HTML\]/g, '');
     }
 
+    // Deep Dive Sections
+    if (tool.content.deepDive && tool.content.deepDive.length > 0) {
+        let ddHtml = '<div class="deep-dive-sections">';
+        tool.content.deepDive.forEach(section => {
+            ddHtml += `<h2>${section.heading}</h2>`;
+            section.body.split('\n\n').forEach(para => {
+                ddHtml += `<p>${para}</p>`;
+            });
+        });
+        ddHtml += '</div>';
+        html = html.replace(/\[DEEP_DIVE_HTML\]/g, ddHtml);
+    } else {
+        html = html.replace(/\[DEEP_DIVE_HTML\]/g, '');
+    }
+
     // FAQs
     let faqHtml = '';
     let faqSchema = [];
@@ -605,8 +638,14 @@ clusters.forEach(cluster => {
     `;
 
     hubHtml = hubHtml.replace(/\[TOOL_LIST_HTML\]/g, hubToolsHtml);
+    const editorialHtml = hubContent.editorialIntro ? `
+        <article class="seo-content shadow-card" style="padding: 30px; margin-bottom: 30px;">
+            ${hubContent.editorialIntro.map(p => `<p style="margin-bottom: 12px; color: var(--text-color); line-height: 1.7;">${p}</p>`).join('\n')}
+        </article>` : '';
+
     const hubPreGridHtml = `
         ${buildBreadcrumbHtml(hubBreadcrumbs)}
+        ${editorialHtml}
         <section class="shadow-card" style="padding: 24px; margin-bottom: 30px;">
             <h2 style="margin-top: 0;">Quick Answer</h2>
             <p style="margin:0; color:#475569;">${hubContent.quickAnswer || (hubSeo.intro || cluster.description || '')}</p>
@@ -735,6 +774,16 @@ guides.forEach(guide => {
     html = html.replace(/\[OG_URL\]/g, canonicalUrl);
     html = html.replace(/\[OG_IMAGE\]/g, OG_IMAGE_URL);
 
+    // Last Updated date
+    const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    if (guide.lastUpdated) {
+        const d = new Date(guide.lastUpdated);
+        const formattedDate = `${MONTH_NAMES[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+        html = html.replace(/\[LAST_UPDATED\]/g, formattedDate);
+    } else {
+        html = html.replace(/\[LAST_UPDATED\]/g, 'April 2026');
+    }
+
     const guideBreadcrumbs = [
         { name: 'Home', path: '/', url: `${BASE_URL}/` },
         { name: 'Guides', path: '/guides/', url: absoluteUrl('/guides/') },
@@ -776,6 +825,8 @@ guides.forEach(guide => {
                 "url": canonicalUrl,
                 "mainEntityOfPage": canonicalUrl,
                 "inLanguage": site.defaultLocale,
+                "datePublished": guide.datePublished || guide.lastUpdated || "2026-02-28",
+                "dateModified": guide.lastUpdated || "2026-04-13",
                 "author": {
                     "@id": `${BASE_URL}/#organization`
                 }

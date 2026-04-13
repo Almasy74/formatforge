@@ -1,0 +1,276 @@
+<h2>Quick Answer</h2>
+<p><strong>Text processing is the act of transforming raw text into a usable, consistent, and clean format.</strong> It covers everything from character encoding and line endings to whitespace normalization, deduplication, and pattern matching. If you work with data from users, APIs, scrapers, or documents, you need text processing skills.</p>
+
+<h2>Why Text Processing Matters</h2>
+<p>Text is the most common data format on the web. API responses, form submissions, log files, CMS content, scraped pages, and exported spreadsheets all produce text that needs cleaning before it can be reliably stored, searched, compared, or displayed. Skipping text processing leads to bugs that are hard to diagnose: failed string comparisons, inflated word counts, broken imports, and inconsistent search results.</p>
+
+<p>The good news is that most text problems fall into a small number of categories. Once you understand character encoding, line endings, whitespace, Unicode normalization, and pattern matching, you can handle nearly any text cleaning challenge.</p>
+
+<h2>Character Encoding: ASCII to UTF-8</h2>
+<p>Every piece of text on a computer is stored as a sequence of bytes. The encoding determines how those bytes map to characters. Understanding encoding is the foundation of all text processing.</p>
+
+<h3>The Encoding Timeline</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Encoding</th>
+            <th>Year</th>
+            <th>Characters</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>ASCII</td>
+            <td>1963</td>
+            <td>128</td>
+            <td>English letters, digits, basic punctuation. 7 bits per character.</td>
+        </tr>
+        <tr>
+            <td>Latin-1 (ISO 8859-1)</td>
+            <td>1987</td>
+            <td>256</td>
+            <td>Added Western European accented characters. 8 bits per character.</td>
+        </tr>
+        <tr>
+            <td>Windows-1252</td>
+            <td>1990s</td>
+            <td>256</td>
+            <td>Microsoft's Latin-1 superset. Added curly quotes and em dashes.</td>
+        </tr>
+        <tr>
+            <td>UTF-8</td>
+            <td>1993</td>
+            <td>1,112,064</td>
+            <td>Variable-length (1-4 bytes). Backwards compatible with ASCII. The web standard.</td>
+        </tr>
+        <tr>
+            <td>UTF-16</td>
+            <td>1996</td>
+            <td>1,112,064</td>
+            <td>2 or 4 bytes per character. Used internally by JavaScript, Java, and Windows.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Why UTF-8 Won</h3>
+<p>UTF-8 is now used by over 98% of all web pages. It succeeded because it is backwards compatible with ASCII (any valid ASCII text is also valid UTF-8), it supports every Unicode character, and its variable-length encoding is space-efficient for Latin-script text. When in doubt, use UTF-8 for everything.</p>
+
+<h3>Mojibake: What Happens When Encoding Goes Wrong</h3>
+<p>When text is decoded with the wrong encoding, characters become garbled. The word "café" stored as UTF-8 but read as Latin-1 might display as "cafÃ©". This is called mojibake. The fix is to identify the original encoding and re-decode correctly, or to ensure all systems in your pipeline agree on UTF-8.</p>
+
+<h2>Line Endings: CRLF, LF, and CR</h2>
+<p>Line endings are invisible characters that mark where one line ends and the next begins. Different systems use different conventions:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>System</th>
+            <th>Characters</th>
+            <th>Escape sequence</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Windows</td>
+            <td>Carriage Return + Line Feed</td>
+            <td><code>\r\n</code> (CRLF)</td>
+        </tr>
+        <tr>
+            <td>Unix / Linux / macOS</td>
+            <td>Line Feed</td>
+            <td><code>\n</code> (LF)</td>
+        </tr>
+        <tr>
+            <td>Classic Mac OS (pre-2001)</td>
+            <td>Carriage Return</td>
+            <td><code>\r</code> (CR)</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Mixed line endings cause subtle bugs: diff tools show phantom changes, parsers split lines incorrectly, and file checksums change when line endings are normalized. The <a href="/text/remove-line-breaks/">Remove Line Breaks</a> tool handles all three conventions automatically.</p>
+
+<h2>Unicode Normalization</h2>
+<p>Unicode allows the same visible character to be stored in multiple ways. The letter "é" can be a single code point (U+00E9, composed form) or two code points (U+0065 + U+0301, decomposed form). Both render identically but compare as different strings.</p>
+
+<p>This creates real bugs: database lookups fail, search misses matches, and deduplication reports false negatives. The solution is Unicode normalization:</p>
+
+<ul>
+    <li><strong>NFC (Composed):</strong> The default for web content, databases, and APIs. Characters are stored in their most compact form.</li>
+    <li><strong>NFD (Decomposed):</strong> Characters are broken into base characters plus combining marks. Useful for accent stripping and character analysis.</li>
+    <li><strong>NFKC / NFKD (Compatibility):</strong> More aggressive normalization that maps compatibility characters to their canonical equivalents.</li>
+</ul>
+
+<p>For most web and application work, normalize to NFC at input boundaries. See the <a href="/guides/unicode-normalization/">Unicode normalization guide</a> for detailed NFC vs NFD comparison with code examples.</p>
+
+<h2>Hidden Characters</h2>
+<p>Text often contains invisible characters that affect processing without being visible on screen:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Character</th>
+            <th>Code Point</th>
+            <th>Effect</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Zero-width space</td>
+            <td>U+200B</td>
+            <td>Invisible separator that breaks word matching</td>
+        </tr>
+        <tr>
+            <td>Byte Order Mark (BOM)</td>
+            <td>U+FEFF</td>
+            <td>Hidden prefix that breaks parsers expecting clean input</td>
+        </tr>
+        <tr>
+            <td>Non-breaking space</td>
+            <td>U+00A0</td>
+            <td>Looks like a regular space but fails equality checks</td>
+        </tr>
+        <tr>
+            <td>Soft hyphen</td>
+            <td>U+00AD</td>
+            <td>Invisible hyphenation hint that inflates character counts</td>
+        </tr>
+        <tr>
+            <td>Zero-width joiner</td>
+            <td>U+200D</td>
+            <td>Joins characters (used in emoji sequences) but invisible in plain text</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Use the <a href="/text/text-analyzer/">Text Analysis Tool</a> to detect hidden characters by comparing visible length with character count. See the <a href="/guides/hidden-unicode-characters/">hidden Unicode characters guide</a> for detection and removal techniques.</p>
+
+<h2>Whitespace Normalization</h2>
+<p>Whitespace problems are the most common text cleaning issue. They include multiple consecutive spaces, tabs mixed with spaces, trailing whitespace on lines, and non-breaking spaces that look identical to regular spaces but behave differently in code.</p>
+
+<p>A standard normalization sequence for whitespace:</p>
+<ol>
+    <li>Replace non-breaking spaces (U+00A0) with regular spaces</li>
+    <li>Replace tabs with spaces (or vice versa, depending on context)</li>
+    <li>Collapse multiple consecutive spaces into single spaces</li>
+    <li>Trim leading and trailing whitespace from each line</li>
+    <li>Normalize line endings to a single convention</li>
+</ol>
+
+<h2>Regular Expressions for Text Processing</h2>
+<p>Regular expressions are the primary tool for pattern-based text processing. They let you find, extract, replace, and validate text patterns efficiently. Common text cleaning patterns include:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Pattern</th>
+            <th>Replacement</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Collapse whitespace</td>
+            <td><code>\s{2,}</code></td>
+            <td>Single space</td>
+        </tr>
+        <tr>
+            <td>Strip HTML tags</td>
+            <td><code>&lt;[^&gt;]+&gt;</code></td>
+            <td>Empty string</td>
+        </tr>
+        <tr>
+            <td>Remove blank lines</td>
+            <td><code>^\s*$\n</code></td>
+            <td>Empty string</td>
+        </tr>
+        <tr>
+            <td>Trim line whitespace</td>
+            <td><code>^[ \t]+|[ \t]+$</code></td>
+            <td>Empty string (multiline mode)</td>
+        </tr>
+        <tr>
+            <td>Normalize line endings</td>
+            <td><code>\r\n|\r</code></td>
+            <td><code>\n</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<p>For an introduction to regex syntax, see the <a href="/guides/regex-basics/">regex basics guide</a>. For debugging complex patterns, see the <a href="/guides/regex-debugging/">regex debugging guide</a>. Test patterns live with the <a href="/dev/regex-tester-explainer/">Regex Tester Online</a>.</p>
+
+<h2>Text Cleaning Pipelines</h2>
+<p>Text cleaning is most effective when applied as an ordered pipeline. Each step handles one category of problem, and the order matters because later steps depend on earlier ones being complete.</p>
+
+<h3>Recommended Pipeline Order</h3>
+<ol>
+    <li><strong>Encoding:</strong> Ensure UTF-8 throughout. Fix mojibake before anything else.</li>
+    <li><strong>Line endings:</strong> Normalize to LF. Remove artificial line breaks from PDFs and emails.</li>
+    <li><strong>HTML and markup:</strong> Strip unwanted tags. Keep semantic structure if needed.</li>
+    <li><strong>Whitespace:</strong> Collapse multiple spaces. Trim lines. Remove blank lines.</li>
+    <li><strong>Unicode normalization:</strong> Normalize to NFC for consistent comparisons.</li>
+    <li><strong>Hidden characters:</strong> Remove zero-width spaces, BOM markers, and soft hyphens.</li>
+    <li><strong>Case normalization:</strong> Apply consistent casing if your downstream system is case-sensitive.</li>
+    <li><strong>Deduplication:</strong> Remove duplicate lines or records after normalization is complete.</li>
+    <li><strong>Validation:</strong> Verify word counts, character limits, and structural integrity.</li>
+</ol>
+
+<h2>Text Processing in Different Contexts</h2>
+
+<h3>AI and LLM Prompt Preparation</h3>
+<p>Text sent to language models benefits from cleaning because unnecessary whitespace, hidden characters, and formatting artifacts waste tokens without adding information. Clean text produces more predictable and cost-efficient LLM responses.</p>
+
+<h3>Search Indexing</h3>
+<p>Search engines and full-text indexes work better with normalized text. Mixed Unicode forms cause missed matches. Inconsistent casing requires case-insensitive indexes. Hidden characters create invisible differences between visually identical terms.</p>
+
+<h3>Data Import and Migration</h3>
+<p>When importing text data from one system to another (CRM migration, CMS migration, database migration), encoding mismatches and formatting differences are the primary source of data corruption. Clean text at the boundary between systems.</p>
+
+<h2>FAQ</h2>
+<div class="guide-faq">
+    <details>
+        <summary>What encoding should I use for everything?</summary>
+        <p>UTF-8. It is the web standard, backwards compatible with ASCII, and supported by every modern system. There is rarely a reason to use anything else for new projects.</p>
+    </details>
+    <details>
+        <summary>How do I detect the encoding of a file?</summary>
+        <p>Check for a BOM (byte order mark) at the start of the file. If absent, try parsing as UTF-8 first. If that fails, use encoding detection libraries like chardet (Python) or jschardet (JavaScript). Manual inspection of garbled characters can also reveal the likely encoding.</p>
+    </details>
+    <details>
+        <summary>Should I normalize Unicode in my database?</summary>
+        <p>Yes. Normalize to NFC at the application layer before inserting text. This prevents duplicate-looking records and ensures consistent search behavior. Some databases handle normalization at the collation level, but application-level normalization is more portable.</p>
+    </details>
+    <details>
+        <summary>What is the difference between trimming and collapsing whitespace?</summary>
+        <p>Trimming removes whitespace from the start and end of a string. Collapsing replaces multiple consecutive whitespace characters with a single space. Most cleaning pipelines need both operations.</p>
+    </details>
+    <details>
+        <summary>Can text cleaning break my data?</summary>
+        <p>Yes, if applied too aggressively. Always keep a backup of the original data. Be cautious about stripping characters that might be meaningful in your context (non-breaking spaces in formatted documents, zero-width joiners in emoji sequences).</p>
+    </details>
+    <details>
+        <summary>Is regex safe for cleaning HTML?</summary>
+        <p>For simple stripping of known tag patterns, regex works. For complex or nested HTML, use a DOM parser instead. The <a href="/text/html-cleaner/">HTML Cleaner</a> uses browser DOM parsing for safe, reliable tag removal.</p>
+    </details>
+</div>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/text/remove-line-breaks/">Remove Line Breaks</a> for cleaning copied text</li>
+    <li><a href="/text/html-cleaner/">HTML Cleaner</a> for stripping markup</li>
+    <li><a href="/text/text-analyzer/">Text Analysis Tool</a> for inspecting text structure</li>
+    <li><a href="/text/case-converter/">Case Converter</a> for normalizing casing</li>
+    <li><a href="/text/remove-duplicate-lines/">Remove Duplicate Lines</a> for deduplication</li>
+    <li><a href="/dev/regex-tester-explainer/">Regex Tester Online</a> for pattern testing</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/text-cleaning/">Text cleaning and normalization guide</a></li>
+    <li><a href="/guides/unicode-normalization/">NFC vs NFD: Unicode normalization explained</a></li>
+    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode characters guide</a></li>
+    <li><a href="/guides/regex-basics/">Regex basics for beginners</a></li>
+    <li><a href="/guides/remove-line-breaks/">Removing line breaks from text</a></li>
+    <li><a href="/guides/data-cleaning-best-practices/">Data cleaning best practices</a></li>
+</ul>

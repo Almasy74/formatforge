@@ -4,6 +4,8 @@
     "title": "How to Remove Line Breaks from Text: 3 Pro Methods",
     "description": "A deep dive into cleaning text by removing unwanted carriage returns and newline characters while preserving readability.",
     "path": "/guides/remove-line-breaks/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
       "remove-line-breaks",
       "text-analyzer"
@@ -14,6 +16,8 @@
     "title": "How to Format JSON Correctly",
     "description": "Learn how to format JSON correctly, fix invalid syntax, validate payloads, and minify for production with examples and debugging steps.",
     "path": "/guides/json-formatting/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
       "json-formatter",
       "json-validator",
@@ -27,6 +31,8 @@
     "title": "The Ultimate Guide to Text Cleaning and Normalization",
     "description": "How to prepare text data for AI models, databases, or content publishing by removing noise and duplicates.",
     "path": "/guides/text-cleaning/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
       "remove-duplicate-lines",
       "html-cleaner",
@@ -40,8 +46,12 @@
     "title": "Converting Between CSV and JSON: When and Why",
     "description": "Understanding the structural differences between tabular data (CSV) and hierarchical data (JSON) and how to convert them.",
     "path": "/guides/data-format-conversion/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
-      "csv-json-converter"
+      "csv-json-converter",
+      "json-formatter",
+      "xml-json-converter"
     ]
   },
   {
@@ -49,6 +59,8 @@
     "title": "Regex Basics: Regular Expressions for Beginners",
     "description": "A non-intimidating introduction to the powerful world of pattern matching and how to use it in your daily text work.",
     "path": "/guides/regex-basics/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
       "regex-visual-explainer",
       "html-cleaner",
@@ -61,6 +73,8 @@
     "title": "NFC vs NFD: Unicode Normalization Explained",
     "description": "Understand NFC vs NFD, when to use each, and how Unicode normalization affects search, databases, APIs, slugs, and string comparison.",
     "path": "/guides/unicode-normalization/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
       "text-analyzer",
       "url-encoder-decoder",
@@ -73,9 +87,12 @@
     "title": "Advanced Data Deduplication and List Merging Strategies",
     "description": "Strategies for cleaning massive datasets by removing near-duplicates and normalizing keys for accurate merging.",
     "path": "/guides/data-deduplication/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
       "remove-duplicate-lines",
-      "text-diff-checker"
+      "text-diff-checker",
+      "case-converter"
     ]
   },
   {
@@ -83,6 +100,8 @@
     "title": "How to Debug Regex: Common Failures and Fixes",
     "description": "Learn how to debug regular expressions step by step. Fix greedy matches, multiline failures, escaping issues, and slow patterns with concrete examples.",
     "path": "/guides/regex-debugging/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
       "regex-visual-explainer",
       "text-analyzer",
@@ -94,6 +113,8 @@
     "title": "How to Normalize UTF-8 to NFC with utf8proc",
     "description": "Use utf8proc to normalize UTF-8 text to NFC in C projects, avoid mixed normalization forms, and handle practical storage and comparison issues.",
     "path": "/guides/utf8proc-normalization-nfc/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
       "smart-slug-generator",
       "text-analyzer",
@@ -105,6 +126,8 @@
     "title": "Common JSON Parse Errors and Fixes",
     "description": "Fix common JSON parse errors such as trailing commas, unquoted keys, bad quotes, and broken brackets with exact examples and repair steps.",
     "path": "/guides/json-parse-errors/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
       "json-validator",
       "json-formatter",
@@ -116,6 +139,8 @@
     "title": "How to Detect Hidden Unicode Characters in Text",
     "description": "Find and fix zero-width spaces, BOM characters, combining marks, and other hidden Unicode characters that break matching, counts, and formatting.",
     "path": "/guides/hidden-unicode-characters/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
       "text-analyzer",
       "remove-line-breaks",
@@ -128,10 +153,86 @@
     "title": "How to Create SEO-Friendly URL Slugs",
     "description": "Learn how to create readable, stable, hyphenated URL slugs for blogs, docs, products, and content systems without creating slug chaos.",
     "path": "/guides/seo-friendly-url-slugs/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-02-28",
     "relatedTools": [
       "smart-slug-generator",
       "url-encoder-decoder",
       "case-converter"
+    ]
+  },
+  {
+    "id": "data-cleaning-best-practices",
+    "title": "Data Cleaning Best Practices for Web Workflows",
+    "description": "Learn the essential techniques for cleaning raw data from scraped content, CRM exports, and pasted text before use in analytics, AI models, or databases.",
+    "path": "/guides/data-cleaning-best-practices/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-03-15",
+    "relatedTools": [
+      "remove-duplicate-lines",
+      "html-cleaner",
+      "text-analyzer",
+      "remove-line-breaks"
+    ]
+  },
+  {
+    "id": "regular-expressions-explained",
+    "title": "Regular Expressions Explained: From Zero to Practical",
+    "description": "A comprehensive introduction to regular expressions covering syntax, real-world examples, email extraction, and safe testing practices for developers.",
+    "path": "/guides/regular-expressions-explained/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-03-15",
+    "relatedTools": [
+      "regex-visual-explainer",
+      "remove-line-breaks",
+      "text-analyzer"
+    ]
+  },
+  {
+    "id": "complete-guide-to-json",
+    "title": "The Complete Guide to JSON: Syntax, Parsing, Validation, and Tools",
+    "description": "Everything developers need to know about JSON: syntax rules, data types, parsing in JavaScript, Python, and Go, schema validation, common errors, and the full format-validate-minify workflow.",
+    "path": "/guides/complete-guide-to-json/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-04-13",
+    "relatedTools": [
+      "json-formatter",
+      "json-validator",
+      "json-minifier",
+      "csv-json-converter",
+      "xml-json-converter",
+      "json-ts-interface-generator",
+      "data-diff-structured"
+    ]
+  },
+  {
+    "id": "text-processing-fundamentals",
+    "title": "Text Processing Fundamentals: Encoding, Unicode, and Cleaning Pipelines",
+    "description": "A comprehensive guide to text processing covering character encoding, line endings, Unicode normalization, hidden characters, whitespace handling, and cleaning pipeline architecture.",
+    "path": "/guides/text-processing-fundamentals/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-04-13",
+    "relatedTools": [
+      "remove-line-breaks",
+      "html-cleaner",
+      "text-analyzer",
+      "case-converter",
+      "remove-duplicate-lines",
+      "regex-visual-explainer"
+    ]
+  },
+  {
+    "id": "url-encoding-web-safe-strings",
+    "title": "URL Encoding, Base64, and Web-Safe Strings Explained",
+    "description": "Understand percent encoding (RFC 3986), Base64 variants, data URIs, JWT structure, slug generation, and how to avoid double-encoding bugs in web applications.",
+    "path": "/guides/url-encoding-web-safe-strings/",
+    "lastUpdated": "2026-04-13",
+    "datePublished": "2026-04-13",
+    "relatedTools": [
+      "url-encoder-decoder",
+      "base64-encode-decode",
+      "smart-slug-generator",
+      "jwt-decoder-inspector"
     ]
   }
 ]

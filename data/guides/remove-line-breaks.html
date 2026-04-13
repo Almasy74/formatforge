@@ -12,6 +12,127 @@
 <h2>When Not to Remove All Breaks</h2>
 <p>Do not flatten everything if paragraph structure matters. In those cases, keep double line breaks and remove only the accidental single ones. The goal is not to destroy structure. The goal is to remove artificial wrapping.</p>
 
+<h2>OS Line Ending Differences</h2>
+<p>Different operating systems use different characters to represent a line ending. This is the root cause of many invisible formatting bugs when text moves between systems.</p>
+<table>
+    <thead>
+        <tr>
+            <th>OS / Origin</th>
+            <th>Sequence</th>
+            <th>Escape notation</th>
+            <th>Hex bytes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Windows</td>
+            <td>CRLF</td>
+            <td><code>\r\n</code></td>
+            <td><code>0D 0A</code></td>
+        </tr>
+        <tr>
+            <td>Linux / macOS (modern)</td>
+            <td>LF</td>
+            <td><code>\n</code></td>
+            <td><code>0A</code></td>
+        </tr>
+        <tr>
+            <td>Classic Mac (pre-OS X)</td>
+            <td>CR</td>
+            <td><code>\r</code></td>
+            <td><code>0D</code></td>
+        </tr>
+    </tbody>
+</table>
+<p>Mixed line endings happen when text passes through multiple systems. A file created on Windows, edited on Linux, and pasted into a web form can end up with a mix of CRLF and LF. Normalize line endings before any other text processing step.</p>
+
+<h2>Regex Approaches in Different Languages</h2>
+
+<h3>JavaScript</h3>
+<pre><code>// Remove all line breaks, replace with a single space
+const cleaned = text.replace(/\r?\n|\r/g, ' ');
+
+// Preserve paragraph breaks (double newlines), remove singles
+const paragraphs = text.replace(/\r?\n|\r/g, '\n')  // normalize
+    .replace(/(?<!\n)\n(?!\n)/g, ' ')                // single LF to space
+    .replace(/\n{2,}/g, '\n\n');                      // collapse multiples</code></pre>
+
+<h3>Python</h3>
+<pre><code># Remove all line breaks, replace with a single space
+import re
+cleaned = re.sub(r'\r?\n|\r', ' ', text)
+
+# Preserve paragraph breaks, remove singles
+normalized = re.sub(r'\r?\n|\r', '\n', text)
+result = re.sub(r'(?<!\n)\n(?!\n)', ' ', normalized)
+result = re.sub(r'\n{2,}', '\n\n', result)</code></pre>
+
+<p>Both examples first normalize line endings to <code>\n</code>, then handle single vs. double newlines separately. Test patterns in the <a href="/dev/regex-tester-explainer/">Regex Tester</a> before applying to production data.</p>
+
+<h2>PDF Extraction and Line Breaks</h2>
+<p>PDF files do not store text as flowing paragraphs. They store positioned character sequences on a fixed-size page. When you extract text from a PDF, the extraction tool must decide where to insert line breaks based on coordinates, and it almost always gets some wrong.</p>
+<p>Common artifacts from PDF extraction:</p>
+<ul>
+    <li><strong>Hard wraps at column boundaries</strong> &mdash; every line breaks at approximately the same character position, regardless of sentence structure.</li>
+    <li><strong>Hyphenated words</strong> &mdash; words split with hyphens at line ends. Removing the break alone leaves "archi- tecture" instead of "architecture". Look for the pattern <code>(\w)-\n(\w)</code> and replace with <code>$1$2</code>.</li>
+    <li><strong>Header and footer repetition</strong> &mdash; page numbers, document titles, and dates repeat on every page. Deduplicate these with <a href="/text/remove-duplicate-lines/">Remove Duplicate Lines</a> after line break cleanup.</li>
+    <li><strong>Column bleed</strong> &mdash; multi-column PDFs can interleave text from different columns. No regex can fix this reliably; it requires layout-aware extraction.</li>
+</ul>
+
+<h2>Email Forwarding and Line Wrap Issues</h2>
+<p>Email clients and servers often hard-wrap lines at 72 or 76 characters (per RFC 2822 recommendations). When a message is forwarded or replied to multiple times, each pass may re-wrap the text, creating nested wrapping artifacts. Quoted-printable encoding adds soft line breaks (<code>=\n</code>) that should be removed during decoding, not during line break cleanup.</p>
+<p>To clean forwarded email text: first remove reply markers (<code>&gt; </code> at line starts), then remove artificial line wraps while preserving paragraph boundaries.</p>
+
+<h2>Preserve vs. Strip Decision Framework</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Content type</th>
+            <th>Action</th>
+            <th>Reason</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Prose paragraphs</td>
+            <td>Strip single breaks, keep doubles</td>
+            <td>Single breaks are wrapping artifacts; doubles mark paragraphs</td>
+        </tr>
+        <tr>
+            <td>Poetry or lyrics</td>
+            <td>Keep all breaks</td>
+            <td>Each line break is intentional and carries meaning</td>
+        </tr>
+        <tr>
+            <td>Code blocks</td>
+            <td>Keep all breaks</td>
+            <td>Line breaks are structural in source code</td>
+        </tr>
+        <tr>
+            <td>CSV or tabular data</td>
+            <td>Keep row breaks, strip intra-cell breaks</td>
+            <td>Row breaks delimit records; breaks inside cells are noise</td>
+        </tr>
+        <tr>
+            <td>Addresses</td>
+            <td>Keep or convert to commas</td>
+            <td>Each line is a distinct address component</td>
+        </tr>
+        <tr>
+            <td>Log files</td>
+            <td>Keep all breaks</td>
+            <td>Each line is a separate log entry</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Handling Mixed Content</h2>
+<p>Real documents often contain both prose and code blocks, or prose mixed with structured data. Blindly removing all line breaks destroys code formatting. Two approaches:</p>
+<ul>
+    <li><strong>Selective processing</strong> &mdash; identify code blocks by their delimiters (triple backticks, <code>&lt;pre&gt;</code> tags, indentation patterns) and exclude them from line break removal. Process only the prose sections.</li>
+    <li><strong>Two-pass strategy</strong> &mdash; extract code blocks and replace them with placeholders, clean the prose, then reinsert the code blocks. This is the safest approach for documents with many code examples.</li>
+</ul>
+
 <h2>Typical Workflow</h2>
 <ol>
     <li>Paste the copied text into <a href="/text/remove-line-breaks/">Remove Line Breaks</a>.</li>
@@ -19,13 +140,6 @@
     <li>Review the cleaned output for sentence continuity.</li>
     <li>If the output is structured data, continue with the appropriate formatter such as the <a href="/json/json-formatter/">JSON Formatter</a>.</li>
 </ol>
-
-<h2>Common Mistakes</h2>
-<ul>
-    <li>Removing paragraph breaks that should stay</li>
-    <li>Cleaning only visually and missing hidden whitespace problems</li>
-    <li>Reformatting structured data manually instead of sending it to a dedicated formatter afterward</li>
-</ul>
 
 <h2>Practical Example</h2>
 <pre><code>// Input copied from a PDF
@@ -36,9 +150,61 @@ handle massive payloads.
 // Cleaned output
 The architecture of the system was designed to handle massive payloads.</code></pre>
 
+<h2>Common Mistakes</h2>
+<ul>
+    <li>Removing paragraph breaks that should stay</li>
+    <li>Cleaning only visually and missing hidden whitespace problems</li>
+    <li>Reformatting structured data manually instead of sending it to a dedicated formatter afterward</li>
+    <li>Forgetting to handle hyphenated words split across lines in PDF text</li>
+    <li>Not normalizing line endings before applying patterns</li>
+    <li>Stripping line breaks from code blocks embedded in prose</li>
+</ul>
+
+<h2>Frequently Asked Questions</h2>
+
+<details>
+    <summary>Why does my text have invisible line breaks that I cannot see?</summary>
+    <p>Some line break characters (<code>\r</code>, <code>\x0B</code>, <code>\x85</code>, Unicode line separator <code>U+2028</code>) do not render visibly in all editors but still split text. Use the <a href="/text/text-analyzer/">Text Analysis Tool</a> or <a href="/guides/hidden-unicode-characters/">hidden character inspector</a> to detect them.</p>
+</details>
+
+<details>
+    <summary>How do I remove line breaks in a spreadsheet cell?</summary>
+    <p>In Excel or Google Sheets, use <code>SUBSTITUTE(A1, CHAR(10), " ")</code> to replace LF, or <code>CLEAN(A1)</code> to remove all non-printable characters. For CRLF, chain two SUBSTITUTE calls: one for <code>CHAR(13)</code> and one for <code>CHAR(10)</code>.</p>
+</details>
+
+<details>
+    <summary>What is the difference between CRLF and LF in practice?</summary>
+    <p>LF (<code>\n</code>) is a single byte used on Linux and modern macOS. CRLF (<code>\r\n</code>) is two bytes used on Windows. Most modern text editors and web browsers handle both transparently, but tools like <code>diff</code>, version control systems, and some parsers treat them differently. Inconsistent line endings cause phantom changes in git diffs and can break shell scripts.</p>
+</details>
+
+<details>
+    <summary>Can I remove line breaks without losing paragraph structure?</summary>
+    <p>Yes. Remove only single line breaks (which are usually wrapping artifacts) and preserve double line breaks (which mark paragraph boundaries). The <a href="/text/remove-line-breaks/">Remove Line Breaks</a> tool has an option for this. In regex terms, replace <code>(?<!\n)\n(?!\n)</code> with a space.</p>
+</details>
+
+<details>
+    <summary>How do I fix hyphenated words split across lines?</summary>
+    <p>Use the regex pattern <code>(\w)-\s*\n\s*(\w)</code> and replace with <code>$1$2</code>. This joins "archi-\ntecture" into "architecture". Be cautious with compound words that genuinely use hyphens (like "well-known") &mdash; context matters, so review results after applying the pattern.</p>
+</details>
+
+<details>
+    <summary>Should I normalize line endings before or after removing breaks?</summary>
+    <p>Before. Normalize all line endings to <code>\n</code> first, then apply your line break removal logic. This prevents CRLF sequences from being partially matched, which can leave stray <code>\r</code> characters in your output.</p>
+</details>
+
 <h2>Related Tools</h2>
 <ul>
+    <li><a href="/text/remove-line-breaks/">Remove Line Breaks</a> for quick online cleanup</li>
     <li><a href="/json/json-formatter/">JSON Formatter</a> for structured data that needs to be readable after cleanup</li>
     <li><a href="/text/text-analyzer/">Text Analysis Tool</a> to inspect the cleaned result</li>
-    <li><a href="/guides/text-cleaning/">Text cleaning guide</a> for the broader cleanup workflow</li>
+    <li><a href="/text/remove-duplicate-lines/">Remove Duplicate Lines</a> to remove repeated header/footer lines from PDF extractions</li>
+    <li><a href="/dev/regex-tester-explainer/">Regex Tester</a> for testing line break patterns</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/text-cleaning/">Text Cleaning</a> &mdash; the broader cleanup workflow</li>
+    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode Characters</a> &mdash; detecting invisible formatting issues</li>
+    <li><a href="/guides/regex-basics/">Regex Basics</a> &mdash; understanding the patterns used for line break removal</li>
+    <li><a href="/guides/data-cleaning-best-practices/">Data Cleaning Best Practices</a></li>
 </ul>

@@ -41,8 +41,107 @@
             <td><code>{"a":1 // note}</code></td>
             <td>Remove comments from strict JSON</td>
         </tr>
+        <tr>
+            <td>Unescaped control character</td>
+            <td><code>{"msg":"line1\nline2"}</code> (literal newline)</td>
+            <td><code>{"msg":"line1\\nline2"}</code></td>
+        </tr>
+        <tr>
+            <td>Hexadecimal numbers</td>
+            <td><code>{"color":0xFF}</code></td>
+            <td><code>{"color":255}</code></td>
+        </tr>
     </tbody>
 </table>
+
+<h2>Error-by-Error Walkthrough</h2>
+
+<h3>Trailing Comma</h3>
+<p>A comma after the last property or array element is valid in JavaScript but illegal in JSON. This is the single most common parse error because developers copy objects from JS source code directly into JSON files.</p>
+<pre><code>// Breaks: trailing comma after "editor"
+{"roles": ["admin", "editor",]}
+
+// Fixed
+{"roles": ["admin", "editor"]}</code></pre>
+
+<h3>Missing Comma</h3>
+<p>When a comma is missing between two key-value pairs or array elements, the parser tries to interpret two tokens as one and fails. The error position often points to the second key, not the gap between them.</p>
+<pre><code>// Breaks: no comma between "name" and "age"
+{"name": "Alice" "age": 30}
+
+// Fixed
+{"name": "Alice", "age": 30}</code></pre>
+
+<h3>Unquoted Keys and Single Quotes</h3>
+<p>JSON requires double quotes around all keys and string values. JavaScript allows unquoted keys and single quotes, but JSON does not. This mismatch causes errors when developers paste JS object literals into JSON fields.</p>
+<pre><code>// Both break in strict JSON
+{name: 'Alice'}
+
+// Fixed
+{"name": "Alice"}</code></pre>
+
+<h3>Unescaped Special Characters</h3>
+<p>JSON strings cannot contain literal newlines, tabs, or other control characters. They must use escape sequences: <code>\n</code>, <code>\t</code>, <code>\\</code>, <code>\"</code>. A literal newline byte inside a quoted string will cause a parse failure.</p>
+
+<h3>Mismatched Brackets and Braces</h3>
+<p>Every <code>[</code> needs a matching <code>]</code>, and every <code>{</code> needs a matching <code>}</code>. When brackets are mismatched, the error message often appears far from the actual mistake because the parser keeps reading, looking for the closing delimiter.</p>
+
+<h2>Language-Specific Error Messages</h2>
+<p>Different languages report JSON errors differently. Knowing your language's error format helps you locate the problem faster.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Language</th>
+            <th>Parse function</th>
+            <th>Typical error message</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>JavaScript</td>
+            <td><code>JSON.parse()</code></td>
+            <td><code>SyntaxError: Unexpected token } in JSON at position 12</code></td>
+        </tr>
+        <tr>
+            <td>Python</td>
+            <td><code>json.loads()</code></td>
+            <td><code>json.decoder.JSONDecodeError: Expecting ',' delimiter: line 3 column 1</code></td>
+        </tr>
+        <tr>
+            <td>Java</td>
+            <td><code>ObjectMapper.readValue()</code></td>
+            <td><code>JsonParseException: Unexpected character ('}') at offset 12</code></td>
+        </tr>
+        <tr>
+            <td>Go</td>
+            <td><code>json.Unmarshal()</code></td>
+            <td><code>invalid character '}' looking for beginning of object key string</code></td>
+        </tr>
+        <tr>
+            <td>Ruby</td>
+            <td><code>JSON.parse()</code></td>
+            <td><code>JSON::ParserError: unexpected token at '}'</code></td>
+        </tr>
+        <tr>
+            <td>PHP</td>
+            <td><code>json_decode()</code></td>
+            <td>Returns <code>null</code> silently; check <code>json_last_error_msg()</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Note that PHP's <code>json_decode()</code> returns <code>null</code> on failure without throwing an exception by default. Always call <code>json_last_error()</code> after parsing in PHP to detect failures.</p>
+
+<h2>Debugging Workflow</h2>
+<ol>
+    <li><strong>Isolate the payload.</strong> Copy the raw JSON string into a standalone file or the <a href="/json/json-validator/">JSON Validator</a>. Do not debug inside your application code.</li>
+    <li><strong>Find the first error.</strong> Parsers report the position of the first failure. Ignore all downstream errors until you fix this one.</li>
+    <li><strong>Check the character at the reported position.</strong> Look at the character and the 5-10 characters before it. The actual mistake is usually just before the reported position.</li>
+    <li><strong>Look for structural patterns.</strong> Count opening and closing braces and brackets. Use a text editor with bracket matching to find mismatches.</li>
+    <li><strong>Validate incrementally.</strong> If the payload is large, validate subsections by extracting nested objects and parsing them individually.</li>
+    <li><strong>Format after fixing.</strong> Once the payload parses cleanly, run it through the <a href="/json/json-formatter/">JSON Formatter</a> to confirm the structure is what you expect.</li>
+</ol>
 
 <h2>How to Fix Parse Errors Fast</h2>
 <ol>
@@ -56,6 +155,36 @@
 <h2>Why the First Error Matters Most</h2>
 <p>One broken comma or bracket often causes many later parse errors. Fix the first real syntax problem first. Do not chase every downstream error message until the parser can get past the earliest failure.</p>
 
+<h2>JSON5 and JSONC: When Strict JSON Is Not Enough</h2>
+<p>Strict JSON does not allow comments, trailing commas, or single-quoted strings. Two extensions address this for config files and development workflows:</p>
+
+<ul>
+    <li><strong>JSON5:</strong> Allows single-quoted strings, unquoted keys, trailing commas, comments (<code>//</code> and <code>/* */</code>), hexadecimal numbers, and multiline strings. Used in some build tools and config files.</li>
+    <li><strong>JSONC (JSON with Comments):</strong> The subset used by VS Code configuration files. Allows <code>//</code> and <code>/* */</code> comments and trailing commas but otherwise follows JSON syntax.</li>
+</ul>
+
+<p>If your parse errors come from comments or trailing commas in a config file, check whether the consuming tool supports JSON5 or JSONC. If it does, the syntax is valid for that context. If you need strict JSON for an API, strip comments and trailing commas before sending.</p>
+
+<h2>API Response Debugging Tips</h2>
+<p>When an API returns JSON that fails to parse, the problem may not be in the JSON itself:</p>
+
+<ul>
+    <li><strong>Check the Content-Type header.</strong> If the response is HTML (a 404 page or error page) rather than <code>application/json</code>, your parser will fail on the HTML tags, not on invalid JSON.</li>
+    <li><strong>Look for BOM characters.</strong> Some servers prepend a UTF-8 BOM (<code>\uFEFF</code>) to the response. This invisible character before the opening <code>{</code> causes parse failures.</li>
+    <li><strong>Check for truncation.</strong> If the response was cut off mid-stream (timeout, network error), the JSON will be incomplete and unparseable. Look for missing closing brackets.</li>
+    <li><strong>Inspect for JSONP wrapping.</strong> Some APIs wrap JSON in a callback function: <code>callback({"data":1})</code>. Strip the function wrapper before parsing.</li>
+</ul>
+
+<h2>Automated JSON Repair</h2>
+<p>Some tools attempt to automatically fix broken JSON by adding missing commas, removing trailing commas, or converting single quotes to double quotes. Use these with caution:</p>
+
+<ul>
+    <li>Automated repair can misinterpret your intended structure when multiple fixes are possible.</li>
+    <li>A missing comma could mean a missing key-value pair, not just a missing separator. The tool cannot know which you intended.</li>
+    <li>For production pipelines, always fix the JSON at the source rather than relying on downstream repair.</li>
+    <li>Repair tools are useful for one-off debugging of pasted data, not for automated pipelines where silent corruption is dangerous.</li>
+</ul>
+
 <h2>When Not to Use a Formatter First</h2>
 <p>If the payload is invalid, a formatter cannot safely pretty-print it. Formatting is for readable valid JSON. Validation is for broken JSON. Keep those jobs separate to avoid confusion.</p>
 
@@ -63,15 +192,31 @@
 <div class="guide-faq">
     <details>
         <summary>Why does valid JavaScript object syntax still fail as JSON?</summary>
-        <p>JSON is stricter than JavaScript object syntax. It requires double-quoted keys and strings, and it does not allow comments, trailing commas, or undefined values.</p>
+        <p>JSON is stricter than JavaScript object syntax. It requires double-quoted keys and strings, and it does not allow comments, trailing commas, or undefined values. JSON is a data interchange format derived from JavaScript, but it is not JavaScript.</p>
     </details>
     <details>
         <summary>Can a validator repair JSON automatically?</summary>
-        <p>No. A validator tells you where the problem is. You still need to fix the syntax manually or regenerate the payload correctly.</p>
+        <p>No. A validator tells you where the problem is. You still need to fix the syntax manually or regenerate the payload correctly. Automated repair tools exist but can misinterpret your intended structure.</p>
     </details>
     <details>
         <summary>Should I minify broken JSON?</summary>
-        <p>No. Minify only after the payload is valid and ready for production use.</p>
+        <p>No. Minify only after the payload is valid and ready for production use. Minifying broken JSON will either fail or produce an unparseable compressed string.</p>
+    </details>
+    <details>
+        <summary>Why does my JSON parse error point to the wrong line?</summary>
+        <p>Parsers report where they first encounter an unexpected token, which is often after the actual mistake. A missing comma on line 5 might cause the parser to fail on line 6 when it encounters the next key without a preceding separator.</p>
+    </details>
+    <details>
+        <summary>How do I handle JSON with comments in a strict parser?</summary>
+        <p>Strip the comments before parsing. You can use a regex to remove <code>//</code> line comments and <code>/* */</code> block comments, or use a library that supports JSONC or JSON5 parsing. Never send commented JSON to an API that expects strict JSON.</p>
+    </details>
+    <details>
+        <summary>Why does PHP json_decode return null instead of an error?</summary>
+        <p>PHP's <code>json_decode()</code> returns <code>null</code> on failure by default. Always check <code>json_last_error()</code> after calling it. In PHP 7.3+, you can pass <code>JSON_THROW_ON_ERROR</code> as a flag to get exceptions instead.</p>
+    </details>
+    <details>
+        <summary>Can a BOM character break JSON parsing?</summary>
+        <p>Yes. A UTF-8 BOM (<code>\uFEFF</code>) at the start of a file or response is invisible but causes parsers to fail because the first character is not <code>{</code> or <code>[</code>. Trim BOM bytes before parsing.</p>
     </details>
 </div>
 
@@ -80,5 +225,11 @@
     <li><a href="/json/json-validator/">JSON Validator</a> for exact syntax errors</li>
     <li><a href="/json/json-formatter/">JSON Formatter</a> for readable output after repair</li>
     <li><a href="/json/json-minifier/">JSON Minifier</a> for compact output once debugging is complete</li>
+    <li><a href="/json/csv-to-json/">CSV to JSON Converter</a> when parse errors come from conversion output</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
     <li><a href="/guides/json-formatting/">How to Format JSON Correctly</a> for the full formatting workflow</li>
+    <li><a href="/guides/data-format-conversion/">Data Format Conversion</a> when errors originate from CSV-to-JSON pipelines</li>
 </ul>

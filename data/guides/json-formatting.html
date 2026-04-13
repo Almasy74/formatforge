@@ -40,6 +40,38 @@
     <li>Use the <a href="/json/json-minifier/">JSON Minifier</a> only when you need compact production output.</li>
 </ol>
 
+<h2>Indentation Standards and Conventions</h2>
+<p>There is no single correct indentation for JSON, but team consistency matters more than the specific choice.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Style</th>
+            <th>Common usage</th>
+            <th>Trade-off</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>2 spaces</td>
+            <td>JavaScript/Node.js projects, npm <code>package.json</code></td>
+            <td>Compact, works well for deeply nested structures</td>
+        </tr>
+        <tr>
+            <td>4 spaces</td>
+            <td>Python projects, many API documentation standards</td>
+            <td>More readable at shallow nesting depths</td>
+        </tr>
+        <tr>
+            <td>Tab</td>
+            <td>Go-adjacent tooling, personal preference</td>
+            <td>Width is viewer-configurable, but inconsistent in web displays</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>The <code>JSON.stringify()</code> function in JavaScript accepts either a number (spaces) or a string (custom indent character) as its third argument. Python's <code>json.dumps()</code> accepts an <code>indent</code> parameter. Both default to no indentation (minified output) when omitted.</p>
+
 <h2>Common JSON Errors</h2>
 <table>
     <thead>
@@ -52,60 +84,137 @@
     <tbody>
         <tr>
             <td>Trailing comma</td>
-            <td><code>{\"a\": 1,}</code></td>
-            <td><code>{\"a\": 1}</code></td>
+            <td><code>{"a": 1,}</code></td>
+            <td><code>{"a": 1}</code></td>
         </tr>
         <tr>
             <td>Unquoted key</td>
-            <td><code>{name: \"Alice\"}</code></td>
-            <td><code>{\"name\": \"Alice\"}</code></td>
+            <td><code>{name: "Alice"}</code></td>
+            <td><code>{"name": "Alice"}</code></td>
         </tr>
         <tr>
             <td>Single quotes</td>
             <td><code>{'name': 'Alice'}</code></td>
-            <td><code>{\"name\": \"Alice\"}</code></td>
+            <td><code>{"name": "Alice"}</code></td>
         </tr>
         <tr>
             <td>Missing comma</td>
-            <td><code>{\"a\": 1 \"b\": 2}</code></td>
-            <td><code>{\"a\": 1, \"b\": 2}</code></td>
+            <td><code>{"a": 1 "b": 2}</code></td>
+            <td><code>{"a": 1, "b": 2}</code></td>
         </tr>
         <tr>
             <td>Comments in JSON</td>
-            <td><code>{\"a\": 1 // note}</code></td>
+            <td><code>{"a": 1 // note}</code></td>
             <td>Use strict JSON without comments</td>
         </tr>
     </tbody>
 </table>
-<p><strong>Error summary:</strong> The most common formatter failures come from trailing commas, unquoted keys, single quotes, missing commas, and comments in otherwise JSON-like text.</p>
+<p><strong>Error summary:</strong> The most common formatter failures come from trailing commas, unquoted keys, single quotes, missing commas, and comments in otherwise JSON-like text. See the <a href="/guides/json-parse-errors/">JSON Parse Errors guide</a> for a detailed walkthrough of each error type.</p>
 
 <h2>When to Format and When Not to</h2>
 <p>Format JSON when you need to inspect nested data, review a payload with teammates, write documentation, or compare changes in a diff. Do not minify while you are still debugging. Do not expect a formatter to repair invalid input automatically. If the payload is failing to parse, validation comes first.</p>
 
+<h2>JSON in CI/CD Pipelines</h2>
+<p>Consistent JSON formatting prevents noisy diffs and merge conflicts in version-controlled config files. Integrate formatting checks into your pipeline to enforce standards automatically.</p>
+
+<ul>
+    <li><strong>Pre-commit hooks:</strong> Run a JSON formatter on staged <code>.json</code> files before each commit. Tools like <code>prettier</code> or <code>python -m json.tool</code> can normalize indentation automatically.</li>
+    <li><strong>CI lint step:</strong> Add a check that compares each JSON file against its formatted version. If they differ, fail the build and report which files need reformatting.</li>
+    <li><strong>Editor configuration:</strong> Use <code>.editorconfig</code> or workspace settings to set JSON indent size. This prevents inconsistencies between team members using different editors.</li>
+</ul>
+
+<pre><code># Example: format-check in a CI script
+for f in $(git diff --name-only --diff-filter=d HEAD~1 -- '*.json'); do
+  python -m json.tool "$f" > /tmp/formatted.json
+  diff -q "$f" /tmp/formatted.json || { echo "$f needs formatting"; exit 1; }
+done</code></pre>
+
+<h2>JSON5 and JSONC for Config Files</h2>
+<p>Strict JSON does not allow comments, which makes it awkward for configuration files that benefit from inline documentation. Two alternatives exist:</p>
+
+<ul>
+    <li><strong>JSONC:</strong> Used by VS Code, TypeScript (<code>tsconfig.json</code>), and other tools. Allows <code>//</code> and <code>/* */</code> comments and trailing commas.</li>
+    <li><strong>JSON5:</strong> A broader superset that also allows unquoted keys, single-quoted strings, and hexadecimal numbers. Used by some build tools.</li>
+</ul>
+
+<p>If your config file supports JSONC or JSON5, use comments freely. But when sending data to APIs or storing interchange payloads, always use strict JSON. A formatter that targets strict JSON will reject JSONC input, which is the correct behavior.</p>
+
+<h2>Diffing Formatted JSON</h2>
+<p>Formatted JSON produces meaningful line-by-line diffs in version control. Minified JSON appears as a single changed line even when only one value changed, making code review impossible.</p>
+
+<ul>
+    <li>Store JSON files in formatted (pretty-printed) form in version control.</li>
+    <li>Use consistent key ordering (sorted keys) if your formatter supports it. This prevents diffs caused by key reordering rather than value changes.</li>
+    <li>Python's <code>json.dumps(data, indent=2, sort_keys=True)</code> and JavaScript's sorted-key serializers both produce deterministic output suitable for diffing.</li>
+</ul>
+
+<h2>Large JSON Handling</h2>
+<p>Formatting multi-megabyte JSON files in the browser or a text editor can cause slowdowns or crashes. Consider these strategies for large payloads:</p>
+
+<ul>
+    <li><strong>Streaming parsers:</strong> Tools like <code>jq</code> (command line) process JSON in a streaming fashion and can format files of any size without loading the entire document into memory.</li>
+    <li><strong>Incremental formatting:</strong> Format only the section you need to inspect. Extract a subtree with <code>jq '.data.users[0]'</code> rather than formatting the entire file.</li>
+    <li><strong>Chunked viewing:</strong> For JSON arrays with thousands of elements, many editors support folding. Collapse sections you are not inspecting to reduce render load.</li>
+    <li><strong>Command-line formatting:</strong> <code>python -m json.tool large.json</code> handles large files more reliably than browser-based tools for files over 10 MB.</li>
+</ul>
+
 <h2>Code Examples</h2>
 <h3>JavaScript</h3>
-<pre><code>const minified = '{\"id\":1,\"name\":\"Alice\",\"roles\":[\"admin\",\"editor\"]}';\nconst formatted = JSON.stringify(JSON.parse(minified), null, 2);\nconsole.log(formatted);\n\nfunction safeParse(text) {\n  try {\n    return { data: JSON.parse(text), error: null };\n  } catch (error) {\n    return { data: null, error: error.message };\n  }\n}</code></pre>
+<pre><code>const minified = '{"id":1,"name":"Alice","roles":["admin","editor"]}';
+const formatted = JSON.stringify(JSON.parse(minified), null, 2);
+console.log(formatted);
+
+function safeParse(text) {
+  try {
+    return { data: JSON.parse(text), error: null };
+  } catch (error) {
+    return { data: null, error: error.message };
+  }
+}</code></pre>
 
 <h3>Python</h3>
-<pre><code>import json\n\npayload = '{\"id\":1,\"name\":\"Alice\"}'\ndata = json.loads(payload)\nprint(json.dumps(data, indent=2))\nprint(json.dumps(data, separators=(\",\", \":\")))</code></pre>
+<pre><code>import json
+
+payload = '{"id":1,"name":"Alice"}'
+data = json.loads(payload)
+print(json.dumps(data, indent=2))
+print(json.dumps(data, separators=(",", ":")))</code></pre>
+
+<h3>Command Line (jq)</h3>
+<pre><code># Format a JSON file
+jq '.' input.json > formatted.json
+
+# Format with sorted keys
+jq -S '.' input.json > sorted.json
+
+# Extract and format a subtree
+jq '.users[0].address' input.json</code></pre>
 
 <h2>FAQ</h2>
 <div class="guide-faq">
     <details>
         <summary>Can a formatter fix broken JSON automatically?</summary>
-        <p>No. Invalid JSON must be corrected before a strict formatter can pretty-print it.</p>
+        <p>No. Invalid JSON must be corrected before a strict formatter can pretty-print it. Use the <a href="/json/json-validator/">JSON Validator</a> to locate errors first.</p>
     </details>
     <details>
         <summary>What is the difference between formatting and validation?</summary>
-        <p>Formatting improves readability. Validation checks whether the payload is syntactically valid JSON.</p>
+        <p>Formatting improves readability by adding indentation and line breaks. Validation checks whether the payload is syntactically correct JSON. A formatter only works on already-valid input.</p>
     </details>
     <details>
         <summary>When should I minify JSON?</summary>
-        <p>Minify JSON after debugging is complete and you need compact output for production transfer or storage.</p>
+        <p>Minify JSON after debugging is complete and you need compact output for production transfer or storage. Never minify while actively debugging.</p>
     </details>
     <details>
         <summary>Does formatting change the data?</summary>
-        <p>No. It only changes whitespace and line breaks, not the underlying keys, values, or structure.</p>
+        <p>No. It only changes whitespace and line breaks, not the underlying keys, values, or structure. The parsed result is identical before and after formatting.</p>
+    </details>
+    <details>
+        <summary>Should I use 2 spaces or 4 spaces for indentation?</summary>
+        <p>Either works. Use 2 spaces for deeply nested structures or JavaScript-heavy projects. Use 4 spaces for Python projects or when readability at shallow depths is the priority. The key is to pick one and apply it consistently across your team.</p>
+    </details>
+    <details>
+        <summary>How do I format large JSON files without crashing my editor?</summary>
+        <p>Use command-line tools like <code>jq</code> or <code>python -m json.tool</code> for files over 10 MB. These process JSON without loading the entire formatted output into an editor buffer. Extract specific subtrees when you only need to inspect part of the data.</p>
     </details>
 </div>
 
@@ -116,4 +225,10 @@
     <li><a href="/json/json-minifier/">JSON Minifier</a> for compact production output</li>
     <li><a href="/json/csv-to-json/">CSV to JSON Converter</a> for tabular data conversion</li>
     <li><a href="/json/xml-json-converter/">XML JSON Converter</a> for legacy integration workflows</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/json-parse-errors/">Common JSON Parse Errors</a> for a detailed walkthrough of each error type</li>
+    <li><a href="/guides/data-format-conversion/">Data Format Conversion</a> for CSV-to-JSON and JSON-to-CSV workflows</li>
 </ul>

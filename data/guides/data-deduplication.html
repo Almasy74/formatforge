@@ -1,6 +1,6 @@
 <h2>Precision Cleaning: Advanced Data Deduplication Strategies</h2>
 <p>Removing exact duplicates is the baseline for any data workshop. However, real-world data is rarely that clean.
-    Strategic deduplication requires <strong>Normalization Keys</strong>—transforming records into a "lowest common
+    Strategic deduplication requires <strong>Normalization Keys</strong>&mdash;transforming records into a "lowest common
     denominator" before performing the uniqueness check.</p>
 
 <section class="usage-scenario">
@@ -48,12 +48,201 @@
 // Normalization (Lower + Trim + Path Strip)
 "google.com" (Unique Key)</code></pre>
 
-<h2>Bidirectional Strategy: Deduplicate → Diff</h2>
-<p>A professional cleaning workflow doesn't stop at the filter. After removing duplicates from a massive dataset, use
+<h2>Fuzzy Matching: When Exact Dedup Is Not Enough</h2>
+<p>Exact deduplication fails when records refer to the same entity but differ in spelling, abbreviation, or data entry errors. Fuzzy matching identifies records that are similar but not identical, using a similarity threshold rather than strict equality.</p>
+
+<h3>Common Fuzzy Matching Scenarios</h3>
+<ul>
+    <li><strong>Customer names</strong> &mdash; "Jon Smith" vs. "John Smith" vs. "Jonathan Smith"</li>
+    <li><strong>Company names</strong> &mdash; "IBM" vs. "International Business Machines" vs. "I.B.M."</li>
+    <li><strong>Product titles</strong> &mdash; "iPhone 15 Pro Max 256GB" vs. "Apple iPhone 15 Pro Max (256 GB)"</li>
+    <li><strong>Addresses</strong> &mdash; "123 Main St" vs. "123 Main Street" vs. "123 Main St."</li>
+</ul>
+
+<h2>Levenshtein Distance</h2>
+<p>Levenshtein distance measures how many single-character edits (insertions, deletions, substitutions) are needed to transform one string into another. It is the most commonly used metric for fuzzy deduplication.</p>
+<table>
+    <thead>
+        <tr>
+            <th>String A</th>
+            <th>String B</th>
+            <th>Distance</th>
+            <th>Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>kitten</td>
+            <td>sitting</td>
+            <td>3</td>
+            <td>k&rarr;s, e&rarr;i, insert g</td>
+        </tr>
+        <tr>
+            <td>smith</td>
+            <td>smyth</td>
+            <td>1</td>
+            <td>i&rarr;y</td>
+        </tr>
+        <tr>
+            <td>example.com</td>
+            <td>exmaple.com</td>
+            <td>2</td>
+            <td>transpose a and m (two substitutions)</td>
+        </tr>
+    </tbody>
+</table>
+<p>A low distance relative to string length suggests the records are likely duplicates. A common threshold: consider two strings duplicates if their Levenshtein distance is less than 20% of the longer string's length.</p>
+
+<h2>Normalization Before Comparison</h2>
+<p>Fuzzy matching works better when you reduce trivial differences first. Apply normalization to both sides of the comparison before computing similarity.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Normalization step</th>
+            <th>What it eliminates</th>
+            <th>Example</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Lowercase</td>
+            <td>Case differences</td>
+            <td>"John DOE" &rarr; "john doe"</td>
+        </tr>
+        <tr>
+            <td>Trim and collapse whitespace</td>
+            <td>Extra spaces, tabs</td>
+            <td>"  John   Doe  " &rarr; "john doe"</td>
+        </tr>
+        <tr>
+            <td>Unicode normalization (NFKC)</td>
+            <td>Fullwidth chars, accented variants</td>
+            <td>"caf&eacute;" (composed) = "caf&eacute;" (decomposed)</td>
+        </tr>
+        <tr>
+            <td>Strip punctuation</td>
+            <td>Dots, commas, dashes</td>
+            <td>"I.B.M." &rarr; "ibm"</td>
+        </tr>
+        <tr>
+            <td>Sort tokens</td>
+            <td>Word order differences</td>
+            <td>"Doe, John" &rarr; "doe john"</td>
+        </tr>
+    </tbody>
+</table>
+<p>For Unicode normalization details, see the <a href="/guides/unicode-normalization/">Unicode Normalization</a> guide.</p>
+
+<h2>Hash-Based Deduplication for Large Datasets</h2>
+<p>When datasets contain millions of rows, comparing every pair is not feasible. Hash-based dedup is O(n) instead of O(n&sup2;).</p>
+<ol>
+    <li><strong>Choose a key</strong> &mdash; select the column(s) that define uniqueness (email, SKU, URL, etc.).</li>
+    <li><strong>Normalize the key</strong> &mdash; apply the normalization steps above to the key value.</li>
+    <li><strong>Hash the normalized key</strong> &mdash; compute a hash (SHA-256, MD5, or even a simple CRC) of the normalized value.</li>
+    <li><strong>Insert into a set</strong> &mdash; if the hash already exists, the record is a duplicate. If not, add it.</li>
+</ol>
+<pre><code>// Pseudocode for hash-based dedup
+seen = new Set()
+for each row in dataset:
+    key = normalize(row.email)
+    hash = sha256(key)
+    if hash in seen:
+        mark_as_duplicate(row)
+    else:
+        seen.add(hash)</code></pre>
+<p>This approach handles exact duplicates after normalization. For fuzzy matches at scale, look into locality-sensitive hashing (LSH), which groups similar items into the same hash bucket.</p>
+
+<h2>Primary Key vs. Full-Row Deduplication</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Approach</th>
+            <th>When to use</th>
+            <th>Trade-off</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Primary key dedup</strong></td>
+            <td>Records share an ID (email, SKU) but differ in metadata</td>
+            <td>Keeps one version; you must decide which (first, last, most complete)</td>
+        </tr>
+        <tr>
+            <td><strong>Full-row dedup</strong></td>
+            <td>Identical rows from repeated imports or log duplication</td>
+            <td>Safe and simple, but misses near-duplicates with different metadata</td>
+        </tr>
+    </tbody>
+</table>
+<p>When deduplicating by primary key, keep the "richest" version of the data. If two rows share the same email but one has a phone number and the other does not, merge rather than discard. This is a merge-dedup strategy, which is more complex but preserves more data.</p>
+
+<h2>Handling Near-Duplicates in Real Scenarios</h2>
+
+<h3>URLs</h3>
+<p>Normalize before comparing: strip protocol (<code>https://</code>, <code>http://</code>), remove <code>www.</code>, lowercase the hostname, strip trailing slashes, remove default ports, and sort query parameters alphabetically. After this, <code>https://WWW.Example.com/path/</code> and <code>http://example.com/path</code> produce the same canonical key.</p>
+
+<h3>Email Addresses</h3>
+<p>Lowercase the entire address. For Gmail, strip dots from the local part (<code>j.doe@gmail.com</code> equals <code>jdoe@gmail.com</code>) and remove plus-addressing suffixes (<code>user+tag@gmail.com</code> equals <code>user@gmail.com</code>). Do not apply Gmail-specific rules to other providers.</p>
+
+<h3>Product Names</h3>
+<p>Normalize units and abbreviations: "256GB" = "256 GB" = "256gb". Remove brand name redundancy if the brand is already in a separate column. Apply token sorting so "Pro Max iPhone 15" matches "iPhone 15 Pro Max". Use Levenshtein or token-set similarity for fuzzy comparison after normalization.</p>
+
+<h2>Bidirectional Strategy: Deduplicate then Diff</h2>
+<p>A professional cleaning workflow does not stop at the filter. After removing duplicates from a massive dataset, use
     the <a href="/text/diff-checker/">Text Diff Workshop</a> to compare the original raw file against the deduplicated
-    output. This manual audit ensures that your normalization keys weren't too aggressive and didn't accidentally merge
+    output. This manual audit ensures that your normalization keys were not too aggressive and did not accidentally merge
     distinct records.</p>
 
-<p><strong>Workshop Pro-Tip:</strong> When working with huge CSV exports, always deduplicate by a primary ID (like an
+<p><strong>Pro Tip:</strong> When working with huge CSV exports, always deduplicate by a primary ID (like an
     email or SKU) rather than the entire row. This preserves the "richest" version of the data if two rows have the same
     ID but different metadata.</p>
+
+<h2>Frequently Asked Questions</h2>
+
+<details>
+    <summary>What is the fastest way to deduplicate a simple text list?</summary>
+    <p>Paste the list into the <a href="/text/remove-duplicate-lines/">Remove Duplicate Lines</a> tool, select case-insensitive mode if needed, and click deduplicate. For lists under 10,000 lines, this runs instantly. For larger datasets, use hash-based dedup in a script.</p>
+</details>
+
+<details>
+    <summary>How do I decide between exact and fuzzy deduplication?</summary>
+    <p>Use exact dedup when your data comes from a single source with consistent formatting (server logs, database exports with stable IDs). Use fuzzy dedup when data comes from multiple sources, user input, or OCR/extraction pipelines where spelling and formatting vary.</p>
+</details>
+
+<details>
+    <summary>Can normalization be too aggressive?</summary>
+    <p>Yes. Stripping too much information merges distinct records. For example, normalizing "123 Main St Apt 4A" and "123 Main St Apt 4B" to "123 main st apt 4" would incorrectly merge different apartments. Always test normalization rules on a sample and audit the results with the <a href="/text/diff-checker/">Diff Checker</a>.</p>
+</details>
+
+<details>
+    <summary>What is locality-sensitive hashing (LSH)?</summary>
+    <p>LSH is a family of algorithms that hash similar items into the same bucket with high probability. Unlike cryptographic hashes (where a single-character change produces a completely different hash), LSH hashes preserve similarity. This allows fuzzy matching at scale by only comparing items within the same bucket, reducing O(n&sup2;) comparisons to near-linear time.</p>
+</details>
+
+<details>
+    <summary>Should I deduplicate before or after other cleaning steps?</summary>
+    <p>After. Normalize casing, whitespace, and encoding first, then deduplicate. This ensures that near-duplicates differing only in formatting are caught. See the <a href="/guides/text-cleaning/">Text Cleaning</a> guide for the recommended pipeline order.</p>
+</details>
+
+<details>
+    <summary>How do I handle duplicates in CSV files with multiple columns?</summary>
+    <p>Decide which column(s) define uniqueness (the dedup key). Extract those columns, normalize them, deduplicate by the key, then keep the full row for each unique key. If two rows share the same key but have different metadata in other columns, decide whether to keep the first occurrence, the last, or merge the most complete data from both.</p>
+</details>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/text/remove-duplicate-lines/">Remove Duplicate Lines</a> for quick online deduplication</li>
+    <li><a href="/text/diff-checker/">Diff Checker</a> for auditing dedup results against the original</li>
+    <li><a href="/text/case-converter/">Case Converter</a> for normalization before dedup</li>
+    <li><a href="/dev/slug-generator/">Slug Generator</a> for canonical key generation</li>
+    <li><a href="/text/text-analyzer/">Text Analysis Tool</a> for inspecting cleaned output</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/text-cleaning/">Text Cleaning</a> &mdash; the broader cleanup pipeline where dedup fits in</li>
+    <li><a href="/guides/unicode-normalization/">Unicode Normalization</a> &mdash; handling encoding differences before comparison</li>
+    <li><a href="/guides/regex-basics/">Regex Basics</a> &mdash; patterns for normalization and extraction</li>
+    <li><a href="/guides/data-cleaning-best-practices/">Data Cleaning Best Practices</a></li>
+    <li><a href="/guides/seo-friendly-url-slugs/">SEO-Friendly URL Slugs</a> &mdash; canonical URL normalization</li>
+</ul>

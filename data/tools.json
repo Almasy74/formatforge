@@ -115,7 +115,21 @@
         "ioFormats": {
           "input": "Raw Text",
           "output": "Formatted Text"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "Understanding Line Endings: CRLF, LF, and CR",
+            "body": "Different operating systems use different characters to represent line breaks. Windows uses CRLF (carriage return + line feed, \\r\\n), Unix and macOS use LF (\\n), and classic Mac OS used CR (\\r). When text moves between systems, these differences create visible formatting problems. A file created on Windows and opened in a Unix tool may show extra characters. Text copied from a PDF might use yet another convention depending on the PDF generator.\n\nThis tool handles all three line ending styles automatically. It detects the dominant pattern in your input and normalizes the result to clean single-space joins or preserved paragraph breaks, regardless of the original line ending format."
+          },
+          {
+            "heading": "Why PDFs and Emails Add Unwanted Line Breaks",
+            "body": "PDF documents store text in fixed-position blocks, not flowing paragraphs. When you copy text from a PDF, the viewer inserts line breaks at the visual boundaries of each text block. A single sentence can end up split across three or four lines. Email clients behave similarly when forwarding plain-text messages, often wrapping lines at 72 or 76 characters according to RFC 2822 conventions.\n\nThe result is text that looks fragmented when pasted into modern editors, CMS fields, or LLM prompts. Removing these artificial breaks while preserving real paragraph boundaries is the core problem this tool solves."
+          },
+          {
+            "heading": "When to Preserve Paragraph Breaks vs Strip Everything",
+            "body": "Not all line breaks should be removed. Double line breaks typically represent intentional paragraph separations, while single line breaks within a paragraph are usually formatting artifacts. The preserve paragraphs option keeps double breaks intact and only removes single breaks.\n\nStrip everything when you need a single continuous string: API payloads, single-field database entries, or prompt preparation where paragraph structure is irrelevant. Preserve paragraphs when the text has meaningful sections that should remain visually separated after cleanup."
+          }
+        ]
       },
       "faq": [
         {
@@ -219,7 +233,17 @@
         "ioFormats": {
           "input": "HTML String",
           "output": "Clean HTML / Text"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "DOM-Based Sanitization vs Regex Stripping",
+            "body": "When cleaning HTML, two main approaches exist: regular expression matching and DOM-based parsing. Regex approaches use pattern matching to find and remove tags, but they are fundamentally unsafe for this task. HTML is not a regular language, which means regex cannot reliably parse nested structures, handle malformed markup, or account for edge cases like attributes containing angle brackets.\n\nDOM-based sanitization, which this tool uses, leverages your browser's built-in HTML parser. The browser first constructs a proper document tree from whatever input it receives, automatically correcting unclosed tags, fixing nesting errors, and normalizing the structure. Only then does the tool walk the tree and remove unwanted nodes. This approach is inherently safer because the parser handles the complexity of real-world HTML before any cleaning logic runs.\n\nRegex stripping can also be tricked by malicious input. A pattern like `<script>` is easy to match, but `<scr<script>ipt>` or tags with encoded characters can slip through. DOM parsers handle these cases correctly because they follow the full HTML specification."
+          },
+          {
+            "heading": "When to Strip All HTML vs Preserve Structure",
+            "body": "The choice between stripping all HTML tags and preserving semantic structure depends on your destination format. When migrating content between CMS platforms, you typically want to keep meaningful tags like headings, links, emphasis, and lists. These carry semantic weight that affects both readability and SEO. Stripping them would lose the content's structure and require manual re-formatting.\n\nStrip everything when your target is a plain text context: database text fields, CSV exports, LLM prompts, or email subject lines. In these cases, any remaining HTML tags would render as visible text rather than formatting, creating noise in your output.\n\nA middle ground exists for cases like pasting Word content into a web editor. Here you want to remove proprietary tags and inline styles while keeping basic formatting like bold, italic, and links. This selective cleaning removes visual pollution without destroying the document's information hierarchy."
+          }
+        ]
       },
       "faq": [
         {
@@ -322,7 +346,17 @@
         "ioFormats": {
           "input": "Raw Text",
           "output": "Statistical Data"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "Understanding Readability Metrics",
+            "body": "Readability formulas estimate how difficult a text is to understand based on measurable features like word length and sentence length. The Flesch-Kincaid Grade Level maps text to a U.S. school grade: a score of 8 means an eighth grader should comprehend it. The formula weighs average sentence length and average syllables per word. Longer sentences and polysyllabic words push the grade higher.\n\nThe Gunning Fog Index takes a similar approach but counts complex words, defined as words with three or more syllables, excluding common suffixes. A Fog score of 12 means the text requires roughly 12 years of formal education.\n\nFor web content and SEO writing, targeting a Flesch-Kincaid grade between 6 and 8 is standard practice. Content at this level reaches the broadest audience without oversimplifying technical subjects. Academic papers naturally score higher, often between 12 and 16, which is appropriate for their audience but problematic if the same text appears on a public-facing landing page."
+          },
+          {
+            "heading": "Using Text Analysis for SEO Content Auditing",
+            "body": "Search engines evaluate content quality through signals that correlate with the metrics this tool provides. Word count indicates depth of coverage. Pages competing for informational queries typically need 800 to 2000 words to rank, though the ideal length depends on the topic and competition.\n\nSentence length affects both readability and engagement. Research on web reading behavior shows that sentences averaging 15 to 20 words maintain reader attention. Paragraphs longer than 3 to 4 sentences create visual walls of text that increase bounce rates on mobile devices.\n\nReading time estimates help set user expectations. Many publishers display estimated reading time in article headers, which has been shown to increase engagement when readers know a piece will take 5 minutes rather than 20. Speaking time matters for podcast scripts and video narration where you need to hit specific duration targets.\n\nBy running your content through text analysis before publication, you can catch structural issues that hurt both user experience and search performance: paragraphs that are too dense, sentences that are too complex, or articles that are too thin to compete."
+          }
+        ]
       },
       "faq": [
         {
@@ -428,7 +462,17 @@
         "ioFormats": {
           "input": "Raw Text Strings",
           "output": "Formatted Case Strings"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "Unicode Case Folding and the Turkish \u0130 Problem",
+            "body": "Most developers assume case conversion is straightforward: call toLowerCase() and move on. This assumption breaks spectacularly with certain locales. Turkish and Azerbaijani have four distinct i characters: dotted uppercase \u0130, dotted lowercase i, dotless uppercase I, and dotless lowercase \u0131. Standard JavaScript toLowerCase() converts I to i, but in Turkish locale it should become \u0131 (dotless lowercase i).\n\nThis causes real bugs. A case-insensitive comparison of file types might fail when a Turkish-locale system converts FILE to f\u0131le instead of file. Database queries, URL matching, and authentication systems have all shipped bugs traced to this issue. The Unicode standard defines case folding rules that handle these locale-specific mappings, but many implementations ignore them.\n\nBeyond Turkish, German has the sharp s (\u00df) which uppercases to SS, Greek has context-dependent sigma rules, and some characters have no uppercase equivalent at all. Robust case conversion must account for these edge cases, especially in internationalized applications."
+          },
+          {
+            "heading": "Developer Case Formats Explained",
+            "body": "Each developer case format exists because of specific technical constraints and community conventions. camelCase starts lowercase and capitalizes each subsequent word: userName, getFirstItem. It is the dominant convention in JavaScript, Java method names, and most JSON APIs.\n\nPascalCase capitalizes every word including the first: UserName, GetFirstItem. It is standard for class names in C#, Java, TypeScript, and Python. React component names must use PascalCase to distinguish them from native HTML elements.\n\nsnake_case separates words with underscores and uses all lowercase: user_name, get_first_item. Python uses this for variables and functions. PostgreSQL column names and Ruby method names follow the same pattern. SCREAMING_SNAKE_CASE is the all-uppercase variant used for constants: MAX_RETRY_COUNT, API_BASE_URL.\n\nkebab-case separates words with hyphens: user-name, get-first-item. It is used in CSS class names, HTML attributes, URL slugs, and CLI flags. Most programming languages cannot use hyphens in identifiers, which is why kebab-case is limited to markup and configuration contexts.\n\nChoosing the right format is not a style preference. It is a convention that signals intent and maintains consistency within a language ecosystem."
+          }
+        ]
       },
       "faq": [
         {
@@ -534,7 +578,17 @@
         "ioFormats": {
           "input": "Text List (Newline separated)",
           "output": "Unique Text List"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "Hash-Based Deduplication for Large Datasets",
+            "body": "The naive approach to finding duplicates compares every line against every other line, resulting in O(n\u00b2) time complexity. For a list of 10,000 lines, that means 100 million comparisons. This quickly becomes unusable for real-world datasets.\n\nHash-based deduplication uses a Set or hash table to track seen values. Each line is checked against the Set in O(1) average time, and if it is new, it gets added. This brings the total complexity down to O(n), meaning 10,000 lines require only 10,000 lookups. The difference is dramatic: a million-line file that would take hours with pairwise comparison finishes in seconds with a hash-based approach.\n\nModern JavaScript engines implement Set using hash tables internally, so this tool achieves near-optimal performance automatically. Memory usage scales linearly with the number of unique lines rather than total lines, which keeps the browser responsive even with large inputs."
+          },
+          {
+            "heading": "Why Normalization Before Deduplication Matters",
+            "body": "Two lines that look identical to a human can fail exact-match comparison for several reasons. Leading or trailing whitespace is the most common culprit: 'hello' and 'hello ' are different strings. Case differences create another class of false negatives: 'New York' and 'new york' represent the same value in most practical contexts but do not match without case folding.\n\nCharacter encoding adds another layer of complexity. Unicode offers multiple ways to represent the same character. The letter \u00e9 can be stored as a single code point (U+00E9) or as two code points (e + combining acute accent). These are visually identical but fail string equality checks without Unicode normalization (NFC or NFD).\n\nEffective deduplication pipelines normalize before comparing: trim whitespace, fold case when appropriate, normalize Unicode representations, and optionally collapse internal whitespace runs. Without these steps, your deduplicated list may still contain entries that appear identical to users, undermining trust in the tool's output."
+          }
+        ]
       },
       "faq": [
         {
@@ -630,7 +684,17 @@
         "ioFormats": {
           "input": "CSV / JSON",
           "output": "JSON / CSV"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "Understanding RFC 4180: The CSV Standard",
+            "body": "CSV looks simple but has surprising complexity. RFC 4180 defines the standard rules that most parsers follow. Fields containing commas, double quotes, or line breaks must be enclosed in double quotes. A double quote within a quoted field is escaped by preceding it with another double quote: the value 'say \"hello\"' becomes '\"say \"\"hello\"\"\"' in CSV.\n\nThe first line is optionally a header row, but there is no reliable way to detect this programmatically. Some files use semicolons or tabs instead of commas as delimiters, especially in European locales where commas serve as decimal separators. A French spreadsheet might export '1.234,56' as a number, making comma-delimited parsing fail catastrophically.\n\nLine breaks inside quoted fields are valid CSV. A single record can span multiple lines if the field value contains newlines. Naive parsers that split on newline characters will break these records into fragments. Proper CSV parsing requires a state machine that tracks whether the current position is inside or outside a quoted field."
+          },
+          {
+            "heading": "Handling Nested Data in Flat Formats",
+            "body": "JSON naturally represents nested structures: objects within objects, arrays of values, and mixed-depth hierarchies. CSV is inherently flat, with each row having the same number of columns. Converting between these formats requires decisions about how to handle the mismatch.\n\nThe most common approach is dot-notation flattening. A JSON object like {\"user\": {\"name\": \"Alice\", \"address\": {\"city\": \"Paris\"}}} becomes columns named user.name and user.address.city. This preserves the path to each value and allows reconstruction of the original structure.\n\nArrays present a harder problem. An array of three items could become three separate columns (items.0, items.1, items.2), but this creates sparse rows when arrays have different lengths. An alternative is to stringify the array into a single column as a JSON string, which preserves the data but loses the tabular benefit.\n\nWhen converting CSV back to JSON, the tool must reverse these transformations. Dot-notation column headers get expanded back into nested objects. This round-trip is only lossless when the flattening strategy is consistent and the data does not contain ambiguous column names."
+          }
+        ]
       },
       "faq": [
         {
@@ -728,7 +792,17 @@
         "ioFormats": {
           "input": "JSON String",
           "output": "Pretty JSON"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "Indentation Conventions: 2 Spaces, 4 Spaces, or Tabs",
+            "body": "Indentation style in JSON is not specified by the format itself, but strong conventions exist across language ecosystems. Most JavaScript and TypeScript projects use 2-space indentation, following the patterns set by Node.js core and popular style guides like Airbnb and StandardJS. Python projects tend to use 4 spaces, matching PEP 8 conventions that carry over into JSON configuration files. Java and C# ecosystems also lean toward 4 spaces.\n\nTabs offer a different trade-off. They separate indentation semantics from visual width, letting each developer configure their editor to display tabs at their preferred width. However, tabs in JSON files can cause issues with strict parsers and create inconsistent alignment when mixed with spaces.\n\nThe practical choice should match your project's existing conventions. If your .editorconfig or prettier configuration specifies 2 spaces for JavaScript files, your JSON files should follow the same rule. Consistency within a project matters more than any universal standard. This tool defaults to 2-space indentation but supports customization for teams with different preferences."
+          },
+          {
+            "heading": "Why Formatted JSON Matters for Code Review",
+            "body": "Minified JSON stored in version-controlled files creates serious problems for code review. When an entire JSON object exists on a single line, any change to one value produces a diff that highlights the entire line as modified. Reviewers cannot see what actually changed without manually comparing the before and after states character by character.\n\nFormatted JSON with consistent indentation produces meaningful diffs. Changing a single value shows exactly one line modified in the pull request. Adding a new key shows a clean insertion. Removing a field shows a clear deletion. These atomic diffs make code review faster and reduce the chance of unrelated changes slipping through unnoticed.\n\nThis matters most for configuration files, package.json dependencies, translation files, and API fixture data. These files change frequently and are reviewed by team members who need to understand the intent of each modification. Committing formatted JSON is a small investment that pays off every time someone reviews a change.\n\nSome teams minify JSON for production deployment while keeping it formatted in source control. Build pipelines can handle this transformation automatically, giving you the best of both worlds: readable diffs in review and compact payloads in production."
+          }
+        ]
       },
       "faq": [
         {
@@ -826,7 +900,17 @@
         "ioFormats": {
           "input": "JSON String",
           "output": "Validation Stream"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "RFC 8259: What Makes JSON Valid",
+            "body": "JSON syntax rules are stricter than most developers realize. RFC 8259 defines the authoritative specification. Strings must use double quotes, not single quotes. Object keys must be strings, which means they must also be double-quoted. Trailing commas after the last element in an array or object are forbidden. Comments in any form, whether // line comments or /* block comments */, are not part of the specification.\n\nThe only valid value types are strings, numbers, booleans (true and false), null, objects, and arrays. The values undefined, NaN, Infinity, and -Infinity are not valid JSON even though JavaScript accepts them. Numbers cannot have leading zeros (except for 0 itself) and must use a decimal point rather than a comma for fractional parts.\n\nWhitespace between tokens is insignificant and can be freely added or removed. However, whitespace inside strings is significant and must be preserved. Control characters inside strings must be escaped using the \\uXXXX notation. These rules seem straightforward individually, but violations are common in hand-written JSON, especially when developers transfer habits from JavaScript object literal syntax."
+          },
+          {
+            "heading": "Strict vs Lenient Parsing Across Languages",
+            "body": "Different programming languages and libraries interpret JSON strictness differently, which creates portability issues. JavaScript's JSON.parse() is relatively strict but accepts some edge cases like duplicate keys, silently using the last value. Python's json.loads() is similarly strict and also allows duplicate keys.\n\nJava's Jackson library defaults to strict parsing but offers feature flags to allow comments, trailing commas, single quotes, and unquoted field names. Go's encoding/json package is strict by default and will reject any deviation from the specification. Rust's serde_json follows the spec precisely.\n\nThis inconsistency means JSON that parses fine in one language may fail in another. A configuration file with JavaScript-style comments will work with Jackson's lenient mode but crash a Go service. A payload with trailing commas will survive a lenient Node.js parser but fail when consumed by a Python microservice.\n\nValidating against the strict RFC 8259 specification, as this tool does, ensures your JSON is portable across all compliant parsers. If it passes strict validation, it will work everywhere."
+          }
+        ]
       },
       "faq": [
         {
@@ -924,7 +1008,17 @@
         "ioFormats": {
           "input": "JSON Object / String",
           "output": "Minified JSON String"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "How Minification Interacts with Gzip Compression",
+            "body": "Most web servers compress HTTP responses using gzip or Brotli before sending them to the client. These compression algorithms are excellent at eliminating repetitive patterns like whitespace and indentation. This raises the question: if gzip already handles whitespace, does minification provide any additional benefit?\n\nThe answer depends on context. For small payloads under a few kilobytes, gzip overhead can negate its benefits, making minification the more effective size reduction. For larger payloads, gzip compresses formatted JSON almost as well as minified JSON because the repeated indentation patterns compress to very few bytes.\n\nHowever, minification still reduces the raw byte count before compression, which means less data for the compression algorithm to process. In high-throughput APIs serving thousands of requests per second, this small CPU savings per request adds up. Minification also reduces memory usage on the client side, since the browser allocates less memory for the response body before parsing.\n\nThe practical recommendation is to use both: minify JSON in production APIs and enable gzip compression on the server. The combination delivers the smallest possible transfer size with minimal overhead."
+          },
+          {
+            "heading": "When Minification Helps and When It Hurts",
+            "body": "Minification is clearly beneficial for API responses, embedded JSON in HTML pages, and any JSON transmitted over a network. Removing whitespace reduces transfer time and bandwidth costs, especially for mobile users on slow connections.\n\nHowever, minifying JSON that is stored in version control actively harms your development workflow. Minified JSON files produce unreadable diffs, making code review impossible. A single changed value in a minified file shows the entire content as modified because the whole file exists on one or two lines. Configuration files, translation dictionaries, and test fixtures should always be stored formatted.\n\nLog files and debugging output should also remain formatted. When investigating a production issue at 3 AM, the last thing you need is a wall of unformatted JSON in your log viewer. Pretty-printed JSON in logs lets you scan for relevant fields quickly.\n\nThe rule of thumb is straightforward: minify JSON that machines consume over a network, and format JSON that humans need to read, review, or maintain. Build pipelines can automate this distinction by minifying during deployment while keeping source files formatted."
+          }
+        ]
       },
       "faq": [
         {
@@ -1026,7 +1120,17 @@
         "ioFormats": {
           "input": "Raw Text Title",
           "output": "URL-safe Slug"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "Transliteration Across Writing Systems",
+            "body": "URL slugs must contain only ASCII-safe characters: lowercase letters, digits, and hyphens. This creates a challenge for content in non-Latin scripts. A blog post titled in Russian, Japanese, or Arabic needs a slug that works in a URL without percent-encoding every character.\n\nTransliteration maps characters from one writing system to their closest ASCII equivalents. Cyrillic \u0436 becomes zh, German \u00fc becomes ue, and Spanish \u00f1 becomes n. These mappings are language-specific: the same Cyrillic character might transliterate differently in Russian, Ukrainian, and Bulgarian.\n\nCJK characters (Chinese, Japanese, Korean) present a harder problem. There is no single-letter ASCII equivalent for a Chinese character. Some slug generators use romanization systems like Pinyin for Chinese or Romaji for Japanese. Others fall back to omitting CJK characters entirely, which produces empty or meaningless slugs.\n\nArabic and Hebrew add right-to-left complexity. The transliterated slug reads left-to-right in the URL even though the source title reads right-to-left. A robust slug generator must handle bidirectional text, combining characters, and script-specific transliteration tables to produce readable, meaningful slugs from any input language."
+          },
+          {
+            "heading": "Slug Stability and URL Redirects",
+            "body": "Once a URL is published, its slug becomes a permanent contract with the web. Search engines index the URL. Other sites link to it. Users bookmark it. Social media posts reference it. Changing the slug after publication breaks all of these references, resulting in 404 errors that damage both user experience and search rankings.\n\nWhen a slug change is unavoidable, such as when correcting a typo or rebranding a product name, you must implement a 301 (permanent) redirect from the old URL to the new one. This tells search engines to transfer link equity to the new address and ensures existing bookmarks still work. A 302 (temporary) redirect is wrong in this context because it tells search engines to keep indexing the old URL.\n\nBest practice is to generate slugs carefully at publication time and then treat them as immutable. If your CMS auto-generates slugs from titles, review the slug before publishing. A title change from 'Best Practices for React' to 'Top React Patterns' should not automatically update the slug, because the original URL may already have backlinks and search ranking.\n\nSome content management systems maintain a redirect history automatically, creating 301 redirects whenever a slug changes. If yours does not, maintain a redirect map manually to prevent link rot."
+          }
+        ]
       },
       "faq": [
         {
@@ -1124,7 +1228,17 @@
         "ioFormats": {
           "input": "Original Text + Edited Text",
           "output": "Diff Analysis"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "How Diff Algorithms Work: Myers vs Patience",
+            "body": "The Myers diff algorithm, published by Eugene Myers in 1986, is the default in Git and most diff tools. It finds the shortest edit script, meaning the minimum number of insertions and deletions needed to transform one text into another. Myers works by exploring a graph of possible edits and finding the shortest path, which runs in O(ND) time where N is the total length and D is the number of differences.\n\nFor most inputs, Myers produces clean, minimal diffs. However, it can struggle with code that has been reorganized. When large blocks of text move around, Myers may match on incidental similarities like blank lines or common keywords, producing diffs that are technically minimal but hard for humans to read.\n\nThe Patience diff algorithm addresses this by first matching only unique lines that appear exactly once in both inputs. These unique lines serve as anchors, and the algorithm builds the diff around them. This produces output that better matches human intuition about what changed, especially for code refactoring where functions are reordered or blocks are extracted.\n\nGit supports both algorithms. The default is Myers, but you can switch with git diff --patience. For this tool's use case of comparing prose and configuration text, the LCS-based approach provides clear, line-level results that highlight exactly what was added, removed, or unchanged."
+          },
+          {
+            "heading": "Using Diffs for Content Review and Version Control",
+            "body": "Diffing is not just a developer tool. Writers use diffs to track revisions between drafts, seeing exactly which sentences changed between an editor's review and the final version. This is faster than re-reading both versions and more reliable than trying to spot changes by eye.\n\nFor content teams, diffing catches unintended changes. A client might request a revision to paragraph three, but the writer also adjusted paragraph seven. A diff makes every modification visible, preventing surprises during approval.\n\nConfiguration management relies heavily on diffs. Before deploying a changed nginx.conf or docker-compose.yml, reviewing the diff against the current production version catches mistakes that could cause outages. Many deployment pipelines require a diff review step before applying configuration changes to production.\n\nTranslation workflows use diffs to identify which source strings changed between versions, so translators know exactly what needs updating rather than re-translating the entire document. This reduces cost and turnaround time for localized content."
+          }
+        ]
       },
       "faq": [
         {
@@ -1223,7 +1337,17 @@
         "ioFormats": {
           "input": "UTF-8 String / URL Encoded",
           "output": "URL Encoded / UTF-8 String"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "Percent Encoding Explained: RFC 3986",
+            "body": "RFC 3986 defines which characters are safe in URLs and how unsafe characters must be encoded. Unreserved characters, including letters, digits, hyphens, periods, underscores, and tildes, can appear as-is. Reserved characters like /, ?, #, &, and = have special meaning in URL structure and must be percent-encoded when used as data rather than delimiters.\n\nPercent encoding converts each byte of a character's UTF-8 representation into a %XX hexadecimal pair. The space character becomes %20 in URL paths. However, in query strings, the application/x-www-form-urlencoded format encodes spaces as + signs, a legacy convention from HTML form submissions.\n\nJavaScript provides two encoding functions with different scopes. encodeURI() encodes a complete URI but leaves reserved characters intact because they serve structural roles. encodeURIComponent() encodes everything except unreserved characters, making it safe for encoding individual query parameter values. Using encodeURI() on a query parameter value would leave characters like & and = unencoded, breaking the query string structure.\n\nUnderstanding this distinction prevents a common class of bugs where URLs work for simple ASCII inputs but break when users enter special characters, non-Latin text, or values containing reserved URL characters."
+          },
+          {
+            "heading": "Double Encoding: The Most Common URL Bug",
+            "body": "Double encoding occurs when an already percent-encoded string passes through an encoding function a second time. The character %20 (a space) becomes %2520 because the percent sign itself gets encoded to %25. The server receives %2520, decodes it once to %20, and displays a literal %20 instead of a space.\n\nThis bug is insidious because it only manifests with special characters. URLs containing only ASCII letters and digits work fine regardless of how many times they are encoded. The problem appears when users enter spaces, accented characters, or symbols, making it intermittent and hard to reproduce.\n\nDouble encoding commonly happens in redirect chains. A login page encodes the return URL as a query parameter. The authentication service encodes the entire redirect URL again when passing it to another service. By the time the user arrives at their destination, the URL has been encoded twice and no longer matches any route.\n\nTo detect double encoding in logs, search for %25 followed by two hexadecimal digits. The string %2520 is almost always a double-encoded space. The fix is to ensure each component in your URL pipeline encodes exactly once: encode raw user input at the point of entry and pass the encoded result through without re-encoding."
+          }
+        ]
       },
       "faq": [
         {
@@ -1323,7 +1447,17 @@
         "ioFormats": {
           "input": "UTF-8 String / Base64 Payload",
           "output": "Base64 Payload / UTF-8 String"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "Base64 Variants: Standard, URL-Safe, and MIME",
+            "body": "Base64 is not a single encoding but a family of variants that differ in their character sets and formatting rules. Standard Base64, defined in RFC 4648, uses an alphabet of A-Z, a-z, 0-9, plus (+), and slash (/), with equals (=) for padding. This works well for embedding data in XML, JSON, and most text formats.\n\nURL-safe Base64 replaces + with - and / with _ because the standard characters have special meaning in URLs and filenames. Without this substitution, a Base64 string in a URL query parameter would need percent-encoding on top of the Base64 encoding, increasing size and complexity. JWT tokens use URL-safe Base64 without padding for this reason.\n\nMIME Base64, used in email attachments and defined in RFC 2045, inserts a line break every 76 characters. This accommodates older email systems that cannot handle long lines. If you decode MIME Base64 with a parser that does not expect line breaks, it will fail or produce corrupted output.\n\nChoosing the wrong variant causes subtle bugs. A JWT decoded with a standard Base64 decoder may fail on tokens containing - or _ characters. An email attachment encoded without line breaks may be rejected by mail servers. Always match the Base64 variant to your specific use case."
+          },
+          {
+            "heading": "Data URIs and Inline Resources",
+            "body": "The data: URI scheme allows embedding file content directly into HTML, CSS, and JavaScript using Base64 encoding. Instead of referencing an external image file, you can encode the image bytes as Base64 and include them inline: data:image/png;base64,iVBORw0KGgo... The browser decodes the Base64 string and renders the image without making a separate HTTP request.\n\nThis technique eliminates network round trips for small resources. A 2 KB icon encoded as Base64 adds roughly 2.7 KB to the HTML document (Base64 increases size by approximately 33%) but saves a DNS lookup, TCP connection, and HTTP request that could take 50 to 200 milliseconds on mobile networks.\n\nData URIs are commonly used for small images in CSS (icons, backgrounds, sprites), SVG graphics embedded in HTML, font subsets for critical text rendering, and small JavaScript or CSS snippets loaded inline for performance. However, Base64-encoded resources cannot be cached independently by the browser. If the same icon appears on every page, an external file cached once is more efficient than embedding the same Base64 string in every HTML response.\n\nThe break-even point depends on file size and caching strategy. Resources under 4 KB generally benefit from inlining. Larger files should remain as separate cached assets."
+          }
+        ]
       },
       "faq": [
         {
@@ -1417,7 +1551,17 @@
         "ioFormats": {
           "input": "JSON",
           "output": "TypeScript Interfaces"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "How Type Inference Works on JSON Data",
+            "body": "JSON values carry implicit type information that can be mapped directly to TypeScript types. String values become string, numeric values become number, true and false become boolean, and null becomes null. Arrays are typed by examining their elements: an array of strings becomes string[], while an array of mixed types becomes a union like (string | number)[].\n\nNested objects generate separate interface definitions. When the tool encounters {\"user\": {\"name\": \"Alice\", \"age\": 30}}, it creates a root interface with a user property typed as a child interface containing name: string and age: number. This recursive process handles arbitrary nesting depth.\n\nArrays of objects require special handling. The tool examines all objects in the array to build a merged interface that covers all observed properties. If the first object has fields A and B while the second has fields A and C, the resulting interface includes all three fields, with B and C marked as optional since they do not appear in every element.\n\nEmpty arrays are inherently ambiguous. Without any elements to inspect, the tool cannot determine the intended type and falls back to any[] or unknown[]. Providing a sample with at least one element in each array produces more accurate type definitions."
+          },
+          {
+            "heading": "Handling Optional Fields and Union Types",
+            "body": "Real-world JSON data is rarely consistent. API responses may include a field in some objects but omit it in others. A value might be a string in one response and null in another. The type generator must make decisions about how to represent this inconsistency in TypeScript.\n\nWhen a field appears in some array elements but not all, the generator marks it as optional using the ? modifier: middleName?: string. This tells TypeScript that the property may be absent, which accurately reflects the data's behavior.\n\nWhen a field is present but contains different types across samples, the generator creates a union type. A field that is sometimes a string and sometimes null becomes name: string | null. A field that varies between string and number becomes value: string | number.\n\nThe distinction between optional and nullable matters for TypeScript's type checker. An optional field (field?: string) can be undefined or missing entirely. A nullable field (field: string | null) must be present but can be null. Some JSON data exhibits both behaviors, requiring field?: string | null to fully describe the contract.\n\nFor the most accurate output, provide the tool with a JSON sample that includes all possible variations of your data structure. A single API response may not reveal optional fields or type variations that appear under different conditions."
+          }
+        ]
       },
       "faq": [
         {
@@ -1516,7 +1660,17 @@
         "ioFormats": {
           "input": "Regex / Text",
           "output": "Match Report / Explanation"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "NFA vs DFA: How Regex Engines Work",
+            "body": "Most programming languages, including JavaScript, Python, Java, and Perl, use NFA (Nondeterministic Finite Automaton) regex engines. NFA engines work by trying each possible path through the pattern, backtracking when a path fails. This allows powerful features like backreferences, lookaheads, and lazy quantifiers, but it comes with a risk: catastrophic backtracking.\n\nCatastrophic backtracking occurs when a pattern has multiple ways to match the same input, and the engine explores an exponential number of paths before determining that no match exists. A classic example is the pattern (a+)+ applied to a string of a's followed by a non-matching character. The engine tries every possible way to distribute the a's between the inner and outer groups before failing.\n\nDFA (Deterministic Finite Automaton) engines, used by tools like RE2 and awk, guarantee linear-time matching by processing each input character exactly once. They achieve this by sacrificing features that require backtracking: no backreferences, no lookaheads, and no lazy quantifiers.\n\nUnderstanding that JavaScript uses an NFA engine helps you write safer patterns. Avoid nested quantifiers on overlapping character classes, anchor patterns when possible, and use possessive quantifiers or atomic groups in languages that support them to prevent unnecessary backtracking."
+          },
+          {
+            "heading": "Why Visual Regex Explanation Matters",
+            "body": "Regular expressions are notoriously difficult to read. A pattern like ^(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}$ is functionally clear to its author at the moment of writing, but becomes opaque to anyone else, or even to the author six months later.\n\nVisual explanation breaks a regex into individual tokens and describes each one in plain language. The caret becomes 'start of string.' The lookahead (?=.*[A-Z]) becomes 'assert that at least one uppercase letter exists ahead.' The character class [a-zA-Z0-9]{8,} becomes 'match 8 or more alphanumeric characters.' This token-by-token breakdown makes the pattern's intent explicit.\n\nDebugging benefits even more from visual explanation. When a pattern fails to match expected input, stepping through the tokens reveals where the mismatch occurs. Perhaps a character class is missing a hyphen, or a quantifier is greedy when it should be lazy. Seeing the match attempt against actual input text pinpoints the problem faster than reading the raw pattern.\n\nFor teams, regex explanations serve as living documentation. Instead of adding a comment that paraphrases the pattern, developers can generate an explanation that stays accurate regardless of future modifications to the expression."
+          }
+        ]
       },
       "faq": [
         {
@@ -1610,7 +1764,17 @@
         "ioFormats": {
           "input": "XML / JSON",
           "output": "JSON / XML"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "XML Namespace Handling in Conversion",
+            "body": "XML namespaces allow elements from different vocabularies to coexist in the same document without name collisions. An element like <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"> uses the soap prefix to distinguish SOAP-specific elements from application data. When converting this to JSON, the converter must decide what to do with namespace information.\n\nThree common strategies exist. Stripping namespaces entirely removes all prefixes and xmlns declarations, producing cleaner JSON but losing the ability to distinguish between identically-named elements from different vocabularies. Preserving prefixes keeps the colon-separated names like soap:Envelope as JSON keys, which maintains readability but creates keys that are unusual in JSON conventions.\n\nFlattening namespaces into a metadata object is the most complete approach. Each element gets a namespace URI stored alongside its value, similar to how attributes are handled. This preserves all information but produces verbose JSON that is harder to work with manually.\n\nFor most practical use cases, stripping namespaces works when you are converting a single-vocabulary document. When the XML mixes multiple schemas, such as SOAP envelopes containing XHTML content, preserving namespace information becomes essential to avoid ambiguity."
+          },
+          {
+            "heading": "Information Loss in Format Conversion",
+            "body": "XML and JSON are not equivalent in expressiveness. Several XML features have no direct JSON counterpart, and information is inevitably lost or transformed during conversion.\n\nXML attributes have no parallel in JSON. Most converters use a convention like @attributes or prefix attribute names with @ to distinguish them from child elements. This works for round-tripping but changes the data structure in ways that consuming code must account for.\n\nProcessing instructions (<?xml-stylesheet type=\"text/xsl\" href=\"style.xsl\"?>) carry metadata about how the document should be processed. JSON has no equivalent concept, and these instructions are typically discarded during conversion.\n\nCDATA sections (<![CDATA[raw content here]]>) allow embedding unescaped text in XML. When converted to JSON, the content becomes a regular string, and the distinction between CDATA and normal text content is lost.\n\nXML comments are almost always stripped during conversion. Mixed content, where an element contains both text and child elements interleaved, is particularly problematic because JSON objects cannot naturally represent the ordering of mixed text and element nodes.\n\nUnderstanding these limitations helps you anticipate issues. If round-trip fidelity is critical, consider whether the XML features you rely on survive the conversion process."
+          }
+        ]
       },
       "faq": [
         {
@@ -1704,7 +1868,17 @@
         "ioFormats": {
           "input": "JWT Token",
           "output": "Decoded Header / Payload / Claims"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "JWT Structure: Header, Payload, and Signature",
+            "body": "A JSON Web Token consists of three parts separated by dots: header.payload.signature. Each part is Base64URL-encoded, which means you can decode the first two parts without any secret key or certificate.\n\nThe header is a JSON object that specifies the token type (typically JWT) and the signing algorithm. Common algorithms include HS256 (HMAC with SHA-256, using a shared secret) and RS256 (RSA with SHA-256, using a public/private key pair). The algorithm choice determines how the signature is created and verified.\n\nThe payload contains claims, which are statements about the user and metadata about the token. Claims are simply JSON key-value pairs. Standard claims include sub (subject identifier), iss (issuer), aud (audience), exp (expiration time), and iat (issued at time). Custom claims can contain any application-specific data like user roles or permissions.\n\nThe signature is computed over the encoded header and payload using the algorithm specified in the header. For HS256, the server signs with a secret key that both the issuer and verifier share. For RS256, the issuer signs with a private key and verifiers check with the corresponding public key. The signature ensures that the token has not been tampered with since it was issued."
+          },
+          {
+            "heading": "Common JWT Claims and Security Considerations",
+            "body": "The exp (expiration) claim is a Unix timestamp indicating when the token becomes invalid. Servers should reject tokens past their expiration time. The iat (issued at) claim records when the token was created. The nbf (not before) claim prevents a token from being used before a specific time, useful for tokens issued in advance.\n\nThe sub (subject) claim identifies the principal, typically a user ID. The iss (issuer) claim identifies who created the token, allowing verifiers to reject tokens from untrusted issuers. The aud (audience) claim specifies the intended recipient, preventing a token meant for one service from being accepted by another.\n\nA critical security principle: never trust JWT contents without verifying the signature. The payload is encoded, not encrypted. Anyone can decode it, modify the claims, and re-encode it. Without signature verification, an attacker could change their user role from 'viewer' to 'admin' by simply editing the Base64 payload.\n\nThis tool intentionally decodes without verifying signatures, which is useful for debugging and inspection. You can see what claims a token carries, check if it has expired, and verify the issuer value. However, for any security decision in production code, always verify the signature using a trusted library and the correct key material. Decoding alone provides no guarantee of authenticity or integrity."
+          }
+        ]
       },
       "faq": [
         {
@@ -1799,7 +1973,17 @@
         "ioFormats": {
           "input": "JSON / CSV",
           "output": "Structured Diff Report"
-        }
+        },
+        "deepDive": [
+          {
+            "heading": "Structural Diff vs Text Diff",
+            "body": "Text-based diff tools compare documents line by line. If you reformat a JSON file by changing indentation or reordering keys, a text diff will report nearly every line as changed, even though the data is semantically identical. This makes text diffs unreliable for structured data comparison.\n\nStructural diff operates on the parsed data model rather than its text representation. It compares objects by their keys and values, arrays by their elements, and nested structures by their paths. Reordering keys in a JSON object produces no diff because the keys still map to the same values. Changing indentation or whitespace produces no diff because the tool compares parsed values, not raw text.\n\nArray comparison highlights a key difference between the two approaches. A text diff reports array changes as line insertions and deletions, which is confusing when elements shift position. A structural diff can identify that an element moved from index 2 to index 5, or that a new element was inserted at index 0 pushing everything else down.\n\nFor CSV data, structural diff compares rows by a key column rather than by line number. If rows are reordered, a text diff shows every row as changed. A structural diff correctly identifies that the data is the same, just in a different order. This distinction is critical for database exports, API responses, and any data where ordering is not semantically meaningful."
+          },
+          {
+            "heading": "JSON Patch (RFC 6902) and Schema Evolution",
+            "body": "RFC 6902 defines JSON Patch, a format for describing changes to a JSON document as an array of operations. Each operation has a type (add, remove, replace, move, copy, or test) and a path pointing to the target location in the document. For example, {\"op\": \"replace\", \"path\": \"/user/name\", \"value\": \"Bob\"} describes changing the user's name to Bob.\n\nStructural diffs and JSON Patch are closely related. A structural diff identifies what changed between two documents. A JSON Patch describes how to transform one document into the other. Some tools generate JSON Patch output directly from a diff, creating an executable changeset that can be applied programmatically.\n\nThis becomes particularly valuable for API versioning and schema evolution. When a REST API changes its response format between versions, a structural diff documents exactly what was added, removed, or modified. Teams can track these changes over time to maintain backward compatibility and generate migration guides for API consumers.\n\nSchema evolution tracking also helps with database migrations, configuration management, and contract testing. By diffing the expected and actual API responses in a CI pipeline, you can catch unintended breaking changes before they reach production. The structural diff provides precise, actionable information about which fields changed, rather than a wall of text differences that requires manual interpretation."
+          }
+        ]
       },
       "faq": [
         {

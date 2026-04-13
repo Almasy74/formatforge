@@ -6,6 +6,66 @@
 
 <p>For most web and application workloads, the practical job is simple: take incoming UTF-8 text, normalize it to NFC, then continue with comparison, indexing, storage, or slug generation.</p>
 
+<h2>ICU vs utf8proc Comparison</h2>
+<p>The two main options for Unicode normalization in C/C++ are ICU and utf8proc. They differ significantly in scope, size, and use case.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Feature</th>
+            <th>ICU</th>
+            <th>utf8proc</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Library size</td>
+            <td>~30 MB (data files included)</td>
+            <td>~300 KB (single .c and .h file)</td>
+        </tr>
+        <tr>
+            <td>Normalization (NFC, NFD, NFKC, NFKD)</td>
+            <td>Yes</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>Collation and locale-aware sorting</td>
+            <td>Yes</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>Bidirectional text</td>
+            <td>Yes</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>Date/number formatting</td>
+            <td>Yes</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>Regular expressions</td>
+            <td>Yes</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>License</td>
+            <td>ICU License (permissive)</td>
+            <td>MIT</td>
+        </tr>
+        <tr>
+            <td>Dependencies</td>
+            <td>Multiple data files, build system</td>
+            <td>None (self-contained)</td>
+        </tr>
+        <tr>
+            <td>Best for</td>
+            <td>Full i18n applications</td>
+            <td>Focused normalization, embedded systems, CLI tools</td>
+        </tr>
+    </tbody>
+</table>
+<p>Choose utf8proc when you need normalization without the weight of a full internationalization stack. Choose ICU when you also need collation, locale-aware formatting, or bidirectional text support.</p>
+
 <h2>Why NFC Matters in C Projects</h2>
 <ul>
     <li><strong>String comparison:</strong> visibly identical text can compare unequal if forms differ</li>
@@ -17,18 +77,115 @@
 <h2>When to Normalize</h2>
 <p>Normalize at the point where text enters your system, not only when you notice a bug later. Good boundaries include API ingestion, file parsing, CLI input, database writes, and search indexing pipelines. The earlier you normalize, the fewer mixed-form bugs you carry downstream.</p>
 
-<h2>Example Workflow with utf8proc</h2>
-<pre><code>// Pseudocode shape for an NFC normalization step in a C project
-// 1. Receive UTF-8 input
-// 2. Normalize to NFC with utf8proc
-// 3. Store or compare the normalized value
+<h2>Real C Code Example with utf8proc</h2>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;utf8proc.h&gt;
 
-const char *input = "...";
-// normalized = utf8proc_map(... NFC options ...)
-// if normalization succeeds:
-//   store(normalized);
-//   compare(normalized, other_normalized_value);
-</code></pre>
+char *normalize_nfc(const char *input) {
+    utf8proc_uint8_t *result = NULL;
+    utf8proc_ssize_t len;
+
+    len = utf8proc_map(
+        (const utf8proc_uint8_t *)input,
+        0,  /* 0 means null-terminated input */
+        &amp;result,
+        UTF8PROC_NULLTERM | UTF8PROC_STABLE |
+        UTF8PROC_COMPOSE  /* NFC = compose */
+    );
+
+    if (len &lt; 0) {
+        fprintf(stderr, "normalization failed: %s\n",
+                utf8proc_errmsg(len));
+        return NULL;
+    }
+
+    return (char *)result;  /* caller must free() */
+}
+
+int main(void) {
+    const char *decomposed = "e\xCC\x81";  /* e + combining acute = NFD */
+    const char *composed   = "\xC3\xA9";   /* precomposed e-acute = NFC */
+
+    char *normalized = normalize_nfc(decomposed);
+    if (normalized) {
+        printf("match: %s\n",
+               strcmp(normalized, composed) == 0 ? "yes" : "no");
+        free(normalized);
+    }
+    return 0;
+}
+/* Compile: gcc -o norm norm.c -lutf8proc */</code></pre>
+<p>The key flag is <code>UTF8PROC_COMPOSE</code>, which produces NFC output. For NFD, use <code>UTF8PROC_DECOMPOSE</code> instead. For NFKC, combine <code>UTF8PROC_COMPOSE | UTF8PROC_COMPAT</code>.</p>
+
+<h2>Platform-Specific Normalization Behavior</h2>
+<p>Different operating systems handle Unicode normalization differently at the filesystem level. This matters when your C program reads filenames or processes paths.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Platform</th>
+            <th>Filesystem Normalization</th>
+            <th>Implications</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>macOS (HFS+/APFS)</td>
+            <td>NFD (a variant close to NFD)</td>
+            <td>Filenames are decomposed on disk. A file created as <code>cafe\u0301</code> and <code>caf\u00e9</code> refer to the same file. Listing the directory returns the NFD form.</td>
+        </tr>
+        <tr>
+            <td>Windows (NTFS)</td>
+            <td>Preserves original form (usually NFC)</td>
+            <td>Windows does not normalize filenames. Two files with NFC and NFD names can coexist as separate entries.</td>
+        </tr>
+        <tr>
+            <td>Linux (ext4, XFS)</td>
+            <td>Byte-preserving (no normalization)</td>
+            <td>Filenames are raw byte sequences. NFC and NFD filenames are distinct files. This causes cross-platform bugs when syncing with macOS.</td>
+        </tr>
+    </tbody>
+</table>
+<p>If your C program processes filenames across platforms, normalize them to NFC before comparison or storage. Otherwise, the same file can appear as two different entries when synced between macOS and Linux.</p>
+
+<h2>Database Storage Implications</h2>
+<p>Database engines vary in their Unicode handling. Normalizing in your application layer with utf8proc gives you consistent behavior regardless of the database backend.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Database</th>
+            <th>Default Behavior</th>
+            <th>Recommendation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>PostgreSQL</td>
+            <td>Stores bytes as-is. Comparison depends on collation. ICU collations can normalize, but the default C collation does byte comparison.</td>
+            <td>Normalize to NFC in your application before INSERT.</td>
+        </tr>
+        <tr>
+            <td>MySQL</td>
+            <td>The <code>utf8mb4</code> charset stores raw bytes. Collations like <code>utf8mb4_unicode_ci</code> handle case-insensitive comparison but do not normalize stored data.</td>
+            <td>Normalize to NFC before storage. Do not rely on collation to fix normalization differences.</td>
+        </tr>
+        <tr>
+            <td>SQLite</td>
+            <td>Stores raw bytes. No built-in normalization. Comparison is binary unless you load an ICU extension.</td>
+            <td>Normalize to NFC in your application before any write or comparison.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Migration Strategy: Adding Normalization to Existing Projects</h2>
+<p>If you have an existing C project with no normalization, adding utf8proc takes four steps:</p>
+<ol>
+    <li><strong>Add the dependency:</strong> utf8proc is available as a system package on most Linux distributions (<code>libut8proc-dev</code>), via Homebrew on macOS (<code>brew install utf8proc</code>), or as a vendored single-file include.</li>
+    <li><strong>Identify input boundaries:</strong> find every point where external text enters your system (file reads, API responses, CLI arguments, database reads). These are your normalization points.</li>
+    <li><strong>Add normalization calls:</strong> wrap incoming text with your <code>normalize_nfc()</code> function at each boundary. Return the normalized copy and free the original if needed.</li>
+    <li><strong>Migrate stored data:</strong> if your database already contains mixed-form text, run a one-time migration that reads each text value, normalizes it to NFC, and writes it back. For PostgreSQL, you can do this with a custom function or a script that reads rows and updates them.</li>
+</ol>
 
 <h2>What to Watch Out For</h2>
 <table>
@@ -60,6 +217,11 @@ const char *input = "...";
             <td>Compatibility normalization can change meaning more aggressively</td>
             <td>Use NFC unless you specifically need compatibility folding</td>
         </tr>
+        <tr>
+            <td>Forgetting to free the result</td>
+            <td><code>utf8proc_map</code> allocates a new buffer</td>
+            <td>Always <code>free()</code> the returned pointer when done</td>
+        </tr>
     </tbody>
 </table>
 
@@ -74,18 +236,37 @@ const char *input = "...";
     </details>
     <details>
         <summary>Does utf8proc solve hidden character problems too?</summary>
-        <p>It helps with normalization, but hidden characters such as zero-width spaces or BOM markers may still need explicit inspection and cleanup.</p>
+        <p>It helps with normalization, but hidden characters such as zero-width spaces or BOM markers may still need explicit inspection and cleanup. See the <a href="/guides/hidden-unicode-characters/">hidden Unicode characters guide</a> for detection and stripping patterns.</p>
     </details>
     <details>
         <summary>Can normalization affect slugs?</summary>
         <p>Yes. Skipping normalization can produce inconsistent slugs for accented titles that look identical to users.</p>
     </details>
+    <details>
+        <summary>What is the difference between NFC and NFKC in utf8proc?</summary>
+        <p>NFC composes characters to their precomposed form. NFKC does the same but also replaces compatibility characters (like ligatures, superscripts, and fullwidth forms) with their standard equivalents. Use NFKC when you want maximum folding, such as for search indexing. Use NFC when you want to preserve visual distinctions.</p>
+    </details>
+    <details>
+        <summary>How large is utf8proc compared to ICU?</summary>
+        <p>utf8proc is roughly 300 KB including its Unicode data tables. ICU can be 30 MB or more. If you only need normalization and basic Unicode properties, utf8proc is the lighter choice by two orders of magnitude.</p>
+    </details>
+    <details>
+        <summary>Does utf8proc support the latest Unicode version?</summary>
+        <p>utf8proc tracks Unicode releases, but there can be a lag. Check the version constant <code>UTF8PROC_UNICODE_VERSION</code> in the header to confirm which Unicode version your build supports. For most normalization work, version differences rarely affect results.</p>
+    </details>
 </div>
 
 <h2>Related Tools</h2>
 <ul>
-    <li><a href="/guides/unicode-normalization/">NFC vs NFD: Unicode Normalization Explained</a> for the conceptual overview</li>
     <li><a href="/dev/slug-generator/">URL Slug Generator</a> to create stable slugs after normalization</li>
     <li><a href="/text/text-analyzer/">Text Analysis Tool</a> to inspect suspicious character-count behavior</li>
     <li><a href="/dev/url-encode-decode/">URL Encoder / Decoder</a> to inspect encoded Unicode in URLs</li>
+    <li><a href="/dev/regex-tester-explainer/">Regex Tester Online</a> to test patterns on normalized text</li>
+</ul>
+
+<h2>Related Guides</h2>
+<ul>
+    <li><a href="/guides/unicode-normalization/">NFC vs NFD: Unicode Normalization Explained</a> for the conceptual overview</li>
+    <li><a href="/guides/hidden-unicode-characters/">Hidden Unicode Characters Guide</a> for detecting and stripping invisible characters</li>
+    <li><a href="/guides/regex-debugging/">Regex Debugging Guide</a> for troubleshooting patterns that interact with Unicode</li>
 </ul>

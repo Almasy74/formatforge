@@ -1,18 +1,16 @@
 <h2>What is a Regular Expression?</h2>
-<p>A Regular Expression (often abbreviated as <strong>Regex</strong> or <strong>RegExp</strong>) is a sequence of
-    characters that specifies a search pattern. Think of it as "Find and Replace" on steroids. Instead of searching for
-    the exact word "apple", you can search for "any word that starts with 'a', ends with 'e', and has exactly 5
-    letters."</p>
+<p>A Regular Expression (often abbreviated as <strong>Regex</strong> or <strong>RegExp</strong>) is a sequence of characters that specifies a search pattern. Think of it as "Find and Replace" on steroids. Instead of searching for the exact word "apple", you can search for "any word that starts with 'a', ends with 'e', and has exactly 5 letters."</p>
+
+<p>Regular expressions are one of the most universally useful tools in programming. They appear in every major language, in text editors, in command-line tools, and in data processing pipelines. Learning even basic regex saves hours of manual text work.</p>
 
 <h2>Why Should You Learn Regex?</h2>
-<p>Regex is universally supported across almost all modern programming languages (JavaScript, Python, Java, PHP) and
-    tools (VS Code, grep, Google Analytics). It is the most powerful tool for:</p>
+<p>Regex is universally supported across almost all modern programming languages (JavaScript, Python, Java, PHP, Go, Ruby) and tools (VS Code, grep, sed, Google Analytics). It is the most powerful tool for:</p>
 <ul>
-    <li><strong>Data Validation:</strong> Ensuring an input field only contains a valid email address or phone number.
-    </li>
-    <li><strong>Data Extraction:</strong> Pulling out all the URLs or IP addresses from a massive 10GB log file.</li>
-    <li><strong>Refactoring Code:</strong> Replacing old variable formats with new ones across hundreds of files
-        simultaneously.</li>
+    <li><strong>Data Validation:</strong> Ensuring an input field only contains a valid email address or phone number.</li>
+    <li><strong>Data Extraction:</strong> Pulling out all the URLs or IP addresses from a massive log file.</li>
+    <li><strong>Refactoring Code:</strong> Replacing old variable formats with new ones across hundreds of files simultaneously.</li>
+    <li><strong>Log Analysis:</strong> Filtering and parsing structured log entries to find error patterns.</li>
+    <li><strong>Text Cleaning:</strong> Removing unwanted formatting, whitespace, or markup from scraped or copied content.</li>
 </ul>
 
 <h2>Basic Regex Syntax</h2>
@@ -43,6 +41,11 @@
             <td style="padding: 10px; border: 1px solid #ccc;"><code>a+b</code> matches "ab", "aab" (but not "b")</td>
         </tr>
         <tr>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>?</code> (Question)</td>
+            <td style="padding: 10px; border: 1px solid #ccc;">Makes the preceding character optional (0 or 1).</td>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>colou?r</code> matches "color" and "colour"</td>
+        </tr>
+        <tr>
             <td style="padding: 10px; border: 1px solid #ccc;"><code>[]</code> (Brackets)</td>
             <td style="padding: 10px; border: 1px solid #ccc;">Matches any one character inside the brackets.</td>
             <td style="padding: 10px; border: 1px solid #ccc;"><code>[aeiou]</code> matches any vowel</td>
@@ -52,23 +55,220 @@
             <td style="padding: 10px; border: 1px solid #ccc;">Matches any digit (0-9).</td>
             <td style="padding: 10px; border: 1px solid #ccc;"><code>\d\d\d</code> matches any 3-digit number</td>
         </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>\w</code></td>
+            <td style="padding: 10px; border: 1px solid #ccc;">Matches any word character (letter, digit, underscore).</td>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>\w+</code> matches "hello", "test_123"</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>\s</code></td>
+            <td style="padding: 10px; border: 1px solid #ccc;">Matches any whitespace (space, tab, newline).</td>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>\s+</code> matches one or more spaces</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>^</code> and <code>$</code></td>
+            <td style="padding: 10px; border: 1px solid #ccc;">Anchors: match start and end of line.</td>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>^hello$</code> matches only the exact string "hello"</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>{n,m}</code></td>
+            <td style="padding: 10px; border: 1px solid #ccc;">Matches between n and m repetitions.</td>
+            <td style="padding: 10px; border: 1px solid #ccc;"><code>\d{2,4}</code> matches 2 to 4 digits</td>
+        </tr>
     </tbody>
 </table>
 
+<h2>Predefined Character Classes</h2>
+<p>Instead of writing out full character ranges, regex provides shorthand classes that cover the most common needs:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Shorthand</th>
+            <th>Equivalent</th>
+            <th>Matches</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>\d</code></td>
+            <td><code>[0-9]</code></td>
+            <td>Any digit</td>
+        </tr>
+        <tr>
+            <td><code>\D</code></td>
+            <td><code>[^0-9]</code></td>
+            <td>Any non-digit</td>
+        </tr>
+        <tr>
+            <td><code>\w</code></td>
+            <td><code>[a-zA-Z0-9_]</code></td>
+            <td>Any word character</td>
+        </tr>
+        <tr>
+            <td><code>\W</code></td>
+            <td><code>[^a-zA-Z0-9_]</code></td>
+            <td>Any non-word character</td>
+        </tr>
+        <tr>
+            <td><code>\s</code></td>
+            <td><code>[ \t\n\r\f]</code></td>
+            <td>Any whitespace</td>
+        </tr>
+        <tr>
+            <td><code>\S</code></td>
+            <td><code>[^ \t\n\r\f]</code></td>
+            <td>Any non-whitespace</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Grouping and Capturing</h2>
+<p>Parentheses <code>()</code> create groups that can capture matched text for later use. This is essential for extraction tasks.</p>
+
+<pre><code>// Extract date parts from "2026-04-13"
+Pattern: (\d{4})-(\d{2})-(\d{2})
+Group 1: 2026 (year)
+Group 2: 04 (month)
+Group 3: 13 (day)
+
+// Non-capturing group (matches but does not capture)
+Pattern: (?:https?://)(\S+)
+Only captures the domain, not the protocol prefix</code></pre>
+
+<p>Use non-capturing groups <code>(?:...)</code> when you need grouping for structure but do not need the matched text stored. This keeps your capture groups clean and numbered correctly.</p>
+
 <h2>A Real World Example: Extracting Emails</h2>
-<p>If you have a block of text and want to find all emails, you might use a pattern like
-    <code>[\w.-]+@[\w.-]+\.\w+</code>. Let's break it down:</p>
+<p>If you have a block of text and want to find all emails, you might use a pattern like <code>[\w.-]+@[\w.-]+\.\w+</code>. Let's break it down:</p>
 <ol>
     <li><code>[\w.-]+</code>: Matches 1 or more word characters, dots, or hyphens (the username part).</li>
     <li><code>@</code>: Exactly matches the @ symbol.</li>
     <li><code>[\w.-]+</code>: Matches 1 or more characters for the domain name.</li>
-    <li><code>\.\w+</code>: Matches a literal dot (<code>\.</code>) followed by 1 or more word characters (like .com or
-        .net).</li>
+    <li><code>\.\w+</code>: Matches a literal dot (<code>\.</code>) followed by 1 or more word characters (like .com or .net).</li>
 </ol>
 
+<h2>Common Patterns You Can Use Today</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Pattern</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Match an email</td>
+            <td><code>[\w.+-]+@[\w.-]+\.\w{2,}</code></td>
+            <td>Basic match, not RFC-complete</td>
+        </tr>
+        <tr>
+            <td>Match an ISO date</td>
+            <td><code>\d{4}-\d{2}-\d{2}</code></td>
+            <td>Matches format, not validity</td>
+        </tr>
+        <tr>
+            <td>Match a URL</td>
+            <td><code>https?://\S+</code></td>
+            <td>Simple URL extraction</td>
+        </tr>
+        <tr>
+            <td>Match an IPv4 address</td>
+            <td><code>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}</code></td>
+            <td>Matches format, does not validate range</td>
+        </tr>
+        <tr>
+            <td>Remove HTML tags</td>
+            <td><code>&lt;[^&gt;]+&gt;</code></td>
+            <td>Simple stripping, not for nested or malformed HTML</td>
+        </tr>
+        <tr>
+            <td>Match whitespace runs</td>
+            <td><code>\s{2,}</code></td>
+            <td>Find 2+ consecutive whitespace characters</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Regex in JavaScript and Python</h2>
+
+<h3>JavaScript</h3>
+<pre><code>// Test if a string matches a pattern
+const emailPattern = /[\w.+-]+@[\w.-]+\.\w{2,}/;
+console.log(emailPattern.test("user@example.com")); // true
+
+// Extract all matches from a string
+const text = "Contact alice@example.com or bob@test.org";
+const matches = text.match(/[\w.+-]+@[\w.-]+\.\w{2,}/g);
+console.log(matches); // ["alice@example.com", "bob@test.org"]
+
+// Replace with regex
+const cleaned = text.replace(/\s{2,}/g, " ");
+</code></pre>
+
+<h3>Python</h3>
+<pre><code>import re
+
+# Test if a string matches
+pattern = r"[\w.+-]+@[\w.-]+\.\w{2,}"
+result = re.search(pattern, "Contact alice@example.com")
+print(result.group())  # "alice@example.com"
+
+# Find all matches
+text = "Contact alice@example.com or bob@test.org"
+matches = re.findall(pattern, text)
+print(matches)  # ["alice@example.com", "bob@test.org"]
+
+# Replace with regex
+cleaned = re.sub(r"\s{2,}", " ", text)
+</code></pre>
+
 <h2>How to Practice Safely</h2>
-<p>Never run a complex regex directly on production databases without testing it first! A badly written regex can cause
-    "Catastrophic Backtracking", which freezes the CPU and takes down your server.</p>
-<p>Instead, use an interactive testing environment. You can paste your data and your pattern into our upcoming
-    <strong>Regex Tester</strong> tool to see what matches instantly, safely within your browser before deploying to
-    production.</p>
+<p>Never run a complex regex directly on production databases without testing it first. A badly written regex can cause "Catastrophic Backtracking", which freezes the CPU and takes down your server.</p>
+<p>Instead, use an interactive testing environment. Paste your data and your pattern into the <a href="/dev/regex-tester-explainer/">Regex Tester Online</a> to see what matches instantly, safely within your browser before deploying to production.</p>
+
+<h2>Common Beginner Mistakes</h2>
+<ul>
+    <li><strong>Using <code>.*</code> everywhere:</strong> This greedy pattern matches as much as possible and often captures more than intended. Use a tighter character class instead.</li>
+    <li><strong>Forgetting anchors:</strong> Without <code>^</code> and <code>$</code>, your pattern matches substrings anywhere in the text, which may not be what you want.</li>
+    <li><strong>Over-escaping or under-escaping:</strong> Characters like <code>.</code>, <code>*</code>, <code>+</code>, and <code>?</code> are special in regex. Escape them with <code>\</code> when you mean the literal character.</li>
+    <li><strong>Testing only on clean input:</strong> Real-world text has extra whitespace, hidden characters, and unexpected formatting. Test with messy data.</li>
+    <li><strong>Writing one giant pattern:</strong> Break complex patterns into smaller parts and test each part separately before combining.</li>
+</ul>
+
+<h2>Next Steps</h2>
+<p>Once you understand these fundamentals, move to more advanced topics:</p>
+<ul>
+    <li><a href="/guides/regex-basics/">Regex basics for real work</a> covers practical patterns for daily tasks</li>
+    <li><a href="/guides/regex-debugging/">Regex debugging guide</a> covers greedy matches, multiline failures, escaping problems, and performance</li>
+</ul>
+
+<h2>FAQ</h2>
+<div class="guide-faq">
+    <details>
+        <summary>What is the difference between <code>*</code> and <code>+</code>?</summary>
+        <p><code>*</code> matches zero or more repetitions (the preceding element is optional). <code>+</code> matches one or more repetitions (at least one occurrence is required).</p>
+    </details>
+    <details>
+        <summary>Why does my regex match too much text?</summary>
+        <p>Greedy quantifiers like <code>.*</code> consume as much text as possible. Use lazy quantifiers (<code>.*?</code>) or tighter character classes to limit matching.</p>
+    </details>
+    <details>
+        <summary>Is regex the same in every programming language?</summary>
+        <p>The core syntax is similar, but there are differences in supported features. JavaScript does not support lookbehind in older engines. Python uses raw strings (<code>r""</code>) to avoid double-escaping. Java requires double backslashes in string literals.</p>
+    </details>
+    <details>
+        <summary>Can regex validate email addresses properly?</summary>
+        <p>Simple regex patterns catch most common email formats but do not fully comply with RFC 5322. For production validation, use a dedicated email validation library in addition to a basic regex check.</p>
+    </details>
+    <details>
+        <summary>When should I NOT use regex?</summary>
+        <p>Avoid regex for parsing nested structures like HTML or JSON. Use a proper parser instead. Regex works best for flat pattern matching, not recursive structures.</p>
+    </details>
+</div>
+
+<h2>Related Tools</h2>
+<ul>
+    <li><a href="/dev/regex-tester-explainer/">Regex Tester Online</a> for live matching and plain-language explanations</li>
+    <li><a href="/text/remove-line-breaks/">Remove Line Breaks</a> to clean copied text before testing patterns</li>
+    <li><a href="/text/text-analyzer/">Text Analysis Tool</a> to inspect text structure after regex transformations</li>
+</ul>
